@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %} Credits {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+<div class="container">
+	<br>
+	<h2> About Codebreaker </h2>
+	<p> Codebreaker is an automated platform that allows for easy and quick grading of Informatics Olympiad solutions. It supports automated compilation of code and parallel grading of testdata, utilising AWS Cloud Computing to minimise costs. Codebreaker has been built and maintained by past and present olympiad students and funding comes from the community. We are currently working on Codebreaker contest mode, which would allow for relatively high-stakes contests to be tested and conducted with minimal hassle. </p>
+	
+	<p> At latest update, Codebreaker supports {{statistics['users']}} users, {{statistics['problems']}} problems and has graded {{statistics['subs']}} submissions. </p>
+
+	<h2> Documentation </h2>
+	<p> Refer to the documentation found <a href="https://docs.google.com/document/d/11_kzvH0YCCwvcKx3kSb16qmEVznQcYf9dj8B5gsicts">here</a>. </p>
+
+	<h2> Technical Specifications </h2>
+	<ul>
+		<li> Compilation and hosting: AWS EC2 </li>
+		<li> Database: AWS DynamoDB </li>
+		<li> Grading server: AWS Lambda </li>
+		<li> Problem uploading: Google Drive API </li>
+		<li> Testcase storage: AWS S3 </li>
+	</ul>
+
+	<h2> Development </h2>
+	<p>
+	Codebreaker (Back-end and Grading) was built by Daniel Choo, Lim Rui Yuan, Shen Xing Yang and James Sng. <br>
+	Codebreaker (User Interface) was designed by Shevonne Chia and Jamie Lim.
+	</p>
+	<p>
+	Please <a href="mailto: singaporezoo060@gmail.com">contact</a> the administrators for any requests. <br>
+	</p>
+
+	<p>
+	We would like to thank:
+	<ul>
+		<li> Mr Li Da for helping to critique our proposals </li>
+		<li> Ranald Lam (dunjudge2015) for his invaluable guidance and support </li>
+		<li> Our army of testers: Benson Lin, Daniel Toh, Evan Lim, Jamie Lim, Kang Yiming, Ryan Goh and Yu Zheyuan </li>
+		<li> Kannan Vishal for designing the logo </li>
+	</ul>
+	</p>
+
+	<h2> Terms of Use</h2>
+	<ol>
+		<li> The following rules, if broken, would result in bans from the judge as well as potential disciplinary actions with affiliated institutions, where applicable:
+		<ol type="a">
+			<li> Spamming submissions not intended to be an attempt at the problem </li>
+			<li> Repeatedly submitting the same piece of code </li>
+			<li> Sharing of user accounts. Each account is intended to be in use by one person only. Please register for another account if required</li>
+			<li> Plagiarism of code </li>
+			<li> Hacking of user accounts </li>
+			<li> Submission of malign codes intended to corrupt the integrity of the judge system </li>
+			<li> Submission of malign codes intended to sabotage judge costs or to disable judge graders</li>
+			<li> Using an external software to submit automatically to Codebreaker </li>
+			<li> Attempting to gain access to resources that are not accessible to you (eg: other people's code, test cases, admin control panel) </li>
+			<li> Any form of Denial of Service (DOS) attacks </li>
+		</ol>
+		<li> In the event of either repeated violations of the rules above, or past misuse of dunjudge.me, we reserve the rights to permanently deny access to the judge for the user. This is a community-sponsored judge and we reserve all rights to revoke accounts at our sole discretion
+		<li> Please contact the current administrators if you would like to run training on the judge </li>
+		<li> Intellectual property </li>
+		<ol type="a">
+			<li> All problems with their author tagged and identified are original problems. They fall under the collective intellectual property of the Codebreaker system </li>
+			<li> Some of the problems with sources credited have testcases independent of the original source. This could account for some differences in score of submissions </li>
+			<li> Anybody who wishes to use or replicate these problems for training or competition purposes should contact Codebreaker administrators first</li>
+			<li> In the event of an ownership dispute, please contact the administrators who will help settle the dispute </li>
+			<li> Please direct any IP rights claim to Codebreaker administrators</li>
+		</ol>
+		<li> The story and all names, characters, and incidents portrayed in any problem are fictional. Any resemblance between characters in statements and real life are purely coincidental. If you are unhappy about your name in a problem statement, please contact us and we will take it down. </li>
+	<p>
+	</p>
+	</ol>
+</div>
+
+{% endblock %}
+

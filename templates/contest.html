@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %} {{contestinfo.contestName}} {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+
+<br>
+
+<div class="container">
+	
+	<h1> {{contestinfo.contestName}} ({{totalScore}}/{{maxScore}}) </h1>
+	
+	<div class="card" style="margin-bottom: -1px; margin-right: 12px;">
+		<div class="card-header bg-white" data-toggle="collapse" data-target="#contestdescription" >
+			<h6 style="margin: -2px"> Contest Description </h6>
+		</div>
+		<div id='contestdescription' class="collapse">
+			<div class="card-body" style="white-space:pre-wrap; margin-bottom: -10px;"> {{contestinfo.description}}
+			</div>
+		</div>
+	</div>
+
+	<!--
+	<div class="progress my-3">
+		<div class="progress-bar bg-success" role="progressba aria-valuenow="{{percent}}" aria-valuemin0" aria-valuemax="100" style="width:{{percent}}%"> </div>
+	</div>
+	-->
+
+	{% if endTime %}
+	<h4 id="timer"></h4>
+	{% endif %}
+	<p hidden id="endtime"> {{endTime}} </p>
+
+	{% if showScoreboard and (not contest or userinfo.role == 'superadmin' or userinfo.username in users) %}
+	<b> <a href="/contest/{{contestinfo.contestId}}/scoreboard">Scoreboard</a> </b>
+	{% endif %}
+
+	{% if contestinfo.editorialVisible and contestinfo.editorial|length != 0 %}
+	<b class="ml-2"> <a href={{contestinfo.editorial}}>Editorial</a></b>
+	{% endif %}
+
+	{% if userinfo.role == 'superadmin' or (not contest and userinfo.role == 'admin') or (contest and userinfo.username in users) %}
+	<b class="ml-2"> <a href="/admin/editcontest/{{contestinfo.contestId}}">Edit Contest</a> </b>
+	<br>
+	{% endif %}
+
+	<br>
+
+	<table class="table table-hover" id="myTable">
+		<thead class="thead-dark">
+			<tr>
+				<th scope="col">Problem ID</th>
+				<th scope="col">Your Score</th>
+				<th scope="col">Title</th>
+				<th scope="col">Source</th>
+				<th scope="col">Problem Type</th>
+			</tr>
+			</thead>
+			
+			<tbody>
+
+			{% for info in problemInfo %}
+				<tr
+					{% if info.yourScore == 100 %}
+						style="-webkit-box-shadow: inset 16px 0px 0px -7px #0C6;"
+					{% endif %}
+				>
+				<th scope="row">
+					<a href="{{url_for('problem', PROBLEM_NAME=info.problemName)}}" class="pl-2" target="_blank">{{info.problemName}}</a>
+				</th>
+					<td > <h6 style="margin: 2px">
+					<span style = "width: 36px"
+						class="pb-1 text-white badge badge-{{"success" if info.yourScore==100 else ("danger" if info.yourScore == 0 else ("secondary" if info.yourScore == "N/A" else "warning"))}}"> {{info.yourScore}}
+					</span> </h6>	
+					</td>
+					{% if not info.EE %}
+					<td>{{info.title}}</td>
+					{% else %}
+					<td>{{info.title}} (EE)</td>
+					{% endif %}
+					<td>
+						{% if info.author != [""]%}
+							{% if info.contestLink != "" %}
+							<a href="/contest/{{info.contestLink}}">{{info.source}}</a> {{" "}} ({% for author in info.author %}<a href="/profile/{{author}}"}>{{author}}</a>{{", " if loop.index != info.author|length}}{% endfor %})
+							{%else%}
+							{{info.source + " "}} ({% for author in info.author %}<a href="/profile/{{author}}"}>{{author}}</a>{{", " if loop.index != info.author|length}}{% endfor %})
+							{%endif%}
+						{%else%}
+							{% if info.contestLink != "" %}
+							<a href="/contest/{{info.contestLink}}">{{info.source}}</a>
+							{%else%}
+							{{info.source}}
+							{%endif%}
+						{%endif%}
+					</td>
+					<td>{{info.problem_type}}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<script>
+		var endTime = document.getElementById("endtime").innerHTML
+                var countDownDate = new Date(endTime).getTime();
+		//console.log(new Date().getTime())
+		//console.log(countDownDate)
+		function update(){
+			var now = new Date().getTime();
+			var distance = countDownDate - now;
+			var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+			var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+			var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+			var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+			
+			str = "Time to End: "
+			if(days != 0) str += days + "d ";
+			if(hours != 0) str += hours + "h ";
+			if(minutes != 0) str += minutes + "m ";
+			if(seconds != 0) str += seconds + "s ";
+			if (document.getElementById("timer") != null){
+				document.getElementById("timer").innerHTML = str;
+				if (distance < 0) {
+					clearInterval(x);
+					document.getElementById("timer").innerHTML = "Contest is over";
+				}
+			}
+		}
+		update()
+		var x = setInterval(update , 1000);
+	</script>
+</div>
+
+{% endblock %}
+
+
+
+

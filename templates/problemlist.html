@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+{% block title %} Problem List {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+
+<link rel="stylesheet" href={{url_for('static',filename='css/problemlist.css')}}>
+
+<br>
+
+<div class="container">
+	{% if command != 'recommended' %}	
+	<div class="card" style="margin-bottom: -1px; margin-right: 12px;">
+		<div class="card-header bg-white" data-toggle="collapse" data-target="#updateHeader" >
+			<h6 style="margin: -2px"> Filter Problems</h6>
+		</div>
+	<div id='updateHeader' class='collapse card-body'>
+
+	<p> Select a set of tags to display all problems with at least 1 of those tags </p>
+	
+	<div class="row">
+		{% set a,b,c=(tags|length/3)|int,(2*tags|length/3)|int,tags|length %}
+		<div class="col-4 container">
+		{%for i in range(a) %}
+		{% set tag = tags[i] %}
+		<div>
+			<input type="checkbox" id="{{tag[0]}}" name="{{tag[0]}}" value="{{tag[0]}}" onclick=update()>
+			<label for="{{tag[0]}}"> {{tag[0]}} ({{tag[1]}} Problems)</label>
+		</div>
+		{%endfor%}
+		</div>
+		<div class="col-4 container">
+		{%for i in range(a,b) %}
+		{% set tag = tags[i] %}
+		<div>
+			<input type="checkbox" id="{{tag[0]}}" name="{{tag[0]}}" value="{{tag[0]}}" onclick=update()>
+			<label for="{{tag[0]}}"> {{tag[0]}} ({{tag[1]}} Problems)</label>
+		</div>
+		{%endfor%}
+		</div>
+		<div class="col-4 container">
+		{%for i in range(b,c) %}
+		{% set tag = tags[i] %}
+		<div>
+			<input type="checkbox" id="{{tag[0]}}" name="{{tag[0]}}" value="{{tag[0]}}" onclick=update()>
+			<label for="{{tag[0]}}"> {{tag[0]}} ({{tag[1]}} Problems)</label>
+		</div>
+		{%endfor%}
+		</div>
+	</div>
+	</div>
+	</div>
+	<br>
+	<div>
+	<div class="input-group mb-4">
+		<input type="text" class="form-control" id="myInput" onkeyup="myFunction()" placeholder="Search for problems..." >
+	</div>
+	{% else %}
+		<label style="padding-right:0.5em">Difficulty:</label>
+		<label id="currentDifficulty">1</label>
+		<div class="row">
+			<label>1</label>
+			<div class="input-group mb-4 col">
+				<input style="width:100%", type="range", min="1", max="7", step="1", value="1", id="slider", onchange="sliderchange(this.value)">
+			</div>
+			<label>7</label>
+		</div>
+	{% endif %}
+	<div style="width:100%;overflow-x:auto">
+		<table class="table table-hover" id="myTable">
+			<thead class="sortable thead-dark">
+				<tr>
+					<th scope="col" data-type="string">
+						<div 
+							{%if sortable%}
+							style="cursor: pointer;"
+							{%endif%}
+						>Problem ID</div>
+					</th>
+					<th scope="col" data-type="string">
+						<div 
+							{%if sortable%}
+							style="cursor: pointer;"
+							{%endif%}
+						>Your Score</div>
+					</th>
+					<th scope="col" data-type="string">
+						<div 
+							{%if sortable%}
+							style="cursor: pointer;"
+							{%endif%}
+						>Title</div>
+					</th>
+					<th scope="col" data-type="string">
+						<div 
+							{%if sortable%}
+							style="cursor: pointer;"
+							{%endif%}
+						>Source</div>
+					</th>
+					<th scope="col" data-type="string">
+						<div 
+							{%if sortable%}
+							style="cursor: pointer;"
+							{%endif%}
+						>Problem Type</div>
+					</th>
+					<th scope="col" data-type="string">
+						<div 
+							{%if sortable%}
+							style="cursor: pointer;"
+							{%endif%}
+						>#ACs</div>
+					</th>
+				</tr>
+				</thead>
+				
+				<tbody>
+
+				{% for info in problemInfo %}
+					<tr
+						{% if info.yourScore == 100 %}
+							style="-webkit-box-shadow: inset 16px 0px 0px -7px #0C6;"
+						{% elif info.yourScore == 0 %}
+							style="-webkit-box-shadow: inset 16px 0px 0px -7px #DC3545;"
+						{% elif info.yourScore == "N/A" %}
+						{% else %}
+							style="-webkit-box-shadow: inset 16px 0px 0px -7px #FFC107;"
+						{% endif %}
+					>
+					<td scope="row">
+						<b> <a href="{{url_for('problem', PROBLEM_NAME=info.problemName)}}" class="pl-2">{{info.problemName}}</a> </b>
+					</td>
+					<td> <!--<h6 style="margin: 0px"> but why the frick is there a h6-->
+						<span style = "width: 42px"
+							class="text-white badge badge-{{"success" if info.yourScore==100 else ("danger" if info.yourScore == 0 else ("secondary" if info.yourScore == "N/A" else "warning"))}}"> {{info.yourScore}}
+						</span> <!--</h6>-->	
+						</td>
+						<td>
+						{%if info.tags|length > 0 %}
+						<span class="tooltipx text-white badge badge-secondary">&#9432;<span class="tooltiptext">{{info.tagtext}}</span></span>
+						{%endif%}
+							{{info.title}} 
+						</td>
+						<td>
+							{% if info.author != [""]%}
+								{% if info.contestLink != "" %}
+								<a href="/contest/{{info.contestLink}}">{{info.source}}</a> {{" "}} ({% for author in info.author %}<a href="/profile/{{author}}"}>{{author}}</a>{{", " if loop.index != info.author|length}}{% endfor %})
+								{%else%}
+								{{info.source + " "}} ({% for author in info.author %}<a href="/profile/{{author}}"}>{{author}}</a>{{", " if loop.index != info.author|length}}{% endfor %})
+								{%endif%}
+							{%else%}
+								{% if info.contestLink != "" %}
+								<a href="/contest/{{info.contestLink}}">{{info.source}}</a>
+								{%else%}
+								{{info.source}}
+								{%endif%}
+							{%endif%}
+						</td>
+						<td>{{info.problem_type}}</td>
+						<td>{{info.noACs}}</td>
+						{% if command == 'recommended' %}
+						<td style="display:none;">{{info.diff}}</td>
+						{% endif %}
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	{% if sortable %}
+        <script src={{url_for('static',filename='js/problemlist_sorted.js')}}></script>
+	{% endif %}
+	<script>
+		var slider = document.getElementById("slider");
+		var A = []
+		if(slider!=null){
+			sliderchange(1);
+			document.getElementById("slider").value = 1;
+		}
+
+		function myFunction() {
+		  var input, hideACs, filter, table, tr, td, i, txtValue;
+		  input = document.getElementById("myInput");
+		  filter = input.value.toUpperCase();
+		  table = document.getElementById("myTable");
+		  tr = table.getElementsByTagName("tr");
+		  for (i = 1; i < tr.length; i++) { 
+		    ok = 0;
+		    ok2 = 1;
+	            ok3 = 0;
+		    var stuff = tr[i].getElementsByTagName("td"); 
+		    for (j=0;j<6;j++){
+		      td = stuff[j];
+		      if (td) {
+		        txtValue = td.textContent || td.innerText;
+		        if (txtValue.toUpperCase().includes(filter)) {
+			      ok = 1;
+			    }
+			    if(j == 1 && hideACs){ 
+			      txtValue = td.textContent || td.innerText;
+			      if(txtValue.indexOf("100") > -1){
+			         ok2 = 0;
+			      }
+			    }
+			if(A.length === 0){
+				ok3=1;
+			}else{
+				for(let i=0;i<A.length;i=i+1){
+					t = stuff[2];
+		        		tv= t.textContent || t.innerText;
+					search = A[i].toUpperCase()
+
+		        		if (tv.toUpperCase().includes(search)) {
+			      			ok3 = 1;
+			    		}
+				}
+			}
+		      }
+	            }
+		    if(!ok || !ok2 || !ok3){
+		    	tr[i].style.display="none";
+		    }else{
+		    	tr[i].style.display="";
+		    }
+		  }
+		}
+
+		function sliderchange(amt){
+		  var label = document.getElementById("currentDifficulty");
+		  label.textContent = amt.toString();
+		  var table = document.getElementById("myTable");
+		  var tr = table.getElementsByTagName("tr");
+		  for (i = 1; i<tr.length; i++){
+		    var stuff = tr[i].getElementsByTagName("td");
+		    if(stuff[6].innerText==amt.toString()){
+		      tr[i].style.display="";
+		    }
+		    else{
+		      tr[i].style.display="none";
+		    }
+		  }
+		}
+
+	function update(){
+		A = []
+		for (let j=0; j < 3; j=j+1){
+			let t = document.getElementById('updateHeader').children[1].children[j]
+			for (let i=0; i < t.children.length; i=i+1){
+				let x = t.children[i]
+				if (x.children[0].checked){
+					let tagName=x.children[0].value
+					A.push(tagName)
+				}
+			}
+		}
+		console.log(A)
+		myFunction()
+	}
+	</script>
+</div>
+
+{% endblock %}
+
+
+

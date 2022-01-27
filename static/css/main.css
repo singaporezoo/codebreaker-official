@@ -1,0 +1,62 @@
+.thintable{
+        padding: 5px !important;
+	text-align: center;
+	font-size: 16px;
+}
+
+.newuserinput{
+	width: 100%;
+	padding: 15px;
+	margin: 5px 0 22px 0;
+	display: inline-block;
+	border: none;
+	background: #f1f1f1;
+}
+
+.cm-line{
+	font-size: 3px;
+}
+
+form {
+	display: inline;
+}
+
+.CodeMirror {
+	font-family: Arial, monospace;
+	font-size: 14px;
+}
+
+.sortable th {
+    cursor: pointer;
+}
+
+.sortable th:hover {
+    filter: brightness(125%);
+}
+
+.navbar {
+	background: linear-gradient(45deg,#417585,#355a8b,#38468d,#612f81,#772d6c,#6e2a4b);
+	box-shadow: black 0 0 4px 2px;
+}
+.admin-bar {
+/*	background-color: #09c3c0; */
+	background: linear-gradient(45deg,#eba5c7,#e5bea2,#ead595,#d0e9a6,#a9ebc2,#a4dced);
+	box-shadow: black 0 0 6px 0;
+}
+
+.own-row {
+	background-color: #abf5ab;
+}
+
+
+pre {
+	font-family: "Lucida Console", "Courier New", monospace !important;
+}
+
+.badge {
+	vertical-align: text-bottom !important;
+}
+
+label {
+	display: inline !important;
+}

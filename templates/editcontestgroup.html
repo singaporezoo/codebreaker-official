@@ -1,0 +1,185 @@
+{% extends "admin_base.html" %}
+{% block title %} Edit Contest Group {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <ul class=flashes>
+  {% for message in messages %}
+    <li>{{ message }}</li>
+  {% endfor %}
+  </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+
+<br>
+
+<link rel='stylesheet' href={{url_for('static',filename='css/editcontest.css')}} />
+
+<div class="container">
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{category}} alert-dismissible fade show mt-4" role="alert">
+                        {{message}}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+ 	<h6> Editing contest group: <b> <a id='contestGroupRef' href={{'/group/' + info['groupId']}}> {{info["groupId"]}} </a> </b> </h6>
+    <br>
+  	
+  	<form id="updatecontestgroupform" action="" method="post" class="form-group">
+
+        <div class = "row">
+        <div class="input-group mb-3 col">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Contest Group Name</span>
+        </div>
+            {{form.contest_group_name(type="text", placeholder="Name", value=info['groupName'], class="form-control")}}
+        </div>
+	
+        </div>
+	    <p hidden id="descstore">{{info['description']}}</p>
+	    <label>Contest Description</label>
+	        {{form.contest_group_description(placeholder="Description", class="form-control")}}
+	    Visible
+	        {{form.contest_group_visible(type="checkbox", checked=info['visible'])}}
+	    <br>
+	    <input type="hidden" name="form_name" value="contest_group_info">
+	    <br>
+	        {{form.submit(type="submit", class="btn btn-secondary")}}
+	</form>
+
+	<!-- begin edit contest -->
+
+	<br>
+	<hr class="hr-text" data-content="">
+
+	<div class="row">
+
+	<div class="col-6 border-right container">
+	<h4> Manage Contests: </h4>
+	<br>
+	<form autocomplete="off" action="" method="post" class="form-group">
+	<div class="autocomplete input-group mb-2">
+	    <input id="contestIdInput" type="text" name="contest" placeholder="Contest ID" class="form-control mr-1">
+	    <input type="hidden" name="form_name" value="add_contest">
+	    <input type="submit" value="Add Contest" class="btn btn-secondary">
+	</div>
+	</form>
+	<form action="" method="post" class="form-group">
+	<div class="input-group mb-2">
+	<select type="select" name="contest" placeholder="Contest ID" class="form-control mr-1">
+	  {% for contest in info['contests']  %}
+	     <option value={{contest}}>{{contest}}</option>
+	  {% endfor %}
+	</select>
+	    <input type="hidden" name="form_name" value="remove_contest">
+	    <input type="submit" value="Remove Contest" class="btn btn-secondary">
+	</div>
+	</form>
+
+	<br>
+
+	<table  class="draggable table table-sm table-bordered" id='tabledata'>
+    	<tbody>
+    	{% for contest in info['contests']  %}
+    	<tr class="draggable" draggable='true' ondragstart='start()' ondragover='dragover()'>
+      		<td class="draggable"> <b> <a draggable="false" href="{{'/contest/' + contest}}">{{contest}}</a> </b> </td>
+    	</tr>
+      	{% endfor %}
+    	</tbody>
+  	</table>
+  	<style>
+  	table.draggable{
+	    border-collapse: collapse;
+	    -webkit-user-select: none;
+	    -ms-user-select: none;
+	    -moz-user-select: none;
+	    user-select: none;
+  	}
+  	td.draggable,tr.draggable{
+    	border-collapse: collapse;
+    	cursor: all-scroll;
+  	}
+  	</style>
+  	<button class='btn btn-secondary' onClick = 'updateGroup()'>Save</button>
+	</div>
+
+	<!-- begin edit contest groups --> 
+
+	<div class="col-6 container">
+	<h4> Manage Contests Groups: </h4>
+	<br>
+	<form autocomplete="off" action="" method="post" class="form-group">
+	<div class="autocomplete input-group mb-2">
+	    <input id="groupIdInput" type="text" name="group" placeholder="Group ID" class="form-control mr-1">
+	    <input type="hidden" name="form_name" value="add_group">
+	    <input type="submit" value="Add Group" class="btn btn-secondary">
+	</div>
+	</form>
+	<form action="" method="post" class="form-group">
+	<div class="input-group mb-2">
+	<select type="select" name="group" placeholder="Group ID" class="form-control mr-1">
+	  {% for group in info['contestGroups']  %}
+		  <option value={{group}}>{{group}}</option>
+	  {% endfor %}
+	</select>
+	    <input type="hidden" name="form_name" value="remove_group">
+	    <input type="submit" value="Remove Group" class="btn btn-secondary">
+	</div>
+	</form>
+
+	<br>
+
+	<table  class="draggable table table-sm table-bordered" id='tabledata2'>
+    	<tbody>
+    	{% for group in info['contestGroups']  %}
+    	<tr class="draggable" draggable='true' ondragstart='start()' ondragover='dragover()'>
+      		<td class="draggable"> <b> <a draggable="false" href="{{'/group/' + group}}">{{group}}</a> </b> </td>
+    	</tr>
+      	{% endfor %}
+    	</tbody>
+  	</table>
+  	<style>
+  	table.draggable{
+	    border-collapse: collapse;
+	    -webkit-user-select: none;
+	    -ms-user-select: none;
+	    -moz-user-select: none;
+	    user-select: none;
+  	}
+  	td.draggable,tr.draggable{
+    	border-collapse: collapse;
+    	cursor: all-scroll;
+  	}
+  	</style>
+  	<button class='btn btn-secondary' onClick = 'updateGroup2()'>Save</button>
+
+	<br><br>
+
+	</div>
+	</div>
+
+
+	<script src={{url_for('static',filename='js/editcontest.js')}}></script>
+	<script>
+	var textarea = document.getElementById('contest_group_description');
+	var descstore = document.getElementById('descstore')
+	textarea.innerHTML = descstore.innerHTML;
+	var contests = {{contest_ids | tojson}};
+	autocomplete(document.getElementById("contestIdInput"), contests);
+	var groups = {{group_ids | tojson}};
+	autocomplete(document.getElementById("groupIdInput"), groups);
+	</script>
+	</div>
+{% endblock %}

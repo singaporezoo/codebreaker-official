@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	{% block head %}
+		<title>{% block title %}{% endblock %}</title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">	
+	
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+		
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.css"></link>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/clike/clike.min.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/monokai.min.css">	
+		
+		{%if userinfo.theme != 'light'%}
+		<link href="/static/css/themes/{{userinfo.theme}}.css" rel="stylesheet">
+		{%endif%}
+		{%if 'custom' in userinfo.theme %}
+			<script>document.querySelector(':root').style.setProperty('--hue',{{userinfo.hue}})</script>
+		{%endif%}
+		{% if socket %}
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+		<script type="text/javascript">
+			var socket=io.connect('https://' + window.location.host);
+			$(document).ready(function(){
+				socket.emit('online', {'username':'{{userinfo.username}}','role':'{{userinfo.role}}'});
+				socket.on('message',function(msg){
+					if(msg=='newclarification'){
+						var badge=document.getElementById('clarification_badge');
+						if(badge!=null){
+							badge.hidden=false;
+							alert("New clarification!");
+						}
+					}
+					else{
+						var badge=document.getElementById('home_badge');
+						if(badge!=null){
+							badge.hidden=false;
+							if(msg.includes("announce")){alert("New announcement!");}
+							else{alert("Your clarification has been answered!");}
+						}
+					}
+				});
+			});
+		</script>
+		{% endif %}
+	{% endblock %}
+</head>
+	<body>
+		<nav class="navbar navbar-expand-md navbar-light sticky top admin-bar">
+			
+			<a class="navbar-brand" href="/admin">Admin</a>
+			
+			<!-- Links -->
+			<ul class="nav navbar-nav">
+				<li class="nav-item">
+					<a class="nav-link" href="/admin/editannouncements">Announcements</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/admin/editproblems">Problems</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/admin/editcontests">Contests</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/admin/editclarifications">Clarifications
+						<span id="clarification_badge" class="badge badge-secondary badge-danger" hidden="true">!</span>
+					</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/admin/editusers">Users</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/">Home
+					<span id="home_badge" class="badge badge-secondary badge-danger" hidden="true">!</span>
+					</a>
+				</li>
+			</ul>
+		</nav>
+		{% block content %}{% endblock %}
+	</body>
+</html>
+

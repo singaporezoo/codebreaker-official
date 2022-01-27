@@ -1,0 +1,120 @@
+html, body {
+    background-color: #ffe1c8 !important;
+}
+
+.sortable th:hover {
+	background-color: #5e4d48 !important;
+	filter: none;
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+	background-color: inherit !important;
+	border-color: #d5a799 #d5a799 #ffefe5 !important;
+}
+
+.nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
+        border-color: #ffe3d3 #ffe3d3 #ffefe5 !important;
+}
+
+
+.table td, .table th, .nav-tabs, .form-control {
+        border-color: #d5a799 !important;
+}
+
+.card {
+	background-color: #fff8f2 !important;
+}
+
+input {
+	background-color: #fff8f2 !important;
+	color: #212529 !important;
+}
+
+textarea {
+	background-color: #fff8f2 !important;
+	color: #212529 !important;
+}
+
+input.btn-primary {
+	background-color: #9f5a3e !important;
+	color: white !important;
+	border-color: #713928 !important;
+}
+
+button.btn-secondary {
+	background-color: #d88856 !important;
+	color: white !important;
+}
+
+select {
+	background-color: #fff8f2 !important;
+	color: #212529 !important;
+}
+
+.navbar {
+	background: linear-gradient(45deg,hsl(6, 60%, 39%),hsl(12, 60%, 39%),hsl(18, 60%, 39%),hsl(24, 60%, 39%),hsl(30, 60%, 39%));
+	box-shadow: black 0 0 4px 2px;
+}
+.admin-bar {
+	background: linear-gradient(45deg,hsl(36, 60%, 50%),hsl(30, 60%, 50%),hsl(24, 60%, 50%),hsl(18, 60%, 50%),hsl(12, 60%, 50%));
+	box-shadow: black 0 0 6px 0;
+}
+
+.dropdown-menu {
+	background-color: #fff8f2 !important;
+}
+.dropdown-item:focus, .dropdown-item:hover {
+	background-color: #e5d5ce !important;
+}
+
+.bg-white {
+	background-color: #fff8f2 !important;
+}
+
+.autocomplete-items {
+    border-color: #e5d5ce !important;
+}
+.autocomplete-items div {
+	background-color: #fff8f2 !important;
+	border-color: #e5d5ce !important;
+}
+.autocomplete-items div:hover {
+	background-color: #e5d5ce !important;
+}
+
+a:not(.btn) {
+        color: #bc4b1f !important;
+}
+a:not(.btn):hover {
+        color: #ff985c !important;
+}
+
+.navbar-dark a.nav-link {
+        color: rgba(255,255,255,.5) !important;
+}
+.navbar-dark a.nav-link:hover {
+        color: rgba(255,255,255,.8) !important;
+}
+
+.navbar-light a.nav-link, navbar-light a.nav-brand {
+	color: #773000 !important;
+}
+.navbar-light a:hover, navbar-light a.nav-brand:hover{
+	color: #bc4b1f !important;
+}
+
+.btn-secondary {
+	color: white !important;
+	background-color: #d88856 !important;
+	border-color: #d88856 !important;
+}
+
+.nav-link.active, .page-item.active .page-link {
+	background-color: #bc4b1f !important;
+	border-color: #bc4b1f !important;
+	color: #773000 !important;
+}
+
+.nav-pills .nav-item .active, .page-item.active .page-link {
+	color: white !important;
+}

@@ -1,0 +1,120 @@
+html, body {
+    background-color: #ffe5fb !important;
+}
+
+.sortable th:hover {
+	background-color: #5e485b !important;
+	filter: none;
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+	background-color: inherit !important;
+	border-color: #d599c0 #d599c0 #ffe5fb !important;
+}
+
+.nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
+        border-color: #ffd3f0 #ffd3f0 #ffe5fb !important;
+}
+
+
+.table td, .table th, .nav-tabs, .form-control {
+        border-color: #d599c0 !important;
+}
+
+.card {
+	background-color: #fff2fd !important;
+}
+
+input {
+	background-color: #fff2fd !important;
+	color: #212529 !important;
+}
+
+textarea {
+	background-color: #fff2fd !important;
+	color: #212529 !important;
+}
+
+input.btn-primary {
+	background-color: #9f3e85 !important;
+	color: white !important;
+	border-color: #71285e !important;
+}
+
+button.btn-secondary {
+	background-color: #a65f93 !important;
+	color: white !important;
+}
+
+select {
+	background-color: #fff2fd !important;
+	color: #212529 !important;
+}
+
+.navbar {
+	background: linear-gradient(45deg,#417585,#355a8b,#38468d,#612f81,#772d6c,#6e2a4b);
+	box-shadow: black 0 0 4px 2px;
+}
+.admin-bar {
+	background: linear-gradient(45deg,#ff9bd3,#ffa8be,#ffd2b7,#ffdfa1,#fff1a5,#eaff9e);
+	box-shadow: black 0 0 6px 0;
+}
+
+.dropdown-menu {
+	background-color: #fff2fd !important;
+}
+.dropdown-item:focus, .dropdown-item:hover {
+	background-color: #e5cee2 !important;
+}
+
+.bg-white {
+	background-color: #fff2fd !important;
+}
+
+.autocomplete-items {
+    border-color: #e5cee2 !important;
+}
+.autocomplete-items div {
+	background-color: #fff2fd !important;
+	border-color: #e5cee2 !important;
+}
+.autocomplete-items div:hover {
+	background-color: #e5cee2 !important;
+}
+
+a:not(.btn) {
+        color: #bc1f92 !important;
+}
+a:not(.btn):hover {
+        color: #ff5cd6 !important;
+}
+
+.navbar-dark a.nav-link {
+        color: rgba(255,255,255,.5) !important;
+}
+.navbar-dark a.nav-link:hover {
+        color: rgba(255,255,255,.8) !important;
+}
+
+.navbar-light a.nav-link, navbar-light a.nav-brand {
+	color: #770057 !important;
+}
+.navbar-light a:hover, navbar-light a.nav-brand:hover{
+	color: #bc1f92 !important;
+}
+
+.btn-secondary {
+	color: white !important;
+	background-color: #a65f93 !important;
+	border-color: #a65f93 !important;
+}
+
+.nav-link.active, .page-item.active .page-link {
+	background-color: #bc1f92 !important;
+	border-color: #bc1f92 !important;
+	color: #770057 !important;
+}
+
+.nav-pills .nav-item .active, .page-item.active .page-link {
+	color: white !important;
+}

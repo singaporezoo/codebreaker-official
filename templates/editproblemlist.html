@@ -1,0 +1,237 @@
+{% extends "admin_base.html" %}
+{% block title %} Problem List {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+
+<br>
+
+<div class="container">
+	<div class="container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                                {% for category, message in messages %}
+                                        <div class="alert alert-{{category}} alert-dismissible fade show mt-4" role="alert">
+                                                {{message}}
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                </button>
+                                        </div>
+                                {% endfor %}
+                        {% endif %}
+                {% endwith %}
+        </div>
+	<h1> Edit Problems </h1>	
+	<br>
+	<form action="" method="post" class="form-group" id="addproblemform">
+		<div class="input-group mb-3">
+			{{form.problem_id(type='text', placeholder='Problem ID', class='form-control', pattern="[a-zA-Z0-9_]+")}}
+			{{form.submit(type='submit', class='btn btn-secondary')}}
+		</div>
+	</form>
+	<div class="input-group mb-4">
+		<input type="text" class="form-control" id="myInput" onkeyup="myFunction()" placeholder="Search for problems..." >
+		<div class="input-group-append">
+			<button class="btn btn-outline-secondary" id="toggleAC" onclick="toggleAC()" type="button">Hidden Problems</button>
+		</div>
+	</div>
+	<table class="table table-hover" id="myTable">
+		<thead class="sortable thead-dark">
+			<tr>
+				<th scope="col" data-type="string">Problem ID</th>
+				<th scope="col" data-type="int">Your Score</th>
+				<th scope="col" data-type="string">Source</th>
+				<th scope="col" data-type="string">Validated</th>
+				<th scope="col" data-type="string">Problem Type</th>
+				<th scope="col" data-type="string">Analysis Mode</th>
+			</tr>
+			</thead>
+			
+			<tbody>
+
+			{% for info in problemInfo %}
+				<tr
+					{% if info.yourScore == 100 %}
+						style="box-shadow: inset 16px 0px 0px -7px #0C6;"
+					{% endif %}
+				>
+				<td scope="row">
+					<b> <a href="/admin/editproblem/{{info.problemName}}" class="pl-2">{{info.problemName}}</a> </b>
+				</td>
+					<td>{{info.yourScore}}</td>
+					<td>
+						{% if info.author != [""]%}
+							{% if info.contestLink != "" %}
+							<a href="/contest/{{info.contestLink}}">{{info.source}}</a> {{" "}} ({% for author in info.author %}<a href="/profile/{{author}}"}>{{author}}</a>{{", " if loop.index != info.author|length}}{% endfor %})
+							{%else%}
+							{{info.source + " "}} ({% for author in info.author %}<a href="/profile/{{author}}"}>{{author}}</a>{{", " if loop.index != info.author|length}}{% endfor %})
+							{%endif%}
+						{%else%}
+							{% if info.contestLink != "" %}
+							<a href="/contest/{{info.contestLink}}">{{info.source}}</a>
+							{%else%}
+							{{info.source}}
+							{%endif%}
+						{%endif%}
+					</td>
+
+					{%if info.validated %}
+					<td> <h6 style="margin: 0px">
+					<span style = "width: 36px" class="pb-1 text-white badge badge-success">Ok
+					</span> </h6>
+					</td>
+					{%else%}
+					<td> <h6 style="margin: 0px">
+					<span style = "width: 36px" class="pb-1 text-white badge badge-danger">No
+					</span> </h6>
+					</td>
+					{%endif%}
+					<td>{{info.problem_type}}</td>
+
+					<td>
+						{{ "visible" if info.analysisVisible == 1 else "hidden" }}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	<script>
+		function myFunction() {
+  var input, toggle, hideACs, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  toggle = document.getElementById("toggleAC");
+  hideACs = (toggle.innerHTML.localeCompare("Show All") == 0)
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+  for (i = 1; i < tr.length; i++) {
+    ok = 0;
+    ok2 = 1
+    for (j=0;j<6;j++){
+      td = tr[i].getElementsByTagName("td")[j];
+      console.log(td);
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+	  ok = 1;
+	}
+	if(j == 5 && hideACs){ //somehow column 0 is yourscore
+	  txtValue = td.textContent || td.innerText;
+	  if(txtValue.indexOf("visible") > -1){
+	     ok2 = 0;
+	  }
+	}
+      }
+    }
+    if(!ok || !ok2){
+	tr[i].style.display="none";
+    }else{
+	tr[i].style.display="";
+    }
+  }
+}
+	function toggleAC(){
+		toggle = document.getElementById("toggleAC");
+		if(toggle.innerHTML.localeCompare("Hidden Problems") == 0){
+			toggle.innerHTML = "Show All";
+		}
+		else{
+			toggle.innerHTML = "Hidden Problems";
+		}
+
+		myFunction();
+	}
+
+// IDK if this works but hopefully this will get executed on start
+// Query the table
+const table = document.getElementById("myTable");
+
+// Query the headers
+const headers = table.querySelectorAll('th');
+let cur = -1;
+
+// Loop over the headers
+[].forEach.call(headers, function(header, index) {
+    header.addEventListener("click", function() {
+        // This function will sort the column
+        sortColumn(index);
+    });
+});
+
+// Helper function for sorting rows
+// Transform the content of given cell in given column
+const transform = function(index, content) {
+    // Get the data type of column
+    const type = headers[index].getAttribute('data-type');
+    switch (type) {        
+	case 'score':
+            // To account for the N/A possbility as a result in score
+            if (content.trim() == "N/A") return 1;
+            else return - parseInt(content.trim())
+        case 'int':
+            // For integer parameters, it is to be reversed
+            return - parseInt(content.trim());
+        case 'string':
+            // Ignore case when sorting and whitespace
+            return content.toLowerCase().trim();
+        default:
+            return content;
+    }
+}
+
+const sortColumn = function(index) {
+    const invert = (index === cur);
+    cur = (invert ? -1 : index);
+    // Get the table
+    const tableBody = table.querySelector('tbody');
+    const rows = tableBody.querySelectorAll('tr');
+
+    // Clone the rows
+    const newRows = Array.from(rows);
+
+    // Sort rows by the content of cells
+    newRows.sort(function(rowA, rowB) {
+        if (invert) [rowA, rowB]=[rowB, rowA];
+        // Get the content of cells
+        const cellA = rowA.querySelectorAll('td')[index];
+        const cellB = rowB.querySelectorAll('td')[index];
+
+        const a = transform(index, cellA.textContent || cellA.innerText);
+        const b = transform(index, cellB.textContent || cellB.innerText);
+ 
+        switch (true) {
+            case a > b: return 1;
+            case a < b: return -1;
+            case a == b: return 0;
+        }
+    });
+
+    // Remove old rows
+    [].forEach.call(rows, function(row) {
+        tableBody.removeChild(row);
+    });
+
+    // Append new row
+    newRows.forEach(function(newRow) {
+        tableBody.appendChild(newRow);
+    });
+}
+
+        </script>
+</div>
+{% endblock %}
+
+
+
+
+

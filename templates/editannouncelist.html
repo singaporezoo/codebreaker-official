@@ -1,0 +1,59 @@
+{% extends "admin_base.html" %}
+{% block title %} Edit Announcements {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul class=flashes>
+	{% for message in messages %}
+	<li>{{ message }}</li>
+	{% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+{% block content %}
+<br>
+<div class="container">
+	<div class="container">
+		{% with messages = get_flashed_messages(with_categories=true) %}
+		{% if messages %}
+		{% for category, message in messages %}
+		<div class="alert alert-{{category}} alert-dismissible fade show mt-4" role="alert">
+			{{message}}
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+		{% endfor %}
+		{% endif %}
+		{% endwith %}
+	</div>
+	<h1> Edit Announcements </h1>
+	<br>
+	<form action="" method="post" class="form-group" id="addannouncementform">
+		<div class="input-group mb-3">
+			{{form.announce_id(type='text', placeholder='Announcement ID', class='form-control', pattern="[a-zA-Z0-9_]+")}}
+			{{form.submit(type='submit', class='btn btn-secondary')}}
+		</div>
+	</form>
+	{% for info in announceinfo %}
+	<div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
+		<div class="card-header bg-white" data-toggle="collapse" data-target="#{{info.announceId}}">
+			{% if info.adminOnly %}
+				<a href="/admin/editannouncement/{{info.announceId}}"><b>{{info.aTitle}}</b></a>
+			{% else %}
+				<a href="/admin/editannouncement/{{info.announceId}}">{{info.aTitle}}</a>
+			{% endif %}
+		</div>
+		<div id="{{info.announceId}}" class="collapse" style="">
+			<div class="card-body">
+				<p class="card-text">{{info.aSummary}}</p>
+				{% if info.contestLink != "" %}
+				<a href="/contest/{{info.contestLink}}">Contest link</a>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	<br>
+	{% endfor %}
+</div>
+{% endblock %}

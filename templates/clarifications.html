@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %} Clarifications {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul class=flashes>
+	{% for message in messages %}
+	<li>{{ message }}</li>
+	{% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+{% block content %}
+
+<link rel='stylesheet' href={{url_for('static',filename='css/editcontest.css')}} />
+
+<br>
+<div class="container">
+	<div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
+		<div class="card-header bg-white" data-toggle="collapse" data-target="#createclarification"><b>New Clarification</b></div>
+		<div id="createclarification" class="collapse" style="">
+			<div class="card-body">
+				<form id="createclarificationform" action="" method="POST" class="form-group" autocomplete="off">
+					<div class="autocomplete input-group mb-2">
+						{{form.clarification_problem_id(id="problemIdInput",placeholder="Problem ID (leave blank for general clarification)",class="form-control mr-1")}}
+					</div>
+					{{form.clarification_question(placeholder="Question (please phrase it as a yes/no question)",class="form-control")}}
+					<br>
+					{{form.submit(id='submitbutton', type='submit',class='btn btn-secondary')}}
+				</form>
+			</div>
+		</div>
+	</div>
+	<br>
+
+	{% for clarification in clarifications %}
+	<div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
+		<div class="card-header bg-white">
+			{% if clarification.problemId != ""%}
+			<b><a href="/problem/{{clarification.problemId}}">{{clarification.problemId}}</a></b> by <a href="/profile/{{clarification.askedBy}}">{{clarification.askedBy}}</a>
+			{% else %}
+			<b>General clarification</b> by <a href="/profile/{{clarification.askedBy}}">{{clarification.askedBy}}</a>
+			{% endif %}
+		</div>
+		<div class="card-body">
+			<div class="row">
+				<div class="col-md-6">
+				{{clarification.question}}
+				</div>
+				<div class="col-mid-6">
+					{% if clarification.answer != "" %}
+					<b>Answered by <a href="/profile/{{clarification.answeredBy}}">{{clarification.answeredBy}}</a>:</b>
+					<br>
+					{{clarification.answer}}
+					{% else %}
+					<b>Unanswered</b>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</div>
+	<br>
+	{% endfor %}
+
+	<script src="{{url_for('static',filename='js/editcontest.js')}}"></script>
+	<script>
+		var problems = {{problem_names|tojson}}
+		autocomplete(document.getElementById('problemIdInput'),problems)
+	</script>
+	{% if contest %}
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('#submitbutton').on('click',function(){
+				socket.send('newclarification');
+			});
+		});
+	</script>
+	{% endif %}
+</div>
+
+{% endblock %}

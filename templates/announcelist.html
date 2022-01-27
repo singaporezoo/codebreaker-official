@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %} Announcements {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul class=flashes>
+	{% for message in messages %}
+	<li>{{ message }}</li>
+	{% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+{% block content %}
+<br>
+<div class="container">
+	<h1> Announcements </h1>
+	<br>
+	{% for info in announceinfo %}
+	<div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
+		<div class="card-header bg-white" data-toggle="collapse" data-target="#{{info.announceId}}">
+			{% if info.adminOnly %}
+				<a href="/announcement/{{info.announceId}}"><b>{{info.aTitle}}</b></a>
+			{% else %}
+				<a href="/announcement/{{info.announceId}}">{{info.aTitle}}</a>
+			{% endif %}
+		</div>
+		<div id="{{info.announceId}}" class="collapse" style="">
+			<div class="card-body">
+				<p class="card-text">{{info.aSummary}}</p>
+				{% if info.contestLink != "" %}
+				<a href="/contest/{{info.contestLink}}">Contest link</a>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	<br>
+	{% endfor %}
+</div>
+{% endblock %}
+

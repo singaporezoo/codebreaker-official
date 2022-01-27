@@ -1,0 +1,237 @@
+{% extends "admin_base.html" %}
+{% block title %} Contests {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+
+<br>
+
+<div class="container">
+	<div class="container">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                                {% for category, message in messages %}
+                                        <div class="alert alert-{{category}} alert-dismissible fade show mt-4" role="alert">
+                                                {{message}}
+                                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                        <span aria-hidden="true">&times;</span>
+                                                </button>
+                                        </div>
+                                {% endfor %}
+                        {% endif %}
+                {% endwith %}
+        </div>
+
+	<form action="" method="post" class="form-group" id="addcontestform">	
+                <div class="input-group mb-3">
+                        {{form.contest_id(type='text', placeholder='Contest ID', class='form-control', pattern="[a-zA-Z0-9]+")}}
+			<input type="hidden" name="form_name", value="add_contest">
+                        {{form.submit(type='submit', class='btn btn-secondary')}}
+                </div>
+	</form>
+	<form action="" method="post" class="form-group" id="addcontestform">
+		<div class="input-group mb-3">
+			{{form.group_id(type='text', placeholder='Group ID', class='form-control', pattern="[a-zA-Z0-9]+")}}
+			<input type="hidden" name="form_name", value="add_group">
+			{{form.submit(type='submit', value='Add Group', class='btn btn-secondary')}}
+		</div>
+        </form>
+
+        <ul class="nav nav-pills nav-fill" role="tablist">
+                <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#ongoing">Ongoing</a>
+                </li>
+                <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#future">Future</a>
+                </li>
+                <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#past">Past</a>
+                </li>
+                <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#timedPractice">Timed Practice</a>
+                </li>
+                <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#collections">Collections</a>
+                </li>
+                <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#groups">Groups</a>
+                </li>
+        </ul>
+
+        <br>
+
+        <div class="tab-content">
+
+
+        <div id="ongoing" class="container tab-pane active">
+        <table class="table table-hover" id="myTable">
+                <thead class="thead-dark">
+                        <tr>
+                                <th scope="col">Contest Name</th>
+				<th scope="col">Contest ID</th>
+                                <th scope="col">Start Time</th>
+                                <th scope="col">End Time</th>
+                                <th scope="col">Duration (Mins)</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for info in contestInfos.ongoing %}
+				<tr>
+					<th scope="row"> <a href="{{url_for('editcontest', contestId=info.contestId)}}" class="pl-2">{{info.contestName}}</a> </th>
+					<td> {{info.contestId}} </td>
+                                        <td> {{info.startTime}} </td>
+                                        <td> {{info.endTime}} </td>
+                                        <td> {{info.duration if info.duration != 0 else "None"}}</td>
+                        	</tr>
+                        {% endfor %}
+                </tbody>
+        </table>
+        </div>
+
+        <div id="future" class="container tab-pane">
+        <table class="table table-hover" id="myTable">
+                <thead class="thead-dark">
+                        <tr>
+                                <th scope="col">Contest Name</th>
+				<th scope="col">Contest ID</th>
+                                <th scope="col">Start Time</th>
+                                <th scope="col">End Time</th>
+                                <th scope="col">Duration (Mins)</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        {% for info in contestInfos.future %}
+				<tr>
+                                	<th scope="row"> <a href="{{url_for('editcontest', contestId=info.contestId)}}" class="pl-2">{{info.contestName}}</a> </th>
+					<td> {{info.contestId}} </td>
+					<td> {{info.startTime}} </td>
+                                        <td> {{info.endTime}} </td>
+                                        <td> {{info.duration if info.duration != 0 else "None"}}</td>
+                                </tr>
+                        {% endfor %}
+                </tbody>
+        </table>
+        </div>
+
+        <div id="past" class="container tab-pane">
+        <table class="table table-hover" id="myTable">
+                <thead class="thead-dark">
+                        <tr>
+                                <th scope="col">Contest Name</th>
+				<th scope="col">Contest ID</th>
+                                <th scope="col">Start Time</th>
+                                <th scope="col">End Time</th>
+                                <th scope="col">Duration (Mins)</th>
+                        </tr>
+		</thead>
+
+                        <tbody>
+
+                        {% for info in contestInfos.past %}
+				<tr>
+                                	<th scope="row"> <a href="{{url_for('editcontest', contestId=info.contestId)}}" class="pl-2">{{info.contestName}}</a> </th>
+					<td> {{info.contestId}} </td>
+					<td> {{info.startTime}} </td>
+                                        <td> {{info.endTime}} </td>
+                                        <td> {{info.duration if info.duration != 0 else "None"}}</td>
+                                </tr>
+                        {% endfor %}
+                </tbody>
+        </table>
+        </div>
+
+
+        <div id="timedPractice" class="container tab-pane">
+        <table class="table table-hover" id="myTable">
+                <thead class="thead-dark">
+                        <tr>
+                                <th scope="col">Contest Name</th>
+				<th scope="col">Contest ID</th>
+                                <th scope="col">Start Time</th>
+                                <th scope="col">End Time</th>
+                                <th scope="col">Duration (Mins)</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        {% for info in contestInfos.timedPractice %}
+				<tr>
+                                	<th scope="row"> <a href="{{url_for('editcontest', contestId=info.contestId)}}" class="pl-2">{{info.contestName}}</a> </th>
+					<td> {{info.contestId}} </td>
+					<td> {{info.startTime}} </td>
+                                        <td> {{info.endTime}} </td>
+                                        <td> {{info.duration if info.duration != 0 else "None"}}</td>
+                                </tr>
+                        {% endfor %}
+                </tbody>
+        </table>
+        </div>
+
+
+        <div id="collections" class="container tab-pane">
+        <table class="table table-hover" id="myTable">
+                <thead class="thead-dark">
+                        <tr>
+                                <th scope="col">Contest Name</th>
+				<th scope="col">Contest ID</th>
+                                <th scope="col">Start Time</th>
+                                <th scope="col">End Time</th>
+                                <th scope="col">Duration (Mins)</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        {% for info in contestInfos.collections %}
+				<tr>	
+					<th scope="row"> <a href="{{url_for('editcontest', contestId=info.contestId)}}" class="pl-2">{{info.contestName}}</a> </th>
+					<td> {{info.contestId}} </td>
+					<td> {{info.startTime}} </td>
+                                        <td> {{info.endTime}} </td>
+                                        <td> {{info.duration if info.duration != 0 else "None"}}</td>
+                                </tr>
+                        {% endfor %}
+                </tbody>
+        </table>
+        </div>
+
+        <div id="groups" class="container tab-pane">
+        <table class="table table-hover" id="myTable">
+                <thead class="thead-dark">
+                        <tr>
+                                <th scope="col">Group Name</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        {% for info in contestgroupsinfo %}
+                                <th scope="row"> <a href="{{url_for('editcontestgroup',groupId=info.groupId)}}" class="pl-2">{{info.groupName}}</a> </th>
+                                </tr>
+                        {% endfor %}
+                </tbody>
+        </table>
+        </div>
+
+        </div>
+
+        <script>
+        </script>
+</div>
+
+{% endblock %}
+

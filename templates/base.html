@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+	{% block head %}
+		<title>{% block title %}{% endblock %}</title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">	
+	
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.css">
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.js"></script>
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/clike/clike.min.js"></script>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/monokai.min.css">
+
+		{%if userinfo.theme|length != 0 and userinfo.theme != 'light'%}
+		<link href="/static/css/themes/{{userinfo.theme}}.css" rel="stylesheet">
+		{%endif%}
+		{%if 'custom' in userinfo.theme %}
+			<script>document.querySelector(':root').style.setProperty('--hue',{{userinfo.hue}})</script>
+		{%endif%}
+		{%if userinfo.theme == 'dark' and userinfo.username in ['Potato3218', 'shenxy13']%}
+		<style>
+		html, body {
+			font-family:"Comic Sans MS", "Comic Sans", cursive, sans-serif;
+		}
+		</style>
+		{%endif%}
+		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+		{% if socket %}
+		<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+		<script type="text/javascript">
+			var socket=io.connect('https://' + window.location.host);
+			$(document).ready(function(){
+				socket.emit('online', {'username':'{{userinfo.username}}','role':'{{userinfo.role}}'});
+				socket.on('message',function(msg){
+					console.log(msg)
+					if(msg=='newclarification'){
+						var badge=document.getElementById('admin_badge');
+						if(badge!=null){
+							badge.hidden=false;
+							alert("New clarification!");
+						}
+					}
+					else if(msg.includes('announce')){
+						var badge=document.getElementById('announce_badge');
+						if(badge!=null){
+							badge.hidden=false;
+							alert("New announcement!");
+						}
+					}
+					else{
+						var badge=document.getElementById('clarification_badge');
+						if(badge!=null){
+							badge.hidden=false;
+							alert("Your clarification has been answered!");
+						}
+					}
+				});
+			});
+		</script>
+		{% endif %}
+	{% endblock %}
+</head>
+	<body>
+		<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+			{% if not contest %}
+			<a class="navbar-brand" href="/"> 
+				<img src="{{ url_for('static', filename='logo.png') }}" width="100"> </img>
+			</a>
+			{% else %}
+			<a class="navbar-brand" href="/">
+				<img src="{{ url_for('static', filename='logo.png') }}" width="100"> </img>
+			</a>
+			{% endif %}
+			
+			<!-- Links -->
+			<ul class="nav navbar-nav">
+
+				{% if not contest %}
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Problems
+					</a>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<a class="dropdown-item" href="/">All Problems</a>
+					<a class="dropdown-item" href="/problems?command=newest">Newest Problems</a>
+					<a class="dropdown-item" href="/problems?command=unsolved">Unsolved Problems</a>
+					<a class="dropdown-item" href="/problems?command=recommended">Recommended Problems</a>
+				</div>
+				<li class="nav-item">
+					<a class="nav-link" href="/contests">Contests</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/submissions">Submissions</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/clarifications">Clarifications</a>
+				</li>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Others
+					</a>
+				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+					<a class="dropdown-item" href="/announcements">Announcements</a>
+					<a class="dropdown-item" href="/rankings">Rankings</a>
+					<a class="dropdown-item" href="/credits">Credits</a>
+					<a class="dropdown-item" href="/cppreference/cpp.html" target="_blank">C++ Reference</a>
+				</li>
+				</div>
+
+				{% if userinfo.role == "admin" or userinfo.role == "superadmin" %}
+				<li class="nav-item">
+					<a class="nav-link" href="/admin">Admin</a>
+				</li>
+
+				{% endif %}
+				
+				<li class="nav-item">
+					<a class="nav-link" href="https://forms.gle/wKN7wJs6CeXqzDXm8" target="_blank">Donate!</a>
+				</li>
+				
+				{% else %}
+				<li class="nav-item">
+					<a class="nav-link" href="/announcements">Announcements
+					<span id="announce_badge" class="badge badge-secondary badge-danger" hidden="true">!</span>
+					</a>
+				</li>
+
+				<li class="nav-item">
+			        	<a class="nav-link" href="/">Contest</a>
+				</li>
+
+				<li class="nav-item">
+					<a class="nav-link" href="/submissions?username={{userinfo['username']}}">My Submissions</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/clarifications">Clarifications
+					<span id="clarification_badge" class="badge badge-secondary badge-danger" hidden="true">!</span>
+					</a>
+				</li>
+
+				{% if cppref %}
+				<li class="nav-item">
+					<a class="nav-link" href="/cppreference/cpp.html" target="_blank">C++ Reference</a>
+				</li>
+				{% endif %}
+
+				{% if userinfo.username in users or userinfo.role == "superadmin" %}
+				<li class="nav-item">
+					<a class="nav-link" href="/submissions">All Submissions</a>
+				</li>
+				
+				<li class="nav-item">
+					<a class="nav-link" href="/admin">Admin
+					<span id="admin_badge" class="badge badge-secondary badge-danger" hidden="true">!</span>
+					</a>
+				</li>
+
+				{% endif %}
+
+				{% endif %}
+
+			</ul>
+
+			{% if not userinfo %}
+				<ul class="nav navbar-nav ml-auto mr-3">
+					<li>
+						<a class="nav-link" href="/login"> Login </a>
+					</li>
+				</ul>
+			{% else %}	
+				<ul class="nav navbar-nav ml-auto mr-3">
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							{{userinfo.username}} ({{userinfo.role}})
+						</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="/profile/{{userinfo.username}}"> Profile </a>
+						<a class="dropdown-item" href="/logout"> Logout </a>
+					</div>
+				</ul>
+			{% endif %}
+			
+			
+		</nav>
+	 	
+		<div class="container">
+			{% with messages = get_flashed_messages(with_categories=true) %}
+				{% if messages %}
+					{% for category, message in messages %}
+						{% if category != "compileError" %}
+						<div class="alert alert-{{category}} alert-dismissible fade show mt-4" role="alert">
+							{{message | safe}}
+							<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						{% endif %}
+					{% endfor %}
+				{% endif %}
+			{% endwith %}
+		</div>
+
+		{% block content %}{% endblock %}
+	</body>
+</html>

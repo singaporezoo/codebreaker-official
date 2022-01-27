@@ -1,0 +1,20 @@
+/* Tooltip text */
+.tooltipx .tooltiptext {
+  display: none;
+  background-color: #000c;
+  color: #fff;
+  text-align: center;
+  padding: 6px;
+  border-radius: 6px;
+  position: absolute;
+  z-index: 1;
+  margin-left:5px;
+  margin-right: 8px;
+  overflow: auto;
+  white-space: normal;
+  text-align: initial;
+}
+
+.tooltipx:hover .tooltiptext {
+  display: block;
+}

@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %} Submissions {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+
+<br>
+
+<div class="container">
+	<form id = "searchsubmissionform" action = "" method = "post" class="form-group">
+		<div class="input-group mb-3">
+			{{form.username(type="text", placeholder="Username", class="form-control", value=("" if username == None else username) ) }}
+			{{form.problem(type="text", placeholder="Problem", class="form-control", value=("" if problem == None else problem) )}}
+			{{form.submit(type="submit", class="btn btn-secondary")}}
+		</div>
+	</form>
+	<nav aria-label="...">
+	<ul class="pagination">
+	
+		<li class="page-item {{"disabled" if 1 == pageNo else ""}}">
+			<a class="page-link" href="{{linkname}}page=1" tabindex="-1">First</a>
+		</li>
+		
+		{% for page in pages %}
+		
+		<li class="page-item {{"active" if page == pageNo else ""}}"><a class="page-link" href="{{linkname}}page={{page}}">{{page}}</a></li>
+
+		{% endfor %}
+		
+		<!--
+		<li class="page-item {{"disabled" if maxPage in pages else ""}}">
+			<a class="page-link" href="{{linkname}}page={{maxPage}}">Last</a>
+		</li>
+		-->
+
+	</ul>
+	</nav>
+	<table class="table table-striped table-sm" id="myTable">
+		<thead class="thead-dark">
+			<tr>
+				<th scope="col">ID</th>
+				<th scope="col">Submission Time</th>
+				<th scope="col">Username</th>
+				<th scope="col">Problem</th>
+				<th scope="col">Score</th>
+				{% if (fullfeedback and (not contest or not hidetime)) or userinfo.role == 'superadmin' or userinfo.username in users %}
+				<th scope="col">Max Time</th>
+				<th scope="col">Max Memory</th>
+				{% endif %}
+			</tr>
+			</thead>
+			
+			<tbody>
+
+			{% for sub in submissionList %}
+				<tr>
+					{% if sub == None %}
+						<td> Submission Still Grading </td>
+					{% else %}
+
+					<td> <a href="{{url_for('submission', subId = sub.subId)}}">{{sub.subId}}</a> </td>
+					<td>{{sub.submissionTime}}</td>
+					<td> <a href="{{url_for('profile', username = sub.username)}}"> {{sub.username}} </a> </td>
+
+					{% if sub.problemName %}
+					<td> <a href="{{url_for('problem', PROBLEM_NAME = sub.problemName)}}"> {{sub.problemName}} </a> </td>
+					{% else %}
+					<td> Hidden </td>
+					{% endif %}
+					<td> <p style="margin: -1px">
+					<span style = "width: 42px" 
+					class="pb-1 text-white badge badge-{{'success' if sub.totalScore==100 else ('danger' if sub.totalScore == 0 else 'warning')}}"> {{sub.totalScore}}
+					</span> </p>
+					</td>
+					{% if (fullfeedback and (not contest or not hidetime)) or userinfo.role == 'superadmin' or userinfo.username in users %}
+					<td>{{sub.maxTime}}</td>
+					<td>{{sub.maxMemory}}</td>
+					{% endif %}
+					{% endif %}
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+<script>
+	console.log("{{userinfo.role}}");
+</script>
+
+
+{% endblock %}
+
+
+
+

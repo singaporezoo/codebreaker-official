@@ -1,0 +1,118 @@
+{% extends "admin_base.html" %}
+{% block title %} Clarifications {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul class=flashes>
+	{% for message in messages %}
+	<li>{{ message }}</li>
+	{% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+{% block content %}
+
+<br>
+<div class="container">
+	<!-- Nav tab -->
+	<ul class="nav nav-pills nav-fill" role="tablist">
+		<li class="nav-item">
+			<a class="nav-link active" data-toggle="tab" href="#unanswered">Unanswered</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link" data-toggle="tab" href="#answered">Answered</a>
+		</li>
+	</ul>
+
+	<!-- Tab panes -->
+	<div class="tab-content">
+		<!-- Unanswered list tab -->
+		<div id="unanswered" class="container tab-pane active"><br>
+			{% for clarification in unanswered %}
+			<div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
+				<div class="card-header bg-white">
+					{% if clarification.problemId != ""%}
+					<b><a href="/problem/{{clarification.problemId}}">{{clarification.problemId}}</a></b> by <a href="/profile/{{clarification.askedBy}}">{{clarification.askedBy}}</a>
+					{% else %}
+					<b>General clarification</b> by <a href="/profile/{{clarification.askedBy}}">{{clarification.askedBy}}</a>
+					{% endif %}
+				</div>
+				<div class="card-body">
+					<div class="row">
+						<div class="col-md-6">
+							{{clarification.question}}
+						</div>
+						<div class="col-md-6">
+							<form id="answerclarificationform" autocomplete="off" action="" method="POST" class="form-group">
+								<div class="autocomplete input-group mb-2">
+									<select type="select" name="clarification_answer" placeholder="Answer" class="form-control mr-1">
+										<option value=""></option>
+										{% for answer in answers %}
+										<option value="{{answer}}">{{answer}}</option>
+										{% endfor %}
+									</select>
+									<input type="hidden" name="clarification_id", value={{clarification.clarificationId}}>
+									<input type="submit" value="Answer" class="btn btn-secondary" onclick="sendsocket('{{clarification.askedBy}}')">
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<br>
+			{% endfor %}
+		</div>
+
+		<!-- Answered list tab -->
+		<div id="answered" class="container tab-pane"><br>
+			{% for clarification in answered %}
+			<div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
+				<div class="card-header bg-white">
+					{% if clarification.problemId != ""%}
+					<b><a href="/problem/{{clarification.problemId}}">{{clarification.problemId}}</a></b> by <a href="/profile/{{clarification.askedBy}}">{{clarification.askedBy}}</a>
+					{% else %}
+					<b>General clarification</b> by <a href="/profile/{{clarification.askedBy}}">{{clarification.askedBy}}</a>
+					{% endif %}
+				</div>
+				<div class="card-body">
+					<div class="row">
+						<div class="col-md-6">
+							{{clarification.question}}
+						</div>
+						<div class="col-md-6">
+							<b>Answered by <a href="/profile/{{clarification.answeredBy}}">{{clarification.answeredBy}}</a>:</b>
+							<br><br>
+							<form id="answerclarificationform" autocomplete="off" action="" method="POST" class="form-group">
+								<div class="autocomplete input-group mb-2">
+									<select type="select" name="clarification_answer" placeholder="Answer" class="form-control mr-1">
+										<option value="{{clarification.answer}}">{{clarification.answer}}</option>
+										{% for answer in answers %}
+										{% if answer != clarification.answer %}
+										<option value="{{answer}}">{{answer}}</option>
+										{% endif %}
+										{% endfor %}
+									</select>
+									<input type="hidden" name="clarification_id", value={{clarification.clarificationId}}>
+									<input type="submit" value="Update" class="btn btn-secondary" onclick="sendsocket('{{clarification.askedBy}}')">
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+			<br>
+			{% endfor %}
+		</div>
+	</div>
+	<script>
+		{% if contest %}
+		function sendsocket(askedBy){
+			socket.send(askedBy)
+		}
+		{% else %}
+		function sendsocket(askedBy){}
+		{% endif %}
+	</script>
+</div>
+
+{% endblock %}

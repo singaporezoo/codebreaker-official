@@ -1,0 +1,170 @@
+/* PSA: using !important in css is actually really bad practice, maintainability, etc etc etc. But I'm not going to wrangle my way around Bootstrap for something no one will ever use anyway. */
+
+html, body {
+	background-color: #1c1e24 !important;
+	color: #ccc !important;
+}
+
+.table {
+	color: #ccc !important;
+}
+
+.table-hover tbody tr:hover {
+	color: #eee !important;
+}
+
+.table td, .table th, .nav-tabs, .form-control {
+	border-color: #2f3441 !important;
+}
+
+.nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
+	background-color: inherit !important;
+	color: #eee !important;
+	border-color: #2f3441 #2f3441 #0d0e12 !important;
+}
+
+.nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
+	border-color: #222632 #222632 #2f3441 !important;
+}
+
+.card {
+	background-color: #0a0b11 !important;
+	color: #eee !important;
+}
+
+input {
+	background-color: #3b3e45 !important;
+	color: #ccc !important;
+	border-color: #000 !important;
+}
+
+textarea {
+	background-color: #3b3e45 !important;
+	color: #ccc !important;
+	border-color: #000 !important;
+}
+
+input.btn-primary {
+	background-color: #1e284e !important;
+	color: #ffffff !important;
+}
+
+button.btn-secondary {
+	background-color: #3b3e45 !important;
+	color: #ccc !important;
+	border-color: #000 !important;
+}
+.input-group-text{
+	background-color: #21242b !important;
+	color: #ccc !important;
+	border-color: #373c48 !important;
+}
+select {
+	background-color: #3b3e45 !important;
+	color: #ccc !important;
+}
+
+a:not(.btn) {
+	color: #8dc3ff !important;
+}
+a:not(.btn):hover {
+	color: #cbe3ff !important;
+}
+
+.navbar {
+	background: linear-gradient(45deg,#355f6c,#1e334e,#1e264e,#3b1e4e,#4e1e47,#4e1e35);
+	box-shadow: black 0 0 4px 2px;
+}
+
+.navbar a {
+	color: rgba(255,255,255,.5) !important;
+}
+.navbar a:hover {
+        color: rgba(255,255,255,.8) !important;
+}
+
+.dropdown-menu {
+	background-color: #13141a !important;
+}
+.dropdown-item:focus, .dropdown-item:hover {
+	background-color: #0d0e12 !important;
+}
+
+.page-link {
+	background-color: inherit !important;
+	border-color: #2f3441 !important;
+}
+.page-item.active .page-link {
+	background-color: #007bff !important;
+	color: inherit !important;
+}
+
+.nav-pills .nav-item .active {
+	color: white !important;
+}
+
+.bg-white {
+	background-color: #13141a !important;
+}
+
+iframe {
+	border: none;
+}
+
+.admin-bar {
+	background: linear-gradient(45deg,#4e1e35,#563b28,#675b35,#4a5d2b,#366648,#355f6c); 
+	box-shadow: black 0 0 4px 2px;
+	/* I'm joking, please don't revoke my judge perms aaah */
+}
+
+.own-row {
+        background-color: #0c330c;
+}
+.table-hover tbody tr.own-row:hover {
+	background-color: #0a2b0a;
+}
+
+.autocomplete-items {
+        border-color: #2f3441 !important;
+}
+.autocomplete-items div {
+	background-color: #13141a !important;
+	border-color: #2f3441 !important;
+}
+.autocomplete-items div:hover {
+	background-color: #0d0e12 !important;
+}
+
+pre {
+	color: #bbb;
+}
+
+.alert-success {
+	color: rgb(153, 230, 171);
+	background-color: rgb(26, 62, 41);
+	border-color: rgb(37, 90, 50);
+}
+.alert-info {
+	color: rgb(142, 227, 241);
+	background-color: rgb(20, 59, 67);
+	border-color: rgb(30, 89, 97);
+}
+.alert-warning {
+	color: rgb(251, 215, 112);
+	background-color: rgb(81, 62, 0);
+	border-color: rgb(123, 92, 0);
+}
+.alert-danger {
+	color: rgb(225, 134, 143);
+	background-color: rgb(67, 12, 17);
+	border-color: rgb(104, 18, 27);
+}
+
+.btn-secondary {
+	background-color: #1d212f;
+	border-color: #212b33;
+}
+
+hr {
+	background-color: white !important;
+}

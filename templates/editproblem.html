@@ -1,0 +1,500 @@
+{% extends "admin_base.html" %}
+{% block title %} Edit Problem {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+
+<br>
+
+<div class="container">
+	<div class="container">
+        	{% with messages = get_flashed_messages(with_categories=true) %}
+        		{% if messages %}
+                		{% for category, message in messages %}
+                                	<div class="alert alert-{{category}} alert-dismissible fade show mt-4" role="alert">
+                                        	{{message}}
+                                               	<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                	<span aria-hidden="true">&times;</span>
+                                                </button>
+                                        </div>
+                                {% endfor %}
+                        {% endif %}
+               	{% endwith %}
+        </div>
+	<h6> Editing problem: <b> <a href={{'/problem/' + info['problemName']}}> {{info["problemName"]}} </a> </b> </h6>	
+	<br>
+
+	<form id="updateproblemform" action="" method="post" class="form-group">
+		
+		<div class = "row">
+		<div class="input-group mb-3 col">
+		<div class="input-group-prepend">
+			<span class="input-group-text">Problem Title</span>
+		</div>
+			{{form.problem_title(type="text", placeholder="Title", value=info['title'], class="form-control")}}
+		</div>
+		<div class="input-group mb-3 col">
+		<div class="input-group-prepend">
+			<span class="input-group-text">Source</span>
+		</div>
+		      {{form.problem_source(type="text", placeholder="Source", value=info['source'], class="form-control")}}
+                </div>
+				
+		<div class="input-group mb-3 col">
+		<div class="input-group-prepend">
+			<span class="input-group-text">Problem Author</span>
+		</div>
+			{{form.problem_author(type="text", placeholder="Author", value=info['author'], class="form-control")}}
+                </div>
+		</div>
+
+		<div class="row">
+		<div class="input-group mb-3 col">
+		<div class="input-group-prepend">
+			<span class="input-group-text">Contest ID</span>
+		</div>
+			{{form.contest_link(type="text",placeholder="Contest ID (Leave blank if none)", value=info['contestLink'], class="form-control")}}
+		</div>
+	 	
+		<div class="input-group mb-3 col">
+		<div class="input-group-prepend">
+			<span class="input-group-text">Problem Type</span>
+		</div>
+			{{form.problem_type(type="select",class="form-control")}}
+		</div>
+		</div>
+
+		<div class = "row">
+		<div class="input-group mb-3 col">
+			<div class="input-group-prepend"> <span class="input-group-text">Time Limit (Seconds)</span> </div>
+			{{form.time_limit(type="text", placeholder="1", value=info['timeLimit'], class="form-control")}}
+                </div>
+				
+		<div class="input-group mb-3 col">
+			<div class="input-group-prepend"> <span class="input-group-text">Memory Limit (MB)</span> </div>
+			{{form.memory_limit(type="text", placeholder="1024", value=info['memoryLimit'], class="form-control")}}
+                </div>
+		</div>
+		{%if info['problem_type'] == 'Communication'%}
+		<div class = "row">
+		<div class="input-group mb-3 col">
+			<div class="input-group-prepend"> <span class="input-group-text">First File Name</span> </div>
+			{{form.nameA(type="text", placeholder="a", value=info['nameA'], class="form-control")}}
+                </div>
+				
+		<div class="input-group mb-3 col">
+			<div class="input-group-prepend"> <span class="input-group-text">Second File Name</span> </div>
+			{{form.nameB(type="text", placeholder="b", value=info['nameB'], class="form-control")}}
+		</div>
+		</div>
+		{%endif%}
+	        	
+		<a href='/admin/viewsubmissions/{{info.problemName}}' > View Submissions </a>
+		<br>
+		
+		{{form.feedback(type="checkbox", checked=(info['fullFeedback'] == 1))}}
+		Full Feedback
+		
+		<br>
+		
+		{{form.analysis(type="checkbox", checked=(info['analysisVisible'] == 1))}}
+		Analysis Mode
+
+		<br>
+
+		{{form.public_statement(type="checkbox", checked=(info['publicStatement'] == 1))}}
+		Public Statement
+
+		<br>
+
+		{{form.editorial_visible(type="checkbox", checked=(info['editorialVisible'] == 1))}}
+		Visible Editorials
+
+		<br>
+	
+		{% if userinfo['role'] == 'superadmin' %}
+		
+		{{form.superhidden(type="checkbox", checked=(info['superhidden'] == 1))}}
+		Super Hidden (Only open to superadmin)
+
+		<br>
+		{% endif %}
+
+		{{form.checker(type="checkbox", checked=(info['customChecker'] == 1))}}
+		Checker
+
+		<br>
+		
+		{{form.attachments(type="checkbox",checked=(info['attachments']==1))}}
+		Attachments
+
+		<br>
+
+		{{form.ee(type="checkbox",checked=(info['EE']==True))}}
+		EE Problem
+
+		<br>
+		Note: if you turn analysis mode off, it will be turned on again if the problem is part of a contest and someone accessed the contest.
+		<br>
+		<br>
+
+		<input type="hidden" name="form_name" value="problem_info">
+		{{form.submit(type="submit", class="btn btn-secondary")}}
+	</form>
+	<a class="btn" href="/admin/viewsubmissions/{{info.problemName}}">View Submissions</a>
+	<br>
+	<br>
+	<hr class="hr-text" data-content="">
+	<br>
+	<div>
+	<h2> Tags </h2>
+	<div class="row">
+		{% set a,b,c=(tags|length/3)|int,(2*tags|length/3)|int,tags|length %}
+		<div class="col-4 container">
+		{%for i in range(a) %}
+		{% set tag = tags[i] %}
+		<div>
+			<input type="checkbox" id={{tag[0]}} name={{tag[0]}} value={{tag[0]}}
+			{%if tag[1] %}
+			       checked=true	
+			       {%else%}
+			       {%endif%}
+			>
+		<label > {{tag[0]}} </label>
+		</div>
+		{%endfor%}
+		</div>
+		<div class="col-4 container">
+		{%for i in range(a,b) %}
+		{% set tag = tags[i] %}
+		<div>
+			<input type="checkbox" id={{tag[0]}} name={{tag[0]}} value={{tag[0]}}
+			{%if tag[1] %}
+			       checked=true	
+			       {%else%}
+			       {%endif%}
+			>
+		<label > {{tag[0]}} </label>
+		</div>
+		{%endfor%}
+		</div>
+		<div class="col-4 container">
+		{%for i in range(b,c) %}
+		{% set tag = tags[i] %}
+		<div>
+			<input type="checkbox" id={{tag[0]}} name={{tag[0]}} value={{tag[0]}}
+			{%if tag[1] %}
+			       checked=true	
+			       {%else%}
+			       {%endif%}
+			>
+		<label > {{tag[0]}} </label>
+		</div>
+		{%endfor%}
+		</div>
+	</div>
+	<br>
+	<input value="Update Tags" class="btn btn-secondary" onclick=updateTags() id="updateTags">
+	</div>
+	<br>
+	<hr class="hr-text" data-content="">
+	<br>
+	<h2>Statements and Other Attachments</h2>
+	<form action="" method="post" class="form-group" enctype="multipart/form-data">
+		Upload statement(html/pdf):
+		<input type="file" name="statement" accept=".html,.pdf">
+		<input type="hidden" name="form_name" value="statement_upload">
+		<input type="submit" value="Upload" class="btn btn-secondary">
+	</form>
+	<br>
+	<br>
+	{% if info['customChecker'] == 1 %}
+	<form action="" method="post" class="form-group" enctype="multipart/form-data">
+		Upload checker(cpp):
+		<input type="file" name="checker" accept=".cpp">
+		<input type="hidden" name="form_name" value="checker_upload">
+		<input type="submit" value="Upload" class="btn btn-secondary">
+	</form>
+	<br>
+	<br>
+	{%endif%}
+	{% if info['problem_type'] == 'Interactive' %}
+	<form action="" method="post" class="form-group" enctype="multipart/form-data">
+		Upload grader(cpp):
+		<input type="file" name="grader" accept=".cpp">
+		<input type="hidden" name="form_name" value="grader_upload">
+		<input type="submit" value="Upload" class="btn btn-secondary">
+	</form>
+	<br>
+	<br>
+	<form action="" method="post" class="form-group" enctype="multipart/form-data">
+		Upload header file(h):
+		<input type="file" name="header" accept=".h">
+		<input type="hidden" name="form_name" value="header_upload">
+		<input type="submit" value="Upload" class="btn btn-secondary">
+	</form>
+	<br>
+	<br>
+	{%elif info['problem_type'] == 'Communication' %}
+	<form action="" method="post" class="form-group" enctype="multipart/form-data">
+		Upload grader(cpp):
+		<input type="file" name="grader" accept=".cpp">
+		<input type="hidden" name="form_name" value="grader_upload">
+		<input type="submit" value="Upload" class="btn btn-secondary">
+	</form>
+	<br>
+	<br>
+	<form action="" method="post" class="form-group" enctype="multipart/form-data">
+		Upload {{info['nameA']}}(h):
+		<input type="file" name="fileA" accept=".h">
+		<input type="hidden" name="form_name" value="fileA_upload">
+		<input type="submit" value="Upload" class="btn btn-secondary">
+	</form>
+	<br>
+	<br>
+	<form action="" method="post" class="form-group" enctype="multipart/form-data">
+		Upload {{info['nameB']}}(h):
+		<input type="file" name="fileB" accept=".h">
+		<input type="hidden" name="form_name" value="fileB_upload">
+		<input type="submit" value="Upload" class="btn btn-secondary">
+	</form>
+	<br>
+	<br>
+
+	{%endif%}
+	
+	{% if info['attachments'] == 1 %}
+	<form action="" method="post" class="form-group" enctype="multipart/form-data">
+		Upload Attachments (zip):
+		<input type="file" name="attachments" accept=".zip">
+		<input type="hidden" name="form_name" value="attachments_upload">
+		<input type="submit" value="Upload" class="btn btn-secondary">
+	</form>
+	<br>
+	<br>
+	{%endif%}
+
+	<button type="button" onclick="deleteHTML()" class="btn btn-secondary mb-2">Delete HTML Statement</button>
+	<form id="delHTML" action="" method="post" class="form-group">
+		<input type="hidden" name="form_name" value="delete_html">
+	</form>
+	<button type="button" onclick="deletePDF()" class="btn btn-secondary mb-2">Delete PDF Statement</button>
+        <form id="delPDF" action="" method="post" class="form-group">
+                <input type="hidden" name="form_name" value="delete_pdf">
+        </form>
+	<br>
+	<br>
+	<hr class="hr-text" data-content="">
+	<br>
+	<h2>Testcases and Subtasks</h2>
+	<button type="button" onclick="syncTestcases()" class="btn btn-secondary mb-2">Sync testcases</button>
+        <form id="syncTC" action="" method="post" class="form-group">
+                <input type="hidden" name="form_name" value="sync_testcases">
+        </form>
+	<form action="" method="post" class="form-group">
+                <input type="hidden" name="form_name" value="update_count">
+                <input type="submit" value="Update Count" class="btn btn-secondary mb-2">
+        </form>
+	<p>There are {{info['testcaseCount']}} test cases on the judge right now.</p>
+
+	<form action="" method="post" class="form-group">
+		<input type="hidden" name="form_name" value="add_subtask">
+		<input type="submit" value="Add Subtask" class="btn btn-secondary mb-2">
+	</form>
+	<form action="" method="post" class="form-group">
+		<input type="hidden" name="form_name" value="remove_subtask">
+		<input type="submit" value="Remove Subtask" class="btn btn-secondary mb-2">
+	</form>
+	<br>
+	<br>
+	<form action="" method="post" class="form-group">
+		{% for score in info['subtaskScores']:  %}
+		<input type="text" size="7" placeholder="Score" name={{'sc_' + loop.index0|string}} value={{score}}>
+		<input type="text" size="50" placeholder="Testcases" name={{'dp_' + loop.index0|string}} value={{info['subtaskDependency'][loop.index0]}}>
+		<br>
+		{% endfor %}
+		<input type="hidden" name="form_name" value="update_subtask">
+		<br>
+		<input type="submit" value="Update Subtask Info" class="btn btn-secondary">
+	</form>
+	<br>
+	<br>
+	
+	{% if info['superhidden'] %}
+		<form action="" method="post" class="form-group">
+			<input type="hidden" name="form_name" value="add_access">
+			<input type="submit" value="Add User" class="btn btn-secondary mb-2">
+		</form>
+		{% if info['allowAccess']|length != 0 %}
+			<form action="" method="post" class="form-group">
+				<input type="hidden" name="form_name" value="remove_access">
+				<input type="submit" value="Remove User" class="btn btn-secondary mb-2">
+			</form>
+			<br>
+			<form action="" method="post" class="form-group">
+			{% for user in info['allowAccess']: %}
+				<input type="text" size="63" placeholder="Username" name={{'u_' + loop.index0|string}} value={{user}}>
+				<br>
+			{% endfor %}
+			<input type="hidden" name="form_name" value="update_access">
+			<br>
+			<input type="submit" value="Update Users" class="btn btn-secondary">
+			</form>
+			<br>
+		{% endif %}
+		<br>
+	{% endif %}
+
+	<hr class="hr-text" data-content="">
+	<br>
+	<h2>Editorial</h2>
+
+	<form action="" method="post" class="form-group">
+		<input type="hidden" name="form_name" value="add_editorial">
+		<input type="submit" value="Add Editorial" class="btn btn-secondary mb-2">
+	</form>
+	
+	{% if info['editorials']|length != 0 %}
+		<form action="" method="post" class="form-group">
+			<input type="hidden" name="form_name" value="remove_editorial">
+			<input type="submit" value="Remove Editorial" class="btn btn-secondary mb-2">
+		</form>
+		<br>
+		<form action="" method="post" class="form-group">
+		{% for editorial in info['editorials']:  %}
+			<input type="text" size="63" placeholder="Link" name={{'e_' + loop.index0|string}} value={{editorial}}>
+			<br>
+		{% endfor %}
+		<input type="hidden" name="form_name" value="update_editorials">
+		<br>
+		<input type="submit" value="Update Editorials" class="btn btn-secondary">
+		</form>
+	{%endif%}
+
+	<br>
+	<br>
+	<hr class="hr-text" data-content="">
+	<br>
+	<h2>Regrade (WARNING: DO NOT INCUR UNNECESSARY COST)</h2>
+
+	{% if userinfo['role'] in ['superadmin'] %}
+	<form action="" method="post" class="form-group" onSubmit="return confirm('Are you sure you want to regrade?');">
+		<input type="hidden" name="form_name" value="regrade_problem">
+		<input type="submit" value="Regrade Submissions" class="btn btn-secondary navbar mb-2">
+	</form>
+	<form action="" method="post" class="form-group" onSubmit="return confirm('Are you sure you want to regrade?');">
+		<input type="hidden" name="form_name" value="regrade_nonzero">
+		<input type="submit" value="Regrade Nonzero" class="btn btn-secondary navbar mb-2">
+	</form>
+	<form action="" method="post" class="form-group" onSubmit="return confirm('Are you sure you want to regrade?');">
+		<input type="hidden" name="form_name" value="regrade_acs">
+		<input type="submit" value="Regrade ACs" class="btn btn-secondary navbar mb-2">
+	</form>
+	<br>
+	<hr class="hr-text" data-content="">
+	<br>
+	{% endif %}
+	<h2>Validation</h2>
+	{% if info.validated == 1 %}
+	<p> Problem has been validated! </p>
+	{%else%}
+	<p> Problem has not been validated! </p>
+	{%endif%}
+
+	<table class="table table-hover">
+		<thead class="thead-dark">
+			<th scope="col">Category</th>
+			<th scope="col">Remarks</th>
+		</thead>
+		<tbody>
+			{% for cat in ['testdata','statement','scoring','attachments','checker','grader','subtasks'] %}
+			<tr
+				{% if info.verdicts[cat] == 1 %}
+					style="-webkit-box-shadow: inset 16px 0px 0px -7px #0C6;"
+				{%else%}
+					style="-webkit-box-shadow: inset 16px 0px 0px -7px #F32013;"
+				{% endif %}
+			>
+			<td>{{cat}}</td>
+			<td>{{info.remarks[cat]}}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	<form action="" method="post" class="form-group">
+                <input type="hidden" name="form_name" value="validate">
+                <input type="submit" value="Validate problem" class="btn btn-secondary">
+        </form>
+	<br>
+	<br>
+</div>
+<script>
+        function deleteHTML() {
+		var pathname = window.location.pathname;
+		if (pathname[pathname.length - 1] == '/') pathname = pathname.slice(0, -1);
+		problem_id = pathname.substring(pathname.lastIndexOf('/') + 1);
+		var del = window.confirm("Are you sure you want to delete the HTML statement?");
+		if (del) {
+			document.getElementById("delHTML").submit();
+		}
+	}
+	function deletePDF() {
+		var pathname = window.location.pathname;
+                if (pathname[pathname.length - 1] == '/') pathname = pathname.slice(0, -1);
+                problem_id = pathname.substring(pathname.lastIndexOf('/') + 1);
+                var del = window.confirm("Are you sure you want to delete the PDF statement?");
+                if (del) {
+                        document.getElementById("delPDF").submit();
+                }
+	}
+	function syncTestcases() {
+		var pathname = window.location.pathname;
+                if (pathname[pathname.length - 1] == '/') pathname = pathname.slice(0, -1);
+                problem_id = pathname.substring(pathname.lastIndexOf('/') + 1);
+                var del = window.confirm("Are you sure you want to sync testdata?")
+                if (del) {
+                        document.getElementById("syncTC").submit();
+                }
+		
+	}
+	function updateTags(){
+		A = []
+		for (let j=0; j < 3; j=j+1){
+			let t = document.getElementById('updateTags').parentElement.children[1].children[j]
+			for (let i=0; i < t.children.length; i=i+1){
+				let x = t.children[i]
+				if (x.children[0].checked){
+					let tagName = x.children[1].innerHTML
+					tagName = tagName.slice(1,-1)
+					A.push(tagName)
+				}
+			}
+		}
+		var pathname = window.location.pathname;
+                if (pathname[pathname.length - 1] == '/') pathname = pathname.slice(0, -1);
+                problemId = pathname.substring(pathname.lastIndexOf('/') + 1);
+		params = {
+			'problemId':problemId,
+			'newTags':JSON.stringify(A)
+		}
+		console.log(params)
+		$.post('/admin/editproblemtags',params).done((response) => {
+			if (response.status !== 200){
+				alert(response.error)
+			}
+		})
+		window.location.reload(true)
+	}
+</script>
+{% endblock %}

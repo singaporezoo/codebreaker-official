@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %} Profile - {{profileinfo.username}} {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+<div class = "container-fluid p-4">
+	
+	<div class = "row">
+	
+	<div class = "col-sm-4">
+		<div class = "container">
+			<div class = "card shadow-sm">
+				<h4 class = "card-header"> {{profileinfo.username}}'s profile </h4>
+
+				<div class = "card-body">
+				<table class = "table table-borderless table-sm">
+					<tbody>
+					<tr>
+						<th scope="row"> Name </th>
+						<td> {{profileinfo.fullname}} </td>
+					<tr>
+					<tr>
+						<th scope="row"> School </th>
+						<td> {{profileinfo.school}} </td>
+					<tr>
+					<tr>                                    
+						<th scope="row"> Role </th>
+						<td> {{profileinfo.role}} </td>
+					<tr>
+					</tbody>
+				</table>
+
+				<a href="/submissions?username={{profileinfo.username}}" class="btn btn-secondary">View Submissions</a>
+				{% if profileinfo.username==userinfo.username %}
+				<a href="/editprofile" class="btn btn-secondary">Edit Profile</a>
+				{% endif %}
+				</div>
+
+			</div>
+		</div>
+	</div>
+
+	<div class = "col-sm-7">
+		<table class = "table table-bordered table-sm">
+			<thead class="thead-dark">
+				<tr> <th scope="col" colspan="4">Solved Problems</th> </tr>
+			</thead>
+
+			<tbody>
+				{% for row in solvedproblems %}
+			
+				<tr>
+					<td style="width: 25%"> <a href={{url_for('problem', PROBLEM_NAME=row.col1)}}> {{row.col1}} </a> </td>
+                                        <td style="width: 25%"> <a href={{url_for('problem', PROBLEM_NAME=row.col2)}}> {{row.col2}} </a> </td>
+                                        <td style="width: 25%"> <a href={{url_for('problem', PROBLEM_NAME=row.col3)}}> {{row.col3}} </a> </td>
+                                        <td style="width: 25%"> <a href={{url_for('problem', PROBLEM_NAME=row.col4)}}> {{row.col4}} </a> </td>
+				</tr>
+
+				{% endfor %}
+			</tbody>
+                </table>
+	
+	</div>
+
+	</div>
+</div>
+{% endblock %}
+
+

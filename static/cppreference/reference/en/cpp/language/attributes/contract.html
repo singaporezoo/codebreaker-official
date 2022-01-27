@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="client-nojs">
+<head>
+<title>C++ attribute: expects, ensures, assert (C++20) - cppreference.com</title>
+<meta charset="UTF-8">
+<meta name="generator" content="MediaWiki 1.21.2">
+<link rel="shortcut icon" href="../../../../common/favicon.ico">
+<link rel="stylesheet" href="../../../../common/ext.css">
+<meta name="ResourceLoaderDynamicStyles" content="">
+<link rel="stylesheet" href="../../../../common/site_modules.css">
+<style>a:lang(ar),a:lang(ckb),a:lang(fa),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}#toc{display:none}.editsection{display:none}
+/* cache key: mwiki1-mwiki_en_:resourceloader:filter:minify-css:7:472787eddcf4605d11de8c7ef047234f */</style>
+
+<script src="../../../../common/startup_scripts.js"></script>
+<script>if(window.mw){
+mw.config.set({"wgCanonicalNamespace":"","wgCanonicalSpecialPageName":false,"wgNamespaceNumber":0,"wgPageName":"cpp/language/attributes/contract","wgTitle":"cpp/language/attributes/contract","wgCurRevisionId":109537,"wgArticleId":17872,"wgIsArticle":true,"wgAction":"view","wgUserName":null,"wgUserGroups":["*"],"wgCategories":[],"wgBreakFrames":false,"wgPageContentLanguage":"en","wgSeparatorTransformTable":["",""],"wgDigitTransformTable":["",""],"wgDefaultDateFormat":"dmy","wgMonthNames":["","January","February","March","April","May","June","July","August","September","October","November","December"],"wgMonthNamesShort":["","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],"wgRelevantPageName":"cpp/language/attributes/contract","wgRestrictionEdit":[],"wgRestrictionMove":[]});
+}</script><script>if(window.mw){
+mw.loader.implement("user.options",function(){mw.user.options.set({"ccmeonemails":0,"cols":80,"date":"default","diffonly":0,"disablemail":0,"disablesuggest":0,"editfont":"default","editondblclick":0,"editsection":0,"editsectiononrightclick":0,"enotifminoredits":0,"enotifrevealaddr":0,"enotifusertalkpages":1,"enotifwatchlistpages":0,"extendwatchlist":0,"externaldiff":0,"externaleditor":0,"fancysig":0,"forceeditsummary":0,"gender":"unknown","hideminor":0,"hidepatrolled":0,"imagesize":2,"justify":0,"math":1,"minordefault":0,"newpageshidepatrolled":0,"nocache":0,"noconvertlink":0,"norollbackdiff":0,"numberheadings":0,"previewonfirst":0,"previewontop":1,"quickbar":5,"rcdays":7,"rclimit":50,"rememberpassword":0,"rows":25,"searchlimit":20,"showhiddencats":0,"showjumplinks":1,"shownumberswatching":1,"showtoc":0,"showtoolbar":1,"skin":"cppreference2","stubthreshold":0,"thumbsize":2,"underline":2,"uselivepreview":0,"usenewrc":0,"watchcreations":0,"watchdefault":0,"watchdeletion":0,
+"watchlistdays":3,"watchlisthideanons":0,"watchlisthidebots":0,"watchlisthideliu":0,"watchlisthideminor":0,"watchlisthideown":0,"watchlisthidepatrolled":0,"watchmoves":0,"wllimit":250,"variant":"en","language":"en","searchNs0":true,"searchNs1":false,"searchNs2":false,"searchNs3":false,"searchNs4":false,"searchNs5":false,"searchNs6":false,"searchNs7":false,"searchNs8":false,"searchNs9":false,"searchNs10":false,"searchNs11":false,"searchNs12":false,"searchNs13":false,"searchNs14":false,"searchNs15":false,"gadget-ColiruCompiler":1,"gadget-MathJax":1});;},{},{});mw.loader.implement("user.tokens",function(){mw.user.tokens.set({"editToken":"+\\","patrolToken":false,"watchToken":false});;},{},{});
+/* cache key: mwiki1-mwiki_en_:resourceloader:filter:minify-js:7:9f05c6caceb9bb1a482b6cebd4c5a330 */
+}</script>
+<script>if(window.mw){
+mw.loader.load(["mediawiki.page.startup","mediawiki.legacy.wikibits","mediawiki.legacy.ajax"]);
+}</script>
+<style type="text/css">/*<![CDATA[*/
+.source-cpp {line-height: normal;}
+.source-cpp li, .source-cpp pre {
+	line-height: normal; border: 0px none white;
+}
+/**
+ * GeSHi Dynamically Generated Stylesheet
+ * --------------------------------------
+ * Dynamically generated stylesheet for cpp
+ * CSS class: source-cpp, CSS id: 
+ * GeSHi (C) 2004 - 2007 Nigel McNie, 2007 - 2008 Benny Baumann
+ * (http://qbnz.com/highlighter/ and http://geshi.org/)
+ * --------------------------------------
+ */
+.cpp.source-cpp .de1, .cpp.source-cpp .de2 {font: normal normal 1em/1.2em monospace; margin:0; padding:0; background:none; vertical-align:top;}
+.cpp.source-cpp  {font-family:monospace;}
+.cpp.source-cpp .imp {font-weight: bold; color: red;}
+.cpp.source-cpp li, .cpp.source-cpp .li1 {font-weight: normal; vertical-align:top;}
+.cpp.source-cpp .ln {width:1px;text-align:right;margin:0;padding:0 2px;vertical-align:top;}
+.cpp.source-cpp .li2 {font-weight: bold; vertical-align:top;}
+.cpp.source-cpp .kw1 {color: #0000dd;}
+.cpp.source-cpp .kw2 {color: #0000ff;}
+.cpp.source-cpp .kw3 {color: #0000dd;}
+.cpp.source-cpp .kw4 {color: #0000ff;}
+.cpp.source-cpp .co1 {color: #909090;}
+.cpp.source-cpp .co2 {color: #339900;}
+.cpp.source-cpp .coMULTI {color: #ff0000; font-style: italic;}
+.cpp.source-cpp .es0 {color: #008000; font-weight: bold;}
+.cpp.source-cpp .es1 {color: #008000; font-weight: bold;}
+.cpp.source-cpp .es2 {color: #008000; font-weight: bold;}
+.cpp.source-cpp .es3 {color: #008000; font-weight: bold;}
+.cpp.source-cpp .es4 {color: #008000; font-weight: bold;}
+.cpp.source-cpp .es5 {color: #008000; font-weight: bold;}
+.cpp.source-cpp .br0 {color: #008000;}
+.cpp.source-cpp .sy0 {color: #008000;}
+.cpp.source-cpp .sy1 {color: #000080;}
+.cpp.source-cpp .sy2 {color: #000040;}
+.cpp.source-cpp .sy3 {color: #000040;}
+.cpp.source-cpp .sy4 {color: #008080;}
+.cpp.source-cpp .st0 {color: #008000;}
+.cpp.source-cpp .nu0 {color: #000080;}
+.cpp.source-cpp .nu6 {color: #000080;}
+.cpp.source-cpp .nu8 {color: #000080;}
+.cpp.source-cpp .nu12 {color: #000080;}
+.cpp.source-cpp .nu16 {color:#000080;}
+.cpp.source-cpp .nu17 {color:#000080;}
+.cpp.source-cpp .nu18 {color:#000080;}
+.cpp.source-cpp .nu19 {color:#000080;}
+.cpp.source-cpp .ln-xtra, .cpp.source-cpp li.ln-xtra, .cpp.source-cpp div.ln-xtra {background-color: #ffc;}
+.cpp.source-cpp span.xtra { display:block; }
+
+/*]]>*/
+</style><!--[if lt IE 7]><style type="text/css">body{behavior:url("/mwiki/skins/cppreference2/csshover.min.htc")}</style><![endif]--></head>
+<body class="mediawiki ltr sitedir-ltr ns-0 ns-subject page-cpp_language_attributes_contract skin-cppreference2 action-view cpp-navbar">
+        <!-- header -->
+        <!-- /header -->
+        <!-- content -->
+<div id="cpp-content-base">
+            <div id="content">
+                <a id="top"></a>
+                <div id="mw-js-message" style="display:none;"></div>
+                                <!-- firstHeading -->
+<h1 id="firstHeading" class="firstHeading"><span style="font-size:0.7em; line-height:130%">C++ attribute:</span> expects, ensures, assert <span class="t-mark-rev t-since-cxx20">(C++20)</span></h1>
+                <!-- /firstHeading -->
+                <!-- bodyContent -->
+                <div id="bodyContent">
+                                        <!-- tagline -->
+                    <div id="siteSub">From cppreference.com</div>
+                    <!-- /tagline -->
+                                        <!-- subtitle -->
+                    <div id="contentSub"><span class="subpages">&lt; <a href="../../../cpp.html" title="cpp">cpp</a>‎ | <a href="../../language.html" title="cpp/language">language</a>‎ | <a href="../attributes.html" title="cpp/language/attributes">attributes</a></span></div>
+                    <!-- /subtitle -->
+                                                            <!-- bodycontent -->
+                    <div id="mw-content-text" lang="en" dir="ltr" class="mw-content-ltr"><div class="t-navbar" style=""><div class="t-navbar-sep"> </div><div class="t-navbar-head"><a href="../../../cpp.html" title="cpp"> C++</a><div class="t-navbar-menu"><div><div><table class="t-nv-begin" cellpadding="0" style="line-height:1.1em;">
+<tr class="t-nv"><td colspan="5"> <a href="../../language.html" title="cpp/language"> Language</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../header.html" title="cpp/header"> Standard Library Headers</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../freestanding.html" title="cpp/freestanding"> Freestanding and hosted implementations</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../named_req.html" title="cpp/named req"> Named requirements </a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../utility.html#Language_support" title="cpp/utility"> Language support library</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../concepts.html" title="cpp/concepts"> Concepts library</a> <span class="t-mark-rev t-since-cxx20">(C++20)</span> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../error.html" title="cpp/error"> Diagnostics library</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../utility.html" title="cpp/utility"> Utilities library</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../string.html" title="cpp/string"> Strings library</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../container.html" title="cpp/container"> Containers library</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../iterator.html" title="cpp/iterator"> Iterators library</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../ranges.html" title="cpp/ranges"> Ranges library</a> <span class="t-mark-rev t-since-cxx20">(C++20)</span> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../algorithm.html" title="cpp/algorithm"> Algorithms library</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../numeric.html" title="cpp/numeric"> Numerics library</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../io.html" title="cpp/io"> Input/output library</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../locale.html" title="cpp/locale"> Localizations library</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../regex.html" title="cpp/regex"> Regular expressions library</a> <span class="t-mark-rev t-since-cxx11">(C++11)</span> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../atomic.html" title="cpp/atomic"> Atomic operations library</a> <span class="t-mark-rev t-since-cxx11">(C++11)</span> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../thread.html" title="cpp/thread"> Thread support library</a> <span class="t-mark-rev t-since-cxx11">(C++11)</span> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../filesystem.html" title="cpp/filesystem"> Filesystem library</a> <span class="t-mark-rev t-since-cxx17">(C++17)</span> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../../experimental.html" title="cpp/experimental"> Technical Specifications</a> </td></tr>
+</table></div><div></div></div></div></div><div class="t-navbar-sep"> </div><div class="t-navbar-head"><a href="../../language.html" title="cpp/language"> C++ language</a></div><div class="t-navbar-sep"> </div><div class="t-navbar-head"><a href="../declarations.html" title="cpp/language/declarations"> Declarations</a><div class="t-navbar-menu"><div><div style="display:inline-block">
+<div><table class="t-nv-begin" cellpadding="0" style="">
+<tr class="t-nv-col-table"><td><div><table class="t-nv-begin" cellpadding="0" style="">
+<tr class="t-nv-h2"><td colspan="5"> Overview </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../declarations.html" title="cpp/language/declarations"> declaration syntax</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../declarations.html#Specifiers" title="cpp/language/declarations"> decl-specifier-seq</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../declarations.html#Declarators" title="cpp/language/declarations"> declarator</a> </td></tr>
+<tr class="t-nv-h2"><td colspan="5"> Specifiers </td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="../typedef.html" title="cpp/language/typedef"><span class="t-lines"><span>typedef</span></span></a></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="../inline.html" title="cpp/language/inline"><span class="t-lines"><span>inline</span></span></a></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../virtual.html" title="cpp/language/virtual"> virtual function specifier</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../explicit.html" title="cpp/language/explicit"> explicit function specifier</a> </td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="../friend.html" title="cpp/language/friend"><span class="t-lines"><span>friend</span></span></a></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="../constexpr.html" title="cpp/language/constexpr"><span class="t-lines"><span>constexpr</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="../consteval.html" title="cpp/language/consteval"><span class="t-lines"><span>consteval</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx20">(C++20)</span></span></span></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../storage_duration.html" title="cpp/language/storage duration"> storage class specifiers</a> </td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="../class.html" title="cpp/language/class"><span class="t-lines"><span>class</span><span>struct</span></span></a></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="../union.html" title="cpp/language/union"><span class="t-lines"><span>union</span></span></a></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="../enum.html" title="cpp/language/enum"><span class="t-lines"><span>enum</span></span></a></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="../decltype.html" title="cpp/language/decltype"><span class="t-lines"><span>decltype</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="../auto.html" title="cpp/language/auto"><span class="t-lines"><span>auto</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="../alignas.html" title="cpp/language/alignas"><span class="t-lines"><span>alignas</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="../cv.html" title="cpp/language/cv"><span class="t-lines"><span>const</span><span>volatile</span></span></a></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../elaborated_type_specifier.html" title="cpp/language/elaborated type specifier"> elaborated type specifier</a></td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../attributes.html" title="cpp/language/attributes"> attributes </a><span class="t-mark-rev t-since-cxx11">(C++11)</span> </td></tr>
+</table></div></td><td><div><table class="t-nv-begin" cellpadding="0" style="">
+<tr class="t-nv-h2"><td colspan="5"> Declarators </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../reference.html" title="cpp/language/reference"> reference </a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../pointer.html" title="cpp/language/pointer"> pointer </a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../array.html" title="cpp/language/array"> array </a> </td></tr>
+<tr class="t-nv-h2"><td colspan="5"> Block declarations </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../declarations.html" title="cpp/language/declarations"> simple-declaration</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> →<a href="../structured_binding.html" title="cpp/language/structured binding"> structured binding declaration</a> <span class="t-mark-rev t-since-cxx17">(C++17)</span> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../type_alias.html" title="cpp/language/type alias"> alias declaration</a><span class="t-mark-rev t-since-cxx11">(C++11)</span> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../namespace_alias.html" title="cpp/language/namespace alias"> namespace alias definition </a></td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../using_declaration.html" title="cpp/language/using declaration"> using-declaration</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../namespace.html#Using-directives" title="cpp/language/namespace"> using-directive</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../static_assert.html" title="cpp/language/static assert"> static_assert declaration</a> <span class="t-mark-rev t-since-cxx11">(C++11)</span></td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../asm.html" title="cpp/language/asm"> asm-definition</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../enum.html" title="cpp/language/enum"> opaque enum declaration</a><span class="t-mark-rev t-since-cxx11">(C++11)</span> </td></tr>
+<tr class="t-nv-h2"><td colspan="5"> Other declarations </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../namespace.html" title="cpp/language/namespace"> namespace definition</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../function.html" title="cpp/language/function"> function declaration</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../class_template.html" title="cpp/language/class template"> class template declaration</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../function_template.html" title="cpp/language/function template"> function template declaration</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../class_template.html#Explicit_instantiation" title="cpp/language/class template"> explicit template instantiation</a><span class="t-mark-rev t-since-cxx11">(C++11)</span></td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../template_specialization.html" title="cpp/language/template specialization"> explicit template specialization</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../language_linkage.html" title="cpp/language/language linkage"> linkage specification</a> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../declarations.html" title="cpp/language/declarations"> attribute declaration</a> <span class="t-mark-rev t-since-cxx11">(C++11)</span> </td></tr>
+<tr class="t-nv"><td colspan="5"> <a href="../declarations.html" title="cpp/language/declarations"> empty declaration</a> </td></tr>
+</table></div></td></tr>
+</table></div>
+</div><div></div></div></div></div><div class="t-navbar-sep"> </div><div class="t-navbar-head"><a href="../attributes.html" title="cpp/language/attributes"> Attributes</a><div class="t-navbar-menu"><div><div><table class="t-nv-begin" cellpadding="0" style="">
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="noreturn.html" title="cpp/language/attributes/noreturn"><span class="t-lines"><span>noreturn‎</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="carries_dependency.html" title="cpp/language/attributes/carries dependency"><span class="t-lines"><span>carries_dependency</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx11">(C++11)</span></span></span></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="deprecated.html" title="cpp/language/attributes/deprecated"><span class="t-lines"><span>deprecated</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx14">(C++14)</span></span></span></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="fallthrough.html" title="cpp/language/attributes/fallthrough"><span class="t-lines"><span>fallthrough</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx17">(C++17)</span></span></span></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="nodiscard.html" title="cpp/language/attributes/nodiscard"><span class="t-lines"><span>nodiscard</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx17">(C++17)</span></span></span></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="maybe_unused.html" title="cpp/language/attributes/maybe unused"><span class="t-lines"><span>maybe_unused</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx17">(C++17)</span></span></span></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="likely.html" title="cpp/language/attributes/likely"><span class="t-lines"><span>likely</span><span>unlikely</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx20">(C++20)</span></span><span><span class="t-mark-rev t-since-cxx20">(C++20)</span></span></span></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="no_unique_address.html" title="cpp/language/attributes/no unique address"><span class="t-lines"><span>no_unique_address</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx20">(C++20)</span></span></span></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><strong class="selflink"><span class="t-lines"><span>expects</span><span>ensures</span><span>assert</span></span></strong></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-cxx20">(C++20)</span></span><span><span class="t-mark-rev t-since-cxx20">(C++20)</span></span><span><span class="t-mark-rev t-since-cxx20">(C++20)</span></span></span></div></div></td></tr>
+<tr class="t-nv"><td colspan="5"><div class="t-nv-ln-table"><div><a href="optimize_for_synchronized.html" title="cpp/language/attributes/optimize for synchronized"><span class="t-lines"><span>optimize_for_synchronized</span></span></a></div><div><span class="t-lines"><span><span class="t-mark-rev t-since-tm-ts t-mark-ts">(TM TS)</span></span></span></div></div></td></tr>
+</table></div><div></div></div></div></div><div class="t-navbar-sep"> </div></div>
+<p>Specifies preconditions, postconditions, and assertions for functions.
+</p>
+<h3><span class="mw-headline" id="Syntax">Syntax</span></h3>
+<table class="t-sdsc-begin">
+
+<tr>
+<td colspan="10" class="t-sdsc-sep">
+</td></tr>
+<tr class="t-sdsc">
+<td> <code><b>[[</b></code> <code><b>expects</b></code> <span class="t-spar">contract-level</span><span class="t-mark">(optional)</span> <code><b>:</b></code> <span class="t-spar">expression</span> <code><b>]]</b></code>
+</td>
+<td> (1)
+</td>
+<td> <span class="t-mark-rev t-since-cxx20">(since C++20)</span>
+</td></tr>
+
+
+
+<tr>
+<td colspan="10" class="t-sdsc-sep">
+</td></tr>
+<tr class="t-sdsc">
+<td> <code><b>[[</b></code> <code><b>ensures</b></code> <span class="t-spar">contract-level</span><span class="t-mark">(optional)</span> <span class="t-spar">identifier</span><span class="t-mark">(optional)</span> <code><b>:</b></code> <span class="t-spar">expression</span> <code><b>]]</b></code>
+</td>
+<td> (2)
+</td>
+<td> <span class="t-mark-rev t-since-cxx20">(since C++20)</span>
+</td></tr>
+
+
+
+<tr>
+<td colspan="10" class="t-sdsc-sep">
+</td></tr>
+<tr class="t-sdsc">
+<td> <code><b>[[</b></code> <code><b>assert</b></code> <span class="t-spar">contract-level</span><span class="t-mark">(optional)</span> <code><b>:</b></code> <span class="t-spar">expression</span> <code><b>]]</b></code>
+</td>
+<td> (3)
+</td>
+<td> <span class="t-mark-rev t-since-cxx20">(since C++20)</span>
+</td></tr>
+
+
+
+<tr>
+<td colspan="10" class="t-sdsc-sep">
+</td></tr></table>
+<table class="t-par-begin">
+
+
+<tr class="t-par">
+<td>  <span class="t-spar">contract-level</span>
+</td>
+<td> -
+</td>
+<td>  one of <code><b>default</b></code>, <code><b>audit</b></code>, or <code><b>axiom</b></code>; the default is <code><b>default</b></code>
+</td></tr>
+<tr class="t-par">
+<td>  <span class="t-spar">identifier</span>
+</td>
+<td> -
+</td>
+<td>  an identifier that is taken to denote the return value of the function; any ambiguity on whether something is a <span class="t-spar">contract-level</span> or an <span class="t-spar">identifier</span> is resolved in favor of it being a <span class="t-spar">contract-level</span>
+</td></tr>
+<tr class="t-par">
+<td>  <span class="t-spar">expression</span>
+</td>
+<td> -
+</td>
+<td>  an expression, <a href="../implicit_cast.html#Contextual_conversions" title="cpp/language/implicit cast" class="mw-redirect">contextually converted to <span class="t-c"><span class="mw-geshi cpp source-cpp"><span class="kw4">bool</span></span></span></a>, that specifies the predicate of the contract; its top-level operator may not be an assignment or comma operator
+</td></tr></table>
+<h3><span class="mw-headline" id="Explanation"> Explanation </span></h3>
+<div class="t-li1"><span class="t-li">1)</span> Defines a <i>precondition</i>, i.e., the function's expectation of its arguments and/or the state of other objects upon entry into the function. This attribute may be applied to the function type in a function declaration. A precondition is checked by evaluating its predicate immediately before starting evaluation of the function body (including the member initializer list of a constructor). Multiple preconditions of the same function are checked in lexical order. </div>
+<div class="t-li1"><span class="t-li">2)</span> Defines a <i>postcondition</i>, i.e., a condition that a function should ensure for the return value and/or the state of objects upon exit from the function. This attribute may be applied to the function type in a function declaration. The <span class="t-spar">identifier</span>, if present, represents the glvalue result or the prvalue result object of the function, as applicable. A postcondition is checked by evaluating its predicate immediately before returning control to the caller of the function (after the lifetime of local variables and temporaries have ended). Multiple postconditions of the same function are checked in lexical order.</div>
+<div class="t-li1"><span class="t-li">3)</span> Defines an <i>assertion</i>, i.e., a condition that should be satisfied where it appears in a function body. This attribute may be applied to a <a href="../statements.html#Expression_statements" title="cpp/language/statements">null statement</a>. An assertion is checked by evaluating its predicate as part of the evaluation of the null statement it applies to.</div>
+<p>The <span class="t-spar">expression</span> in a contract attribute, contextually converted to <span class="t-c"><span class="mw-geshi cpp source-cpp"><span class="kw4">bool</span></span></span>, is called its <i>predicate</i>. Evaluation of the predicate must not have any side effects other than modification of non-volatile objects whose lifetimes begin and end within that evaluation; otherwise the behavior is undefined. If the evaluation of a predicate exits via an exception, <span class="t-lc"><a href="../../error/terminate.html" title="cpp/error/terminate">std::terminate</a></span> is called. 
+</p><p>During constant expression evaluation, only predicates of checked contracts are evaluated. In all other contexts, it is unspecified whether the predicate of a contract that is not checked is evaluated; the behavior is undefined if it would evaluate to <span class="t-c"><span class="mw-geshi cpp source-cpp"><span class="kw2">false</span></span></span>.
+</p>
+<h4><span class="mw-headline" id="Contract_conditions"> Contract conditions </span></h4>
+<p>Preconditions and postconditions are collectively called <i>contract conditions</i>. These attributes may be applied to the function type in a function declaration:
+</p>
+<div dir="ltr" class="mw-geshi" style="text-align: left;"><div class="cpp source-cpp"><pre class="de1"><span class="kw4">int</span> f<span class="br0">(</span><span class="kw4">int</span> i<span class="br0">)</span> <span class="br0">[</span><span class="br0">[</span>expects<span class="sy4">:</span> i <span class="sy1">&gt;</span> <span class="nu0">0</span><span class="br0">]</span><span class="br0">]</span> <span class="br0">[</span><span class="br0">[</span>ensures audit x<span class="sy4">:</span> x <span class="sy1">&lt;</span> <span class="nu0">1</span><span class="br0">]</span><span class="br0">]</span><span class="sy4">;</span> 
+ 
+<span class="kw4">int</span> <span class="br0">(</span><span class="sy2">*</span>fp<span class="br0">)</span><span class="br0">(</span><span class="kw4">int</span> i<span class="br0">)</span> <span class="br0">[</span><span class="br0">[</span>expects<span class="sy4">:</span> i <span class="sy1">&gt;</span> <span class="nu0">0</span><span class="br0">]</span><span class="br0">]</span><span class="sy4">;</span> <span class="co1">// error: not a function declaration</span></pre></div></div>
+<p>The first declaration of a function must specify all contract conditions (if any) of the function. Subsequent redeclarations must either specify no contract conditions or the same list of contract conditions; no diagnostic is required if corresponding conditions will always evaluate to the same value. If the same function is declared in two different translation units, the list of contract conditions shall be the same; no diagnostic is required.
+</p><p>Two lists of contract conditions are the same if they contain the same contract conditions in the same order. Two contract conditions are the same if they are the same kind of contract condition and have the same <span class="t-spar">contract-level</span> and the same predicate. Two predicates are the same if they would satisfy the <a href="../definition.html#One_Definition_Rule" title="cpp/language/definition">one-definition rule</a> were they to appear in function definitions, except for the renaming of function and template parameters and return value identifiers (if any).
+</p>
+<div dir="ltr" class="mw-geshi" style="text-align: left;"><div class="cpp source-cpp"><pre class="de1"><span class="kw4">int</span> f<span class="br0">(</span><span class="kw4">int</span> i<span class="br0">)</span> <span class="br0">[</span><span class="br0">[</span>expects<span class="sy4">:</span> i <span class="sy1">&gt;</span> <span class="nu0">0</span><span class="br0">]</span><span class="br0">]</span><span class="sy4">;</span>
+<span class="kw4">int</span> f<span class="br0">(</span><span class="kw4">int</span><span class="br0">)</span><span class="sy4">;</span>                       <span class="co1">// OK, redeclaration</span>
+<span class="kw4">int</span> f<span class="br0">(</span><span class="kw4">int</span> j<span class="br0">)</span> <span class="br0">[</span><span class="br0">[</span>expects<span class="sy4">:</span> j <span class="sy1">&gt;</span> <span class="nu0">0</span><span class="br0">]</span><span class="br0">]</span><span class="sy4">;</span>  <span class="co1">// OK, redeclaration</span>
+<span class="kw4">int</span> f<span class="br0">(</span><span class="kw4">int</span> k<span class="br0">)</span> <span class="br0">[</span><span class="br0">[</span>expects<span class="sy4">:</span> k <span class="sy1">&gt;</span> <span class="nu0">1</span><span class="br0">]</span><span class="br0">]</span><span class="sy4">;</span>  <span class="co1">// ill-formed</span>
+<span class="kw4">int</span> f<span class="br0">(</span><span class="kw4">int</span> l<span class="br0">)</span> <span class="br0">[</span><span class="br0">[</span>expects<span class="sy4">:</span> <span class="nu0">0</span> <span class="sy1">&lt;</span> l<span class="br0">]</span><span class="br0">]</span><span class="sy4">;</span>  <span class="co1">// ill-formed, no diagnostic required</span></pre></div></div>
+<p>If a friend declaration is the first declaration of the function in a translation unit and has a contract condition, that declaration must be a definition and must be the only declaration of the function in the translation unit:
+</p>
+<div dir="ltr" class="mw-geshi" style="text-align: left;"><div class="cpp source-cpp"><pre class="de1"><span class="kw1">struct</span> C <span class="br0">{</span>
+   <span class="kw4">bool</span> ok<span class="br0">(</span><span class="br0">)</span> <span class="kw4">const</span><span class="sy4">;</span>
+   <span class="kw1">friend</span> <span class="kw4">void</span> f<span class="br0">(</span><span class="kw4">const</span> C<span class="sy3">&amp;</span> c<span class="br0">)</span> <span class="br0">[</span><span class="br0">[</span>ensures<span class="sy4">:</span> c.<span class="me1">ok</span><span class="br0">(</span><span class="br0">)</span><span class="br0">]</span><span class="br0">]</span><span class="sy4">;</span> <span class="co1">// error, not a definition</span>
+   <span class="kw1">friend</span> <span class="kw4">void</span> g<span class="br0">(</span>C c<span class="br0">)</span> <span class="br0">[</span><span class="br0">[</span>expects<span class="sy4">:</span> c.<span class="me1">ok</span><span class="br0">(</span><span class="br0">)</span><span class="br0">]</span><span class="br0">]</span> <span class="br0">{</span> <span class="br0">}</span> <span class="co1">// OK</span>
+<span class="br0">}</span><span class="sy4">;</span>
+<span class="kw4">void</span> g<span class="br0">(</span>C c<span class="br0">)</span><span class="sy4">;</span> <span class="co1">// error</span></pre></div></div>
+<p>The predicate of a contract condition has the same semantic restrictions as if it appeared as the first <a href="../statements.html#Expression_statements" title="cpp/language/statements">expression statement</a> in the body of the function it applies to.
+</p><p>If a postcondition <a href="../definition.html#ODR-use" title="cpp/language/definition">odr-uses</a> a parameter in its predicate and the function body modifies the value of that parameter directly or indirectly, the behavior is undefined.
+</p>
+<div dir="ltr" class="mw-geshi" style="text-align: left;"><div class="cpp source-cpp"><pre class="de1"><span class="kw4">int</span> f<span class="br0">(</span><span class="kw4">int</span> x<span class="br0">)</span> <span class="br0">[</span><span class="br0">[</span>ensures r<span class="sy4">:</span> r <span class="sy1">==</span> x<span class="br0">]</span><span class="br0">]</span>
+<span class="br0">{</span>
+  <span class="kw1">return</span> <span class="sy2">++</span>x<span class="sy4">;</span> <span class="co1">// undefined behavior</span>
+<span class="br0">}</span>
+<span class="kw4">int</span> g<span class="br0">(</span><span class="kw4">int</span><span class="sy2">*</span> p<span class="br0">)</span> <span class="br0">[</span><span class="br0">[</span>ensures<span class="sy4">:</span> p <span class="sy3">!</span><span class="sy1">=</span> nullptr<span class="br0">]</span><span class="br0">]</span>
+<span class="br0">{</span>
+  <span class="sy2">*</span>p <span class="sy1">=</span> <span class="nu0">42</span><span class="sy4">;</span> <span class="co1">// OK, p is not modified</span>
+<span class="br0">}</span>
+ 
+<span class="kw4">bool</span> meow<span class="br0">(</span><span class="kw4">const</span> <span class="kw4">int</span><span class="sy3">&amp;</span><span class="br0">)</span> <span class="br0">{</span> <span class="kw1">return</span> <span class="kw2">true</span><span class="sy4">;</span> <span class="br0">}</span>
+ 
+<span class="kw4">void</span> h<span class="br0">(</span><span class="kw4">int</span> x<span class="br0">)</span> <span class="br0">[</span><span class="br0">[</span>ensures<span class="sy4">:</span> meow<span class="br0">(</span>x<span class="br0">)</span><span class="br0">]</span><span class="br0">]</span> 
+<span class="br0">{</span>
+  <span class="sy2">++</span>x<span class="sy4">;</span>  <span class="co1">// undefined behavior</span>
+<span class="br0">}</span>
+ 
+<span class="kw4">void</span> i<span class="br0">(</span><span class="kw4">int</span><span class="sy3">&amp;</span> x<span class="br0">)</span> <span class="br0">[</span><span class="br0">[</span>ensures<span class="sy4">:</span> meow<span class="br0">(</span>x<span class="br0">)</span><span class="br0">]</span><span class="br0">]</span>
+<span class="br0">{</span>
+  <span class="sy2">++</span>x<span class="sy4">;</span>  <span class="co1">// OK; the "value" of a reference is its referent and cannot be modified</span>
+<span class="br0">}</span></pre></div></div>
+<p>For templated functions with deduced return types, the return value may be named in a postcondition without additional restrictions (except that the name of the return value is treated as having a <a href="../dependent_name.html#Type-dependent_expressions" title="cpp/language/dependent name">dependent type</a>). For the non-templated functions with deduced return types, naming the return value is prohibited in declarations (but allowed in the definitions):
+</p>
+<div dir="ltr" class="mw-geshi" style="text-align: left;"><div class="cpp source-cpp"><pre class="de1"><span class="kw4">auto</span> h<span class="br0">(</span><span class="kw4">int</span> x<span class="br0">)</span> <span class="br0">[</span><span class="br0">[</span>ensures res<span class="sy4">:</span> <span class="kw2">true</span><span class="br0">]</span><span class="br0">]</span><span class="sy4">;</span> <span class="co1">// error: return value with deduced type</span>
+                                     <span class="co1">// on a non-template function declaration</span></pre></div></div>
+<h4><span class="mw-headline" id="Build_level_and_violation_handling"> Build level and violation handling </span></h4>
+<p>A program may be translated with one of three <i>build levels</i>:
+</p>
+<ul><li> <i>off</i>: no contract checking is performed.
+</li><li> <i>default</i> (default if no build level is selected): checking is performed for contracts whose <span class="t-spar">contract-level</span> is <code><b>default</b></code>.
+</li><li> <i>audit</i>: checking is performed for contracts whose <span class="t-spar">contract-level</span> is <code><b>default</b></code> or <code><b>audit</b></code>.
+</li></ul>
+<p>The mechanism for selecting the build level is implementation-defined. Combining translation units that were translated at different build levels is conditionally-supported.
+</p><p>The <i>violation handler</i> for a program is a function of type <span class="t-c"><span class="mw-geshi cpp source-cpp"><span class="kw4">void</span> <span class="br0">(</span><span class="kw4">const</span> <a href="../../error/contract_violation.html"><span class="kw2748">std::<span class="me2">contract_violation</span></span></a> <span class="sy3">&amp;</span><span class="br0">)</span></span></span> (optionally <span class="t-c"><span class="mw-geshi cpp source-cpp"><span class="kw1">noexcept</span></span></span>), specified in an implementation-defined manner. It is invoked when the predicate of a checked contract evaluates to <span class="t-c"><span class="mw-geshi cpp source-cpp"><span class="kw2">false</span></span></span>.
+</p>
+<ul><li> If a precondition is violated, the source location reflected in the <span class="t-lc">std::contract_violation</span> argument is implementation-defined.
+</li><li> If a postcondition is violated, the source location reflected in the <span class="t-lc">std::contract_violation</span> argument is the source location of the function definition.
+</li><li> If an assertion is violated, the source location reflected in the <span class="t-lc">std::contract_violation</span> argument is the source location of the statement to which the assertion is applied.
+</li></ul>
+<p>The value of the <span class="t-lc">std::contract_violation</span> argument passed to the violation handler is otherwise implementation-defined.
+</p><p>If a violation handler exits by throwing an exception and a contract is violated on a call to a function with a non-throwing exception specification, <span class="t-lc"><a href="../../error/terminate.html" title="cpp/error/terminate">std::terminate</a></span> is called:
+</p>
+<div dir="ltr" class="mw-geshi" style="text-align: left;"><div class="cpp source-cpp"><pre class="de1"> 
+<span class="kw4">void</span> f<span class="br0">(</span><span class="kw4">int</span> x<span class="br0">)</span> <span class="kw1">noexcept</span> <span class="br0">[</span><span class="br0">[</span>expects<span class="sy4">:</span> x <span class="sy1">&gt;</span> <span class="nu0">0</span><span class="br0">]</span><span class="br0">]</span><span class="sy4">;</span>
+<span class="kw4">void</span> g<span class="br0">(</span><span class="br0">)</span> <span class="br0">{</span>
+    f<span class="br0">(</span><span class="nu0">0</span><span class="br0">)</span><span class="sy4">;</span> <span class="co1">// terminate if the violation handler throws</span>
+<span class="br0">}</span></pre></div></div>
+<p>A program may be translated with one of two <i>violation continuation modes</i>:
+</p>
+<ul><li> <i>off</i> (default if no continuation mode is selected): after the execution of the violation handler completes, <span class="t-lc"><a href="../../error/terminate.html" title="cpp/error/terminate">std::terminate</a></span> is called;
+</li><li> <i>on</i>: after the execution of the violation handler completes, execution continues normally.
+</li></ul>
+<p>Implementations are encouraged to not provide any programmatic way to query, set, or modify the build level or to set or modify the violation handler.
+</p>
+<!-- 
+NewPP limit report
+Preprocessor visited node count: 3109/1000000
+Preprocessor generated node count: 5848/1000000
+Post‐expand include size: 101519/2097152 bytes
+Template argument size: 19463/2097152 bytes
+Highest expansion depth: 16/40
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key mwiki1-mwiki_en_:pcache:idhash:17872-0!*!0!!en!*!* and timestamp 20190226222105 -->
+</div>                    <!-- /bodycontent -->
+                                        <!-- printfooter -->
+                    <div class="printfooter">
+                    Retrieved from "<a href="https://en.cppreference.com/mwiki/index.php?title=cpp/language/attributes/contract&amp;oldid=109537">https://en.cppreference.com/mwiki/index.php?title=cpp/language/attributes/contract&amp;oldid=109537</a>"                    </div>
+                    <!-- /printfooter -->
+                                                            <!-- catlinks -->
+                    <!-- /catlinks -->
+                                                            <div class="visualClear"></div>
+                    <!-- debughtml -->
+                                        <!-- /debughtml -->
+                </div>
+                <!-- /bodyContent -->
+            </div>
+        </div>
+        <!-- /content -->
+        <!-- footer -->
+        <!-- /footer -->
+        <script>if(window.mw){
+mw.loader.state({"site":"loading","user":"missing","user.groups":"ready"});
+}</script>
+<script src="../../../../common/skin_scripts.js"></script>
+<script>if(window.mw){
+mw.loader.load(["mediawiki.action.view.postEdit","mediawiki.user","mediawiki.page.ready","mediawiki.searchSuggest","mediawiki.hidpi","ext.gadget.ColiruCompiler","ext.gadget.MathJax"], null, true);
+}</script>
+<script src="../../../../common/site_scripts.js"></script>
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-2828341-1']);
+_gaq.push(['_setDomainName', 'cppreference.com']);
+_gaq.push(['_trackPageview']);
+</script><!-- Served in 0.037 secs. -->
+	</body>
+<!-- Cached 20190226222225 -->
+</html>

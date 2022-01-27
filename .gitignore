@@ -1,0 +1,7 @@
+*.swp
+*.swn
+*.swo
+.DS_Store
+node_modules/
+password.py
+tmp/submissions/

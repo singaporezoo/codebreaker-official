@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %} {{contestinfo.contestName}} {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+
+<br>
+
+<div class="table-responsive container-fliud px-5">
+	
+	<p class="mb-0">
+		<h1> {{contestinfo.contestName}} Scoreboard </h1>
+		<b> <a href="/contest/{{contestinfo.contestId}}"> Back To Contest </a> </b>
+	</p>
+	
+	<div style="height: 100%; width: 100%; overflow: auto; overflow-y: hidden;" id="doublescroll">
+	<table class="table table-bordered table-sm text-center" id="myTable">
+		<thead>
+			<tr>
+				<th scope="col">Rank</th>
+				<th scope="col">Username</th>
+				
+	
+				{% for problem in problemNames %}
+					<th scope="col"> <a href="/problem/{{problem}}"> {{problem}} </a> </th>
+				{% endfor %}
+				<th scope="col">Total Score</th>
+				<th scope="col">Status</th>
+			</tr>
+		</thead>
+			
+		<tbody>
+			{% for user in participantInfo %}
+			<tr
+				{% if "sameuser" in user %}
+					class="own-row"	
+				{% endif %}
+			>
+				<th scope="row"> {{user.rank}} </th>
+				<td scope="row"> <b> <a href="/profile/{{user.username}}"> {{user.username}} </a> </b>  </td>
+				
+	
+				{% for problem in problemNames %}
+				<td scope="col"> {{scores[user.username+"+"+problem]}} </td>
+				{% endfor %}
+				<td> {{user.totalScore}} </td>
+				<td> {{user.status}} </td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	</div>
+	<script>
+		
+	function DoubleScroll(element) {
+			    var scrollbar = document.createElement('div');
+			    scrollbar.appendChild(document.createElement('div'));
+			    scrollbar.style.overflow = 'auto';
+			    scrollbar.style.overflowY = 'hidden';
+			    scrollbar.firstChild.style.width = element.scrollWidth+'px';
+			    scrollbar.firstChild.style.paddingTop = '1px';
+			    scrollbar.firstChild.appendChild(document.createTextNode('\xA0'));
+			    scrollbar.onscroll = function() {
+				          element.scrollLeft = scrollbar.scrollLeft;
+				        };
+			    element.onscroll = function() {
+				            scrollbar.scrollLeft = element.scrollLeft;
+				        };
+			    element.parentNode.insertBefore(scrollbar, element);
+		}
+
+	DoubleScroll(document.getElementById('doublescroll'));
+	</script>
+</div>
+
+{% endblock %}
+
+
+
+

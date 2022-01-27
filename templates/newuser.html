@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %} Welcome! {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+
+<br>
+
+<div class="container">
+	<h1>Welcome to Codebreaker!</h1>
+	<p>But... we still don't know who you are. Please fill this form to register an account for <b>{{userinfo.email}}</b>.</p>
+	
+	<hr>
+	
+	<form id = "newuserform" action = "" method = "post" class="form-group">
+	
+		<label for="username"><b>Username</b> (alphanumeric only)</label>
+		{{form.username(class = "newuserinput", type="text", placeholder="Enter Username", required='required', pattern="[a-zA-Z0-9]+")}}
+
+		<label for="name"><b>Full Name</b></label>
+		{{form.name(class = "newuserinput", type="text", placeholder="Enter Full Name", value=userinfo['fullname'], required='required')}}
+
+		<label for="school"><b>School</b></label>
+		{{form.school(class = "newuserinput", type="text", placeholder="Enter School", value=userinfo['school'], required='required')}}
+
+		<br>
+
+		<hr>
+		
+		<p>By creating an account you agree to our <a href="/credits">Terms & Privacy Policy</a>.</p>
+
+		{{form.submit(type="submit", class="btn btn-primary w-100")}}
+
+	</form>
+</div>
+<br>
+<div class="container">
+	<p>Note: you cannot change your username once you submit this form. As the admins may need to check with your school's teacher, <b>please provide your real name and school.</b></p>
+	<p>Your account will be disabled at first, but an admin will activate your account within a few days. If your account is not activated, you may contact us at <a href="mailto:singaporezoo090@gmail.com">singaporezoo090@gmail.com</a>.</p>
+</div>
+
+{% endblock %}
+
+

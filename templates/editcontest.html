@@ -1,0 +1,270 @@
+{% extends "admin_base.html" %}
+{% block title %} Edit Contest {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <ul class=flashes>
+  {% for message in messages %}
+    <li>{{ message }}</li>
+  {% endfor %}
+  </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+
+<br>
+
+<link rel='stylesheet' href={{url_for('static',filename='css/editcontest.css')}} />
+
+<div class="container">
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{category}} alert-dismissible fade show mt-4" role="alert">
+                        {{message}}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+  <h6> Editing contest: <b> <a id='contestIdRef' href={{'/contest/' + info['contestId']}}> {{info["contestId"]}} </a> </b> </h6>
+    <br>
+    <h2>Contest Details</h2>
+  <form id="updatecontestform" action="" method="post" class="form-group">
+
+        <div class = "row">
+        <div class="input-group mb-3 col">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Contest Name</span>
+        </div>
+            {{form.contest_name(type="text", placeholder="Name", value=info['contestName'], class="form-control")}}
+        </div>
+        <div class="input-group mb-3 col">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Duration (Minutes)</span>
+        </div>
+          {{form.contest_duration(type="text", placeholder="Duration", value=info['duration'], class="form-control")}}
+        </div>
+        </div>
+
+	<div class = "row">
+        <div class="input-group mb-3 col">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Start Time</span>
+        </div>
+            {{form.contest_start(type="text", placeholder="Start", value=info['startTime'], class="form-control")}}
+        </div>
+        <div class="input-group mb-3 col">
+        <div class="input-group-prepend">
+            <span class="input-group-text">End Time</span>
+        </div>
+            {{form.contest_end(type="text", placeholder="End", value=info['endTime'], class="form-control")}}
+        </div>
+	<p hidden id="descstore">{{info['description']}}</p>
+	</div>
+
+	<div class = "row">
+        <div class="input-group mb-6 col">
+        <div class="input-group-prepend">
+            <span class="input-group-text">Editorial Link</span>
+        </div>
+            {{form.editorial(type="text", placeholder="Link", value=info['editorial'], class="form-control")}}
+        </div>
+        </div>
+	<br>
+
+    <p> End Time should be in YYYY-MM-DD HH:MM:SS format. If the contest doesn't end, set it as "Unlimited" without the quotes. For contest duration, if you do not wish to set a contest duration, set the value to 0.</p> 
+
+    <h4>Contest Description</h4>
+    {{form.contest_description(type="text", placeholder = "Description", class="form-control")}}
+    <br>
+
+    <h4>Contest Mode Options</h4>
+    <div class="row">
+    <div class="input-group mb-3 col">
+    <div class="input-group-prepend">
+	<span class="input-group-text">Sub Limit</span>
+    </div>
+	{{form.contest_sub_limit(type="text", placeholder = "Sub Limit", value=info['subLimit'], class="form-control")}}
+    </div>
+    <div class="input-group mb-3 col">
+    <div class="input-group-prepend">
+	<span class="input-group-text">Sub Delay (Seconds)</span>
+    </div>
+	{{form.contest_sub_delay(type="text", placeholder = "Sub Delay", value=info['subDelay'], class="form-control")}}
+    </div>
+    </div>
+    These options will only be turned on in contest mode. Submission limit can be -1 if you do not want a limit. Submission delay has to be at least 5s.
+    <br><br>
+    <h4>Visibility</h4>
+    {{form.contest_public(type="checkbox", checked=info['public'])}}
+    Public
+    <br>
+    {{form.contest_scoreboardpublic(type="checkbox", checked=info['publicScoreboard'])}}
+    Public Scoreboard
+    <br>
+    {{form.editorial_visible(type="checkbox", checked=info['editorialVisible'])}}
+    Visible Editorial
+    <br>
+    <br>
+    <input type="hidden" name="form_name" value="contest_info">
+        {{form.submit(type="submit", class="btn btn-secondary")}}
+  </form>
+
+  <br>
+  <br>
+
+  <div>
+    <p> You may generate a scoreboard with subtask stitching and last score change times. Please do not create a new scoreboard if the download button is already there, unless you plan to update it.</p>
+    {%if scoreboard %}
+    <form action="" method="post" class="form-group">
+      <input type="hidden" name="form_name" value="download_scoreboard">
+      <input type="submit" value="Download Scoreboard" class="btn btn-secondary">
+    </form>
+    <br>
+    <br>
+    {%endif%}
+    <form action="" method="post" class="form-group">
+      <input type="hidden" name="form_name" value="generate_scoreboard">
+      <input type="submit" value="Create Scoreboard" class="btn btn-secondary">
+    </form>
+    <br>
+    <br>
+  </div>
+
+  <hr class="hr-text" data-content="">
+
+  <div class="row">
+  
+  <div class="col-6 border-right container">
+    <h4> Manage Problems </h4> <br>
+  <form autocomplete="off" action="" method="post" class="form-group">
+    <div class="autocomplete input-group mb-2">
+        <input id="problemIdInput" type="text" name="problem_name" placeholder="Problem ID" class="form-control mr-1">
+        <input type="hidden" name="form_name" value="add_problem">
+        <input type="submit" value="Add Problem" class="btn btn-secondary">
+    </div>
+  </form>
+  <form action="" method="post" class="form-group">
+    <div class="input-group">
+    <select type="select" name="problem_name" placeholder="Problem ID" class="form-control mr-1">
+      {% for problem in info['problems']  %}
+         <option value={{problem}}>{{problem}}</option>
+      {% endfor %}
+    </select>
+        <input type="hidden" name="form_name" value="remove_problem">
+        <input type="submit" value="Remove Problem" class="btn btn-secondary">
+    </div>
+  </form>
+  
+  <br>
+  <table  class="draggable table table-sm table-bordered" id='tabledata'>
+    <tbody>
+    {% for problem in info['problems']  %}
+    <tr class="draggable" draggable='true' ondragstart='start()' ondragover='dragover()'>
+      <td class="draggable"> <b> <a draggable="false" href="{{'/problem/' + problem}}">{{problem}}</a> </b> </td>
+    </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <style>
+  table.draggable{
+    border-collapse: collapse;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+  td.draggable,tr.draggable{
+    border-collapse: collapse;
+    cursor: all-scroll;
+  }
+  </style>
+  <button class='btn btn-secondary' onClick = 'update()'>Save</button>
+  <p> PSA: NEW UPDATE!! YOU CAN DRAG PROBLEMS!!! (Please Save)</p>
+
+  <form action="" method="post" class="form-group">
+    <input type="hidden" name="form_name" value="add_link">
+    <input type="submit" value="Add Contest ID" class="btn btn-secondary">
+  </form>
+  <p> Links every problem in this contest to this contest
+  <br>
+  Please add only if this is the source, or the timed practice for the source </p>
+
+  <form action="" method="post" class="form-group">
+	  <input type="hidden" name="form_name" value="add_editorial">
+	  <input type="submit" value="Add Editorial" class="btn btn-secondary">
+  </form>
+  <p> Adds the editorial to every problem in this contest, and makes the editorial visible in the contests </p>
+
+  </div>
+
+  <div class="col-6 container">
+  <h4> Manage Users </h4>
+  <br>
+  <form autocomplete="off" action="" method="post" class="form-group">
+    <div class="autocomplete input-group mb-2">
+    <input id="userIdInput" type="text" name="username" placeholder="User ID" class="form-control mr-1">
+        <input type="hidden" name="form_name" value="add_user">
+        <input type="submit" value="Add User" class="btn btn-secondary">
+    </div>
+    </form>
+    <form action="" method="post" class="form-group">
+    <div class="input-group mb-2">
+    <select type="select" name="username" placeholder="User ID" class="form-control mr-1">
+      {% for user in info['users']  %}
+         <option value={{user}}>{{user}}</option>
+      {% endfor %}
+    </select>
+        <input type="hidden" name="form_name" value="remove_user">
+        <input type="submit" value="Remove User" class="btn btn-secondary">
+    </div>
+    </form>
+  
+    <form action="" method="post" class="form-group">
+    <div class="input-group">
+    <select type="select" name="username" placeholder="User ID" class="form-control mr-1">
+      <option value="ALLUSERS">ALLUSERS</option>
+      {% for user in info['users']  %}
+         <option value={{user}}>{{user}}</option>
+      {% endfor %}
+    </select>
+        <input type="hidden" name="form_name" value="freeze_user">
+        <input type="submit" value="Freeze User's Score" class="btn btn-secondary">
+    </div>
+    </form>
+
+  <br>
+
+  <table class="table table-sm table-bordered">
+    <tbody>
+    {% for user  in info['users']  %}
+    <tr>
+      <td> {{user}} </td>
+      <td> {{"Invited" if info['users'][user] == "0" else "Started/Completed"}}</td>
+    </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  </div>
+  </div>
+  <script src={{url_for('static',filename='js/editcontest.js')}}></script>
+  <script>
+    var textarea = document.getElementById('contest_description');
+    var descstore = document.getElementById('descstore');
+    textarea.innerHTML = descstore.innerHTML;
+    var problems = {{problem_names | tojson}};
+    autocomplete(document.getElementById("problemIdInput"), problems);
+    var usernames = {{usernames | tojson}};
+    autocomplete(document.getElementById("userIdInput"), usernames);
+  </script>
+</div>
+{% endblock %}

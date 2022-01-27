@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %} {{contestgroupinfo.groupName}} {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+
+<br>
+
+<div class="container">
+	
+	<h1> {{contestgroupinfo.groupName}} </h1>
+
+	{% if userinfo['role']=='admin' or userinfo['role'] == 'superadmin' %}
+		<a href="/admin/editgroup/{{contestgroupinfo['groupId']}}">Edit Contest Group</a>
+		<br><br>
+	{% endif %}
+
+	<h6 style="margin: -2px"> Contest Group Description </h6>
+	<div class="card-body" style="white-space:pre-wrap; margin-bottom: -10px;"> {{contestgroupinfo.description}}
+	</div>
+
+	{% if contestsinfo|length != 0 %}	
+
+	<h6> <b> Contests </b> </h6>
+	<table class="table table-hover" id="myTable">
+		<thead class="thead-dark">
+			<tr>
+				<th scope="col">Contest Name</th>
+				<th scope="col">Your Score</th>
+				<th scope="col">Duration</th>
+			</tr>
+		</thead>
+			
+		<tbody>
+			{% for contest in contestsinfo %}
+				<tr>
+					<td><a href="{{url_for('contest',contestId=contest.contestId)}}">{{contest.contestName}}</a></td>
+					{% if contest.userscore != None %}
+					<td>{{contest.userscore}}/{{contest.totalscore}}</td>
+					{% else %}
+					<td>Unattempted</td>
+					{%endif%}
+					<td>{{contest.duration if contest.duration != 0 else None}}</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+
+	{% endif %}
+
+	{% if groupsinfo|length != 0 %}
+
+	<h6> <b> Contests Groups</b> </h6>
+	<table class="table table-hover" id="myTable">
+		<thead class="thead-dark">
+			<tr>
+				<th scope="col">Contest Group Name</th>
+			</tr>
+		</thead>
+			
+		<tbody>
+			{% for group in groupsinfo %}
+				<tr>
+					<td><a href="{{url_for('contestgroup',groupId=group.groupId)}}">{{group.groupName}}</a></td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	
+	{% endif %}
+</div>
+
+{% endblock %}
+
+
+
+

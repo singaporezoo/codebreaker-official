@@ -1,0 +1,122 @@
+{% extends "admin_base.html" %}
+{% block title %} Users List {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+
+<br>
+
+<div class="container">
+	<h1> Edit Users </h1>
+
+	<input type="text" id="myInput" onkeyup="myFunction()" class="form-control mb-3" placeholder="Search for users..." title="Type in a name">
+
+	<table class="table table-sm table-hover" id="myTable">
+		<thead class="sortable thead-dark">
+			<tr>
+				<th scope="col">Username</th>
+				<th scope="col">Full Name</th>
+				<th scope="col">Role</th>
+				<th scope="col">School</th>
+			</tr>
+			</thead>
+			
+			<tbody>
+
+			{% for user in allusersinfo%}
+				<tr>
+				<td scope="row"><a href="/profile/{{user.username}}">{{user.username}}</a></td>
+
+				<td>{{user.fullname}}</td>
+
+				{% if userinfo.role == 'superadmin' and user.role == 'admin' %}
+				<td>
+				<select onfocus="this.oldvalue=this.value;"onchange="updateRole(this);this.oldvalue=this.value;">
+					<option value="admin">admin</option>
+					<option value="disabled">disabled</option>
+					<option value="locked">locked</option>
+					<option value="member">member</option>
+				</select>
+				</td>
+				{% elif user.role == "admin" or user.role == "superadmin" %}
+				<td><b>{{user.role}}</b></td>
+				{% elif user.role=="member"%}
+				<td>
+				<select onfocus="this.oldvalue=this.value;"onchange="updateRole(this);this.oldvalue=this.value;">
+					<option value="member">member</option>
+					<option value="admin">admin</option>
+					<option value="disabled">disabled</option>
+					<option value="locked">locked</option>
+				</select>
+				</td>
+				{% elif user.role=="disabled"%}
+				<td>
+				<select onfocus="this.oldvalue=this.value;"onchange="updateRole(this);this.oldvalue=this.value;">
+					<option value="disabled">disabled</option>
+					<option value="admin">admin</option>
+					<option value="locked">locked</option>
+					<option value="member">member</option>
+				</select>
+				</td>
+				{%else%}
+				<td>
+				<select onfocus="this.oldvalue=this.value;"onchange="updateRole(this);this.oldvalue=this.value;">
+					<option value="locked">locked</option>
+					<option value="admin">admin</option>
+					<option value="disabled">disabled</option>
+					<option value="member">member</option>
+				</select>
+				</td>
+
+				{%endif%}
+				
+				<td>{{user.school}}</td>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1rjquery.min.js"></script>
+	<script src={{url_for('static',filename='js/editusers.js')}}> </script>
+	<script>
+	function updateRole(item){
+		//console.log(docClient)
+		value = item.options[item.selectedIndex].value
+		//oldvalue = item.oldvalue
+		//console.log({'value':value,'oldvalue':oldvalue})i
+		username = item.parentElement.parentElement.children[0].children[0].text
+		var upd = window.confirm("Are you sure you want to update " + username + "'s role to " + value + "?")
+		if (upd){
+			params = {
+				'username':username,
+				'newrole':value
+			}
+			//console.log(params)
+			$.post('/admin/edituserrole',params).done((response) => {
+				if (response.status !== 200){
+					alert(response.error)
+				}
+			})	
+		}
+		else{
+			item.value = item.oldvalue
+		}
+	}
+
+	</script>
+{% endblock %}
+
+
+
+
+
+

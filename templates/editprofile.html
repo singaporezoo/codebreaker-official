@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %} Edit Profile {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+
+<br>
+
+<div class="container">
+	<h1>Edit Profile</h1>
+	
+	<hr>
+	
+	<form id = "editprofileform" action = "" method = "post" class="form-group">	
+
+		<label for="name"><b>Full Name</b></label>
+		{{form.name(class = "newuserinput", type="text", placeholder="Enter Full Name", required='required', value=userinfo.fullname)}}
+
+		<label for="school"><b>School</b></label>
+		{{form.school(class = "newuserinput", type="text", placeholder="Enter School", required='required', value=userinfo.school)}}
+
+		<label for="theme"><b>Theme</b></label>
+		{{form.theme(type="select", class="form-control")}}
+		
+		{% if "custom" in userinfo.theme %}
+			<br>
+			<label style="padding-right:0.5em">Hue:</label>
+			<label id="currentHue">{{userinfo.hue}}</label>
+			<div class="row">
+				<label>0</label>
+				<div class="input-group mb-4 col">
+					<input style="width:100%" name="hue" type="range" min="0" max="360" step="1" value="{{userinfo.hue}}" id="slider" onchange="sliderchange(this.value)">
+				</div>
+				<label>360</label>
+			</div>
+		{% endif %}
+
+		<br>
+		<hr>
+
+		{{form.submit(type="submit", class="btn btn-primary w-100")}}
+
+	</form>
+</div>
+<br>
+
+<script>
+	function sliderchange(val){
+		var slider=document.getElementById("slider");
+		document.querySelector(':root').style.setProperty('--hue',val);
+		document.getElementById("currentHue").textContent=val;
+	}
+	sliderchange(parseInt(document.getElementById("slider").value));
+</script>
+
+
+{% endblock %}
+
+

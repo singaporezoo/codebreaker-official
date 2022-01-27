@@ -1,0 +1,84 @@
+{% extends "admin_base.html" %}
+{% block title %} Edit Announcement {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <ul class=flashes>
+  {% for message in messages %}
+    <li>{{ message }}</li>
+  {% endfor %}
+  </ul>
+  {% endif %}
+{% endwith %}
+{% block content %}
+<br>
+<div class="container">
+	<div class="container">
+		{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				{% for category, message in messages %}
+					<div class="alert alert-{{category}} alert-dismissible fade show mt-4" role="alert">
+						{{message}}
+						<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+	</div>
+	<h6>Editing Announcement: <a href="/announcement/{{info['announceId']}}">{{info['announceId']}}</a></h6>
+	<br>
+	<form id="updateannounceform" action="" method="POST" class="form-group">
+		<div class="input-group mb-3">
+			<div class="input-group-prepend">
+				<span class="input-group-text">Title</span>
+			</div>
+			{{form.announce_name(type='text', placeholder='Announcement Title', value=info['aTitle'], class='form-control')}}
+		</div>
+		<div class="input-group mb-3">
+			<div class="input-group-prepend">
+				<span class="input-group-text">Contest ID</span>
+			</div>
+			{{form.announce_link(type='text', placeholder='Contest ID (Leave blank if none)', value=info['contestLink'], class='form-control')}}
+		</div>
+		<p hidden id="summ">{{info['aSummary']}}</p>
+		<p hidden id="tex">{{info['aText']}}</p>
+		<p>Note that announcements summary should be quite short (about 200 characters?). Write something catchy! (no clickbait)
+		{{form.announce_summary(placeholder='Announcement Summary', class='form-control')}}</p>
+		<p>Note that you are allowed to write announcements using HTML tags, which would work. Please make sure they are closed properly!
+		{{form.announce_text(placeholder='Announcement Text', class='form-control')}}</p>
+		Visible
+		{{form.announce_visible(type='checkbox', id='announcevisible', checked=info['visible'])}}
+		<br>
+		Admin Only
+		{{form.announce_admin_only(type='checkbox', id='adminonly',checked=info['adminOnly'])}}
+		<br>
+		{{form.submit(type='submit', id='submitbutton', class='btn btn-secondary')}}
+	</form>
+</div>
+<script>
+	var summ = document.getElementById("announce_summary")
+	var summvar = document.getElementById("summ");
+	var tex = document.getElementById("announce_text")
+	var texvar = document.getElementById("tex")
+	summ.innerHTML = summvar.innerHTML;
+	tex.innerHTML = texvar.innerHTML;
+</script>
+{% if contest %}
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#submitbutton').on('click',function(){
+			var visible = document.getElementById('announcevisible').checked;
+			var adminonly = document.getElementById('adminonly').checked;
+			if(visible && !adminonly){
+				socket.send('announce');
+			}
+			if(visible && adminonly){
+				socket.send('adminannounce');
+			}
+		});
+	});
+</script>
+{% endif %}
+{% endblock %}

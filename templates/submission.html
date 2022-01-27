@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+{% block title %} Submission {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% block content %}
+
+	<div class="container-fluid">
+		
+		{%if blockpage %}
+		<p> Hi, as there is a contest ongoing that uses this problem, you may not view other users' submissions to the problem.</p>
+		{%else%}
+		<br>
+		
+		<div class="row">
+			<div class="col-md-6">
+					
+					<table class="table table-bordered shadow-sm" style="font-size: 12px" >
+						<tbody>
+							<tr>
+								<th scope="row">Problem</th>
+								<td> <b> <a href="{{url_for('problem', PROBLEM_NAME=problemName)}}"> {{problemName}} </a> </b> </td>
+							</tr>
+							
+							<tr>
+								<th scope="row">User</th>
+								<td> <a href="/profile/{{user}}"> {{user}} </a> </td>
+							</tr>
+
+							<tr>
+                                                                <th scope="row">Submission Time</th>
+                                                                <td> {{submissionTime}} </td>
+                                                        </tr>
+							
+							<tr>
+								<th scope="row">Score</th>
+								<td> {{totalScore}} </td>
+							</tr>
+
+							{% if (probleminfo.fullFeedback and not (contest and hidetime)) or userinfo.role == 'superadmin' or userinfo.username in users %}
+							
+							<tr>
+								<th scope="row">Max Time</th>
+								<td>{{maxTime}} seconds</td>
+							</tr>
+							
+							<tr>
+								<th scope="row">Max Memory</th>
+								<td>{{maxMemory}} MB</td>
+							</tr>
+							{% endif %}
+						</tbody>
+					</table>
+					{% if userinfo != None and user == userinfo['username'] %}
+						<!-- own submission -->
+						{% if probleminfo['problem_type'] != 'Communication' %}
+							<form autocomplete="off" id = "submitCodeForm" action = "" method = "post" class="form-group">
+								<p> {{form.code(class = 'form-control', id = 'editor', maxLength = '50', innerHTML = code)}} </p>
+								<p id="submitButtonParagraph" hidden>  {{form.submit(class="btn btn-primary", onclick="onSubmit()")}} </p>
+							</form>
+							<p id="codestorage" hidden>{{code}}</p>
+							<p>{{message}}</p>
+						{% else %}
+							<form autocomplete="off" id = "submitCommunicationForm" action = "" method = "post" class = "form-group">
+								<p> {{probleminfo.nameA}}.cpp </p>
+								<p> {{form.codeA(class = 'form-control', id = 'editorA', maxLength = '50')}} </p>
+								<p> {{probleminfo.nameB}}.cpp </p>
+								<p> {{form.codeB(class = 'form-control', id = 'editorB', maxLength = '50')}} </p>
+								<p id="submitFilesForm"> {{form.submit(class="btn btn-primary", onclick="onSubmit()")}} </p>
+							</form>
+							<p id="codestorageA" hidden>{{codeA}}</p>
+							<p id="codestorageB" hidden>{{codeB}}</p>
+							<p>{{message}}</p>
+						{% endif %}
+					{% elif userinfo.role == "admin" or userinfo.role == "superadmin" or (userinfo != None and userinfo['problemScores'][problemName] == 100)%}
+						<!-- admin or superadmin or person ac -->
+						{% if code != None %}
+							<textarea id='codebox'>{{code}}</textarea> 
+							<p id="codestorage" hidden>{{code}}</p>
+							<p>{{message}}<p>
+						{% else %}
+							<p> {{probleminfo.nameA}}.cpp </p>
+							<textarea id='codeboxA'>{{codeA}}</textarea>
+							<p id="codestorageA" hidden>{{codeA}}</p>
+							<br>
+							<p> {{probleminfo.nameB}}.cpp </p>
+							<textarea id='codeboxB'>{{codeB}}</textarea>
+							<p id="codestorageB" hidden>{{codeB}}</p>
+							<p>{{mesage}}<p>
+						{% endif %}
+					{% else %}
+						<p id="codestorage" hidden>Owl Get a Life</p>
+					{% endif %}
+			</div>
+			
+			<div class="col-md-6">
+				<div class = "container">	
+					{% for subtask in subtaskDetails %}
+					<div class="card text-white" style="margin-bottom: 12px; margin-right: 12px;">
+						<div class="card-header bg-{{'secondary' if subtask.done == False else ('success' if subtask.verdict=='AC' else ('warning' if subtask.verdict=='PS' else'danger'))}}" data-toggle="collapse" data-target="#subtask{{subtask.number}}" >
+							<h6 style="margin: -2px">Subtask {{subtask.number+1}}: ({{subtask.yourScore}}/{{subtask.maxScore}}) </h6>
+						</div>
+						
+						<div id="subtask{{subtask.number}}" class="collapse">
+							<table class="table table-sm table-striped text-center" style="margin-bottom: 0px; font-size: 14px">
+									
+								<thead>
+									<tr class="text-center">
+										<th class="text-center">Testcase</th>
+										<th class="text-center">Score</th>
+										<th class="text-center">Verdict</th>
+										{% if not contest or not hidetime or userinfo.role == 'superadmin' or userinfo.username in users%}
+										<th class="text-center">Time</th>
+										<th class="text-center">Memory</th>
+										{% endif %}
+									</tr>
+								</thead>
+								
+								<tbody>
+								{% for TC in subtask.testcases %}
+									<tr class="text-center">
+										<td class="text-center">{{loop.index}}</td>
+										<td class="text-center">{{TC.score}}</td>
+										<td class="text-center"> <h6 style="margin: -1px" class="text-center">
+											<span class="text-white text-center badge badge-{{'success' if TC.verdict=="AC" else ('secondary' if (TC.verdict == ":(" or TC.verdict == "N/A" or TC.verdict == "UG") else ('warning' if TC.verdict=="PS" else 'danger'))}}">
+												{{TC.verdict}}
+											</span> 
+										</h6> </td>
+										{% if not contest or not hidetime or userinfo.role == 'superadmin' or userinfo.username in users%}
+										<td class = "text-center">{{TC.time}}{{"s" if TC.time != "N/A"}}</td>
+										<td class = "text-center">{{TC.memory}}{{"MB" if TC.memory != "N/A"}}</td>
+										{% endif %}
+									</tr>
+								{% endfor %}
+								</tbody>
+							</table>				
+						</div>	
+						
+					</div>
+					{% endfor %}
+
+					{% if userinfo != None and user == userinfo['username'] %}
+						{% if probleminfo['problem_type'] != 'Communication' %}
+						<p id="submitButtonParagraph2">{{form.submit(class="btn btn-secondary", onclick="onSubmit()", form="submitCodeForm")}}</p>
+						{% else %}
+						<p id="submitButtonParagraph2">{{form.submit(class="btn btn-secondary", onclick="onSubmit()", form="submitCommunicationForm")}}</p>
+						{% endif %}
+
+					{% endif %}
+					{% if (userinfo.role == "superadmin") or (not contest and userinfo.role == "admin") or (contest and userinfo.username in users) %}
+						<form action="" method="post" class="form-group">
+							<input type="hidden" name="form_name" value="regrade">
+							<input type="submit" value="Regrade" class="btn btn-secondary navbar">
+						</form>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+		{%endif%}
+	</div>
+		
+	{% if toRefresh %}
+	<meta http-equiv="refresh" content="2; URL=/submission/{{subId}}">
+	{% endif %}
+	<script>
+		$(document).ready(function(){
+			$('#submitCodeForm').submit(function(){
+				$('#submitButtonParagraph2').children().prop('disabled', true);
+			});
+			$('#submitCommunicationForm').submit(function(){
+				$('#submitButtonParagraph2').children().prop('disabled', true);
+			});
+		});
+
+		$(window).bind('unload', function(){
+			$('#submitButtonParagraph2').children().prop('disabled', false);
+		});
+		var convert = function(convert){
+			return $("<span />", { html: convert }).text();
+		};
+
+		var codeboxelement = document.getElementById("codebox");
+		if(codeboxelement != null){
+                	var codebox = CodeMirror.fromTextArea(codeboxelement, {
+                        	tabSize: 4,
+				lineNumbers: true,
+				indentWithTabs: true,
+				indentUnit: 4,
+                        	mode: 'text/x-c++src',
+                        	theme: 'monokai',
+				readOnly: true
+                	});
+                	codebox.setSize("100%", 750);
+		}
+		
+		var editorelement = document.getElementById("editor");
+		if(editorelement != null){
+                	var editor = CodeMirror.fromTextArea(editorelement, {
+                        	tabSize: 4,
+				lineNumbers: true,
+				indentWithTabs: true,
+				indentUnit: 4,
+                        	mode: 'text/x-c++src',
+                        	theme: 'monokai',
+                	});
+                	editor.setSize("100%", 750);
+			editor.getDoc().setValue(convert(document.getElementById("codestorage").innerHTML));
+			editor.refresh();
+		}
+		var codeboxelementA = document.getElementById("codeboxA");
+		if(codeboxelementA != null){
+                	var codeboxA = CodeMirror.fromTextArea(codeboxelementA, {
+                        	tabSize: 4,
+				lineNumbers: true,
+				indentWithTabs: true,
+				indentUnit: 4,
+                        	mode: 'text/x-c++src',
+                        	theme: 'monokai',
+				readOnly: true
+                	});
+                	codeboxA.setSize("100%", 750);
+		}
+		
+		var editorelementA = document.getElementById("editorA");
+		if(editorelementA != null){
+                	var editorA = CodeMirror.fromTextArea(editorelementA, {
+                        	tabSize: 4,
+				lineNumbers: true,
+				indentWithTabs: true,
+				indentUnit: 4,
+                        	mode: 'text/x-c++src',
+                        	theme: 'monokai',
+                	});
+                	editorA.setSize("100%", 750);
+			editorA.getDoc().setValue(convert(document.getElementById("codestorageA").innerHTML));
+			editorA.refresh();
+		}
+		var codeboxelementB = document.getElementById("codeboxB");
+		if(codeboxelementB != null){
+                	var codeboxB = CodeMirror.fromTextArea(codeboxelementB, {
+                        	tabSize: 4,
+				lineNumbers: true,
+				indentWithTabs: true,
+				indentUnit: 4,
+                        	mode: 'text/x-c++src',
+                        	theme: 'monokai',
+				readOnly: true
+                	});
+                	codeboxB.setSize("100%", 750);
+		}
+		
+		var editorelementB = document.getElementById("editorB");
+		if(editorelementB != null){
+                	var editorB = CodeMirror.fromTextArea(editorelementB, {
+                        	tabSize: 4,
+				lineNumbers: true,
+				indentWithTabs: true,
+				indentUnit: 4,
+                        	mode: 'text/x-c++src',
+                        	theme: 'monokai',
+                	});
+                	editorB.setSize("100%", 750);
+			editorB.getDoc().setValue(convert(document.getElementById("codestorageB").innerHTML));
+			editorB.refresh();
+		}
+
+
+		var codestorage = document.getElementById("codestorage")
+		if(codestorage != null){
+			innerHTML = 'lol you thought you could copy code';
+		}
+		var codestorageA = document.getElementById("codestorageA")
+		if(codestorageA != null){
+			innerHTML = 'lol you thought you could copy code';
+		}
+		var codestorageB = document.getElementById("codestorageB")
+		if(codestorageB != null){
+			innerHTML = 'lol you thought you could copy code';
+		}
+		
+		function checkCookie(){
+	    		var cookieEnabled = navigator.cookieEnabled;
+			if (!cookieEnabled){ 
+		            document.cookie = "testCookie";
+		            cookieEnabled = document.cooe.indexOf("testcookie")!=-1;
+		        }
+    			return cookieEnabled;
+		}
+		function onSubmit(){
+			document.cookie = "testCookie";
+			swal("Submission Received!", "This may take a few seconds, you'll be redirected shortly", "success");
+		}
+		function refresh(){
+			setTimeout(function(){
+				editor.refresh();
+			}, 100);
+		};
+		//document.getElementById("submitlink").onclick = refresh;
+
+		
+        </script>
+	
+{% endblock %}
+
+
+
+

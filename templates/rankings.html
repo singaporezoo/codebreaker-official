@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %} Rankings {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+<div class="container">
+	<br>
+	<h3> <b> Rankings </b> </h3>
+	<p> We dedicate this feature to an alumnus with a lasting legacy on the IO community who felt this feature would help encourage future generations of students to try more problems </p>
+	<table class="table table-hover" id="myTable">
+		<thead class="thead-dark">
+			<tr>
+				<th scope="col">Rank</th>
+				<th scope="col">Username</th>
+				<th scope="col">Score</th>
+				<th scope="col">Accepted</th>
+				<th scope="col">Partial</th>
+				<th scope="col">Failed</th>
+			</tr>
+			</thead>
+
+			<tbody>
+
+			{% for user in rankings %}
+			<tr
+				{% if user[4] == userinfo.username %}
+				class="own-row"
+				{%endif%}
+			>
+			<th scope=row>{{user[5]}}</th>
+			<td> <a href='/profile/{{user[4]}}'>{{user[4]}}</a> </td>
+			<td> {{user[0]}} </td>
+			<td> {{user[1]}} </td>
+			<td> {{user[2]}} </td>
+			<td> {{user[3]}} </td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+{% endblock %}
+
+

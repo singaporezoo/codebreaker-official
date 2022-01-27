@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %} Begin Contest {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+<br>
+
+<div class = "container">
+	
+	<h1> {{contestinfo.contestName}} </h1>
+	<p style="white-space:pre-wrap;">{{contestinfo.description}}</p>
+
+	<p hidden id="starttime"> {{startTime}} </p>
+
+	<form id = "newuserform" action = "" method = "post" class="form-group">
+		{{form.submit(type="submit", class="btn btn-primary w-100", id="submit")}}
+	</form>
+	
+
+	{% if userinfo.role == 'admin' or userinfo.role == 'superadmin' %}
+		<b> <a href="/contest/{{contestinfo.contestId}}/scoreboard"> To Contest Scoreboard </a> </b> 
+		<b class="ml-2"> <a href="/admin/editcontest/{{contestinfo.contestId}}">Edit Contest</a> </b>
+		<br><br>
+	{% endif %}
+
+	<script>
+		var endTime = document.getElementById("starttime").innerHTML
+                var countDownDate = new Date(endTime).getTime();
+		console.log(new Date().getTime())
+		console.log(countDownDate)
+		function update(){
+			var now = new Date().getTime();
+			var distance = countDownDate - now;
+			var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+			var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+			var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+			var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+			
+			str = "Time to Begin: "
+			if(days != 0) str += days + "d ";
+			if(hours != 0) str += hours + "h ";
+			if(minutes != 0) str += minutes + "m ";
+			if(seconds != 0) str += seconds + "s ";
+			document.getElementById("submit").value = str;
+			document.getElementById("submit").disabled = true;
+			if (distance < 0) {
+				clearInterval(x);
+				document.getElementById("submit").value = "Begin Contest";
+				document.getElementById("submit").disabled = false;
+			}
+		}
+		update()
+		var x = setInterval(update , 1000);
+	</script>
+</div>
+{% endblock %}
+
+

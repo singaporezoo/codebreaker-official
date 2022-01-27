@@ -1,0 +1,302 @@
+{% extends "base.html" %}
+{% block title %} {{probleminfo.title}} {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+	
+	<br>
+	<div class="container-fluid pr-md-5">
+		
+		<!-- This is the part which is the main part (statements, submit code)-->
+		<div class="row">
+			<div class="col-md-8">
+				<div class="container">
+		
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link {{"active" if compileError == "" else ""}}" data-toggle="tab" href="#statement">Statement</a>
+						</li>
+						{%if probleminfo.problem_type == 'Communication'%}
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#submitCommunication" id="submitlink">Submit Code</a>
+						</li>
+
+						{%else %}
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#submitCode" id="submitlink">Submit Code</a>
+						</li>
+						{%endif%}
+						<li class="nav-item">
+							<a class="nav-link" href="/submissions?problem={{probleminfo.problemName}}&username={{userinfo.username}}">My Submissions</a>
+						</li>
+
+						{% if not contest or userinfo['role'] == 'admin' or userinfo['role'] == 'superadmin' %} 
+						<li class="nav-item">
+							<a class="nav-link" href="/submissions?problem={{probleminfo.problemName}}">All Submissions</a>
+						</li>
+						{% endif %}
+						
+						{% if compileError != "" %}
+						<li class="nav-item">
+							<a class="nav-link active" data-toggle="tab" href="#compileError">Compile Errors</a>
+						</li>
+						{% endif %}
+
+						{% if userinfo.role == "admin" or userinfo.role == "superadmin" %}
+						<li class="nav-item">
+							<a class="nav-link" href="/admin/editproblem/{{probleminfo.problemName}}">Edit</a>
+						</li>
+						{% endif %}
+
+					</ul>
+						<!-- Tab panes -->
+						<div class="tab-content">
+							<div id="statement" class="container tab-pane {{"active" if compileError == "" else "fade"}}"><br>
+								{% if not probleminfo.EE %}
+								<h3> <b> {{probleminfo.title}}</b> </h3>
+								{% else %}
+								<h3> <b> {{probleminfo.title}} (EE) </b> </h3>
+								{% endif %}
+								{{statementHTML | safe}}
+							</div>
+
+							<div id="submitCode" class="container tab-pane fade"><br>
+								<h3> <b> Submitting to '{{probleminfo.title}}' </b> </h3> <br>
+								{% if not userinfo %}
+								<p> <a href="/login"> You're not logged in! Click here to login </a> </p>
+								{% elif userinfo.role == 'disabled' or userinfo.role == 'locked'%}
+								<p> Your account is unfortunately disabled :( <br> If you just registered, please wait for an admin to enable your account. <p>
+								{% else %}
+								<form autocomplete="off" id = "submitCodeForm" action = "" method = "post" class="form-group">
+									<p> {{form.code(class = 'form-control', id = 'editor', maxLength = '50')}} </p>
+									{% if probleminfo.problemName != 'helloworld2' %}
+									<p id="submitButtonParagraph">  {{form.submit(class="btn btn-primary", onclick="onSubmit()")}} </p>
+									{% endif %}
+								</form>
+	                                                        {% endif %}
+
+							</div>
+
+							<div id='submitCommunication' class="container tab-pane fade"><br>
+								<h3> <b> Submitting {{probleminfo.nameB}}.cpp to '{{probleminfo.title}}' </b> </h3> <br>
+								{% if not userinfo %}
+								<p> <a href="/login"> You're not logged in! Click here to login </a> </p>
+								{% elif userinfo.role == 'disabled' or userinfo.role == 'locked'%}
+								<p> Your account is unfortunately disabled :( <br> If you just registered, please wait for an admin to enable your account. <p>
+								{% else %}
+								<form autocomplete="off" id = "submitCommunicationForm" action = "" method = "post" class="form-group">
+									<p> {{probleminfo.nameA}}.cpp </p>
+									<p> {{form.codeA(class = 'form-control', id = 'editorA', maxLength = '50')}} </p>
+									<p> {{probleminfo.nameB}}.cpp </p>
+									<p> {{form.codeB(class = 'form-control', id = 'editorB', maxLength = '50')}} </p>
+									<p id="submitFilesForm">  {{form.submit(class="btn btn-primary", onclick="onSubmit()")}} </p>
+								</form>
+	                                                        {% endif %}
+							</div>
+								
+							<div id="compileError" class="container tab-pane {{"fade" if compileError == "" else "active"}}">
+								<br>
+								<h3> <b> Compile Errors </b> </h3>
+								<pre>{{compileError | safe}}</pre>
+							</div>
+					
+						</div>
+					</div>
+			</div>
+			
+			<!-- This is the additional info-->
+			<div class="col-md-4">
+				<div class = "container">
+					
+					<div class="card m-0">
+						<div class="card-body shadow-sm">
+							<b> Time Limit: </b> {{probleminfo.timeLimit}} Seconds <br>
+							<b> Memory Limit: </b> {{probleminfo.memoryLimit}}MB <br>
+							{% if not contest or userinfo.role == 'superadmin' or userinfo.username in users %}
+							<b> No. of ACs: </b> {{probleminfo.noACs}} <br>
+							{% else %}
+							<b> No. of ACs: </b> Hidden <br>
+							{% endif %}
+							<b> Your best score: </b>
+
+                                                        {% if probleminfo.problemName in userinfo.problemScores %}
+                                                                {{userinfo.problemScores[probleminfo.problemName]}}
+                                                        {% else %}
+                                                                0
+                                                        {% endif %}
+
+                                                        <br>
+							<b> Source: </b>
+							{% if probleminfo.author != [""]%}
+								{% if probleminfo.contestLink != "" %}
+								<a href="/contest/{{probleminfo.contestLink}}">{{probleminfo.source}}</a> {{" "}} ({% for author in probleminfo.author %}<a href="/profile/{{author}}"}>{{author}}</a>{{", " if loop.index != probleminfo.author|length}}{% endfor %})
+								{%else%}
+								{{probleminfo.source + " "}} ({% for author in probleminfo.author %}<a href="/profile/{{author}}"}>{{author}}</a>{{", " if loop.index != probleminfo.author|length}}{% endfor %})
+								{%endif%}
+							{%else%}
+								{% if probleminfo.contestLink != "" %}
+								<a href="/contest/{{probleminfo.contestLink}}">{{probleminfo.source}}</a>
+								{%else%}
+								{{probleminfo.source}}
+								{%endif%}
+							{%endif%}
+							{% if editorials|length != 0 and probleminfo.editorialVisible %}
+								<br>
+								<b>Editorial: </b>
+								{% for i in range(editorials|length) %}
+									<a href = {{editorials[i]}}>{{i+1}}</a>
+								{%endfor%}
+							{%endif%}
+							{% if contest and remsubs != -1%}
+								<br>
+								<b> Remaining Submissions: </b> {{remsubs}}
+							{% endif %}
+						</div>
+					</div>
+					
+					
+					<br> 
+					
+					<table class="table table-sm table-striped table-bordered shadow-sm">
+						<thead>
+							<tr class="text-center bg-secondary" style="color:white">
+								<th class="text-center">Subtask</th>
+								<th class="text-center">Score</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for score in probleminfo.subtaskScores %}
+								<tr class="text-center">
+									<td class="text-center">{{loop.index}}</td>
+									<td class="text-center">{{score}}</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+					
+					{% if probleminfo['attachments'] == 1 %}
+					<p>
+					<button type="submit" onclick="window.open('https://codebreaker-attachments.s3-ap-southeast-1.amazonaws.com/{{probleminfo.problemName}}.zip')" class="btn btn-secondary">Download Attachments</button>
+					</p>
+					<!--p> <a href="https://codebreaker-attachments.s3-ap-southeast-1.amazonaws.com/{{probleminfo.problemName}}.zip">Download Attachments</a> </p-->
+					{%endif%}
+
+					{% if (userinfo.role == "superadmin") or (not contest and userinfo.role == "admin") or (contest and userinfo.username in users)%}
+
+        				<form action="" method="post" class="form-group">
+					<div class="input-group mb-2">
+					<select type="select" name="tcin" placeholder="User ID" class="form-control mr-1">
+					{% for i in range(1,1+probleminfo['testcaseCount']) %}
+					<option value={{i}}>{{i}}</option>
+					{%endfor%}
+					</div>
+					<div class="input-group mb-2">
+					</select>
+                				<input type="hidden" name="form_name" value="download_input">
+                				<input type="submit" value="Download Input" class="btn btn-secondary">
+					</div>
+
+					</form>
+        				<form action="" method="post" class="form-group">
+					<div class="input-group">
+					<select type="select" name="tcout" placeholder="User ID" class="form-control mr-1">
+					{% for i in range(1,1+probleminfo['testcaseCount']) %}
+					<option value={{i}}>{{i}}</option>
+					{%endfor%}
+					</div>
+					<div class="input-group">
+					</select>
+                				<input type="hidden" name="form_name" value="download_output">
+                				<input type="submit" value="Download Output" class="btn btn-secondary">
+					</div>
+					</form>
+					{%endif%}
+				</div>
+			</div>
+			
+		</div>
+	</div>
+
+	<script>
+
+		$(document).ready(function(){
+			$('#submitCodeForm').submit(function(){
+				$(this).children('#submitButtonParagraph').children().prop('disabled', true);
+			});
+			$('#submitCommunicationForm').submit(function(){
+				$(this).children('#submitFilesForm').children().prop('disabled', true);
+			});
+		});
+
+		$(window).bind('unload', function(){
+			$('#submitButtonParagraph').children().prop('disabled', false);
+			$('#submitFilesForm').children().prop('disabled', false);
+		});
+		
+		var editorA = CodeMirror.fromTextArea(document.getElementById("editorA"), {
+			tabSize: 4,
+			lineNumbers: true,
+			indentWithTabs: true,
+			indentUnit: 4,
+			mode: 'text/x-c++src',
+			theme: 'monokai',
+		});
+		editorA.setSize("100%", 550);
+		editorA.refresh();
+		var editorB = CodeMirror.fromTextArea(document.getElementById("editorB"), {
+			tabSize: 4,
+			lineNumbers: true,
+			indentWithTabs: true,
+			indentUnit: 4,
+			mode: 'text/x-c++src',
+			theme: 'monokai',
+		});
+		editorB.setSize("100%", 550);
+		editorB.refresh();
+		var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
+			tabSize: 4,
+			lineNumbers: true,
+			indentWithTabs: true,
+			indentUnit: 4,
+			mode: 'text/x-c++src',
+			theme: 'monokai',
+		});
+		editor.setSize("100%", 550);
+		editor.refresh();
+		
+		function checkCookie(){
+	    		var cookieEnabled = navigator.cookieEnabled;
+			if (!cookieEnabled){ 
+		            document.cookie = "testCookie";
+		            cookieEnabled = document.cooe.indexOf("testcookie")!=-1;
+		        }
+    			return cookieEnabled;
+		}
+		function onSubmit(){
+			document.cookie = "testCookie";
+			swal("Submission Received!", "This may take a few seconds, you'll be redirected shortly", "success");
+		}
+		function refresh(){
+			setTimeout(function(){
+				editor.refresh();
+				editorA.refresh();
+				editorB.refresh();
+			}, 100);
+		};
+		document.getElementById("submitlink").onclick = refresh;
+	</script>
+{% endblock %}
+		
+
+
