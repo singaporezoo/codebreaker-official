@@ -387,7 +387,7 @@
 	<br>
 	<h2>Regrade (WARNING: DO NOT INCUR UNNECESSARY COST)</h2>
 
-	{% if userinfo['role'] in ['superadmin'] %}
+	{% if userinfo['role'] in ['admin', 'superadmin'] %}
 	<form action="" method="post" class="form-group" onSubmit="return confirm('Are you sure you want to regrade?');">
 		<input type="hidden" name="form_name" value="regrade_problem">
 		<input type="submit" value="Regrade Submissions" class="btn btn-secondary navbar mb-2">
