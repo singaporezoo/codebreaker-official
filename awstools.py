@@ -681,7 +681,7 @@ def credits_page():
         def getSubmissionId():
                 subId = s3.get_object(Bucket='codebreaker-submission-number',Key=f'submissionNumber.txt')['Body'].read().decode('utf-8')
                 subId = int(subId)
-                subId = 100*round(subId/100)
+                subId = 1000*round(subId/1000)
                 return subId
 
         problems = find_length(problems_table,'problemName')

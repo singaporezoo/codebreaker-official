@@ -141,10 +141,10 @@
 					<td scope="row">
 						<b> <a href="{{url_for('problem', PROBLEM_NAME=info.problemName)}}" class="pl-2">{{info.problemName}}</a> </b>
 					</td>
-					<td> <!--<h6 style="margin: 0px"> but why the frick is there a h6-->
+					<td>
 						<span style = "width: 42px"
 							class="text-white badge badge-{{"success" if info.yourScore==100 else ("danger" if info.yourScore == 0 else ("secondary" if info.yourScore == "N/A" else "warning"))}}"> {{info.yourScore}}
-						</span> <!--</h6>-->	
+						</span>
 						</td>
 						<td>
 						{%if info.tags|length > 0 %}
