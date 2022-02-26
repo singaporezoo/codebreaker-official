@@ -26,7 +26,6 @@
 		{{form.submit(type="submit", class="btn btn-primary w-100", id="submit")}}
 	</form>
 	
-
 	{% if userinfo.role == 'admin' or userinfo.role == 'superadmin' %}
 		<b> <a href="/contest/{{contestinfo.contestId}}/scoreboard"> To Contest Scoreboard </a> </b> 
 		<b class="ml-2"> <a href="/admin/editcontest/{{contestinfo.contestId}}">Edit Contest</a> </b>
@@ -55,8 +54,13 @@
 			document.getElementById("submit").disabled = true;
 			if (distance < 0) {
 				clearInterval(x);
-				document.getElementById("submit").value = "Begin Contest";
-				document.getElementById("submit").disabled = false;
+				var tmp = document.getElementsByClassName("usernameField")
+				if (tmp.length === 0){
+					document.getElementById("submit").value = "Please login to begin contest";
+				}else{
+					document.getElementById("submit").value = "Begin Contest";
+					document.getElementById("submit").disabled = false;
+				}
 			}
 		}
 		update()

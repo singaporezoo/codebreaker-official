@@ -15,11 +15,14 @@ def contestlist():
     
     userInfo = awstools.getCurrentUserInfo()
     
-    if userInfo == None:
-        flash("Please login to view this page", "warning")
-        return redirect("/")
+    #if userInfo == None:
+        #flash("Please login to view this page", "warning")
+        #return redirect("/")
 
-    username = userInfo["username"]
+    if userInfo != None:
+        username = userInfo["username"]
+    else:
+        username = ""
     
     ongoing = []; future = []; past = []; timedPractice = []; collections = [];
     for contestinfo in contests:

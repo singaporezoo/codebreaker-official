@@ -11,9 +11,11 @@ def contestgroup(groupId):
         return redirect(f'/contest/{contestmode.contestId()}')
 
     userInfo = awstools.getCurrentUserInfo()
-    if userInfo == None:
-        flash("Pleas login to view this page!", "warning")
-        return redirect("/")
+    
+    if userInfo != None:
+        username = userInfo["username"]
+    else:
+        username = ""
         
     contestgroupinfo = awstools.getContestGroupInfo(groupId)
     if type(contestgroupinfo) == str:
@@ -22,7 +24,7 @@ def contestgroup(groupId):
     contestsinfo = []
 
     for contest in contestgroupinfo['contests']:
-        contestinfo = awstools.getContestScore(contest,userInfo['username'])
+        contestinfo = awstools.getContestScore(contest,username)
         contestinfo['contestId'] = contest
         if contestinfo['public']:
             contestsinfo.append(contestinfo)

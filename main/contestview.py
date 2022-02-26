@@ -27,16 +27,11 @@ def contest(contestId):
         problems = [P for P in problems if P['analysisVisible']]
     
     userInfo = awstools.getCurrentUserInfo()
-    if userInfo == None:
-        flash("Please login to view this page!", "warning")
-        
-        if contestmode.contest():
-            return redirect('/announcements')
-
-        return redirect("/")
+    if userInfo != None:
+        username = userInfo["username"]
+    else:
+        username = ""
 		
-    username = userInfo["username"]
-    
     # not userInfo["username"] in contestinfo.users
     if contestinfo["public"] == 0 and not username in contestinfo["users"] and userInfo['role'] != 'superadmin' and username not in contestmode.allowedusers():
         flash("Sorry, you've not been invited to this private contest!", "warning")
@@ -73,7 +68,9 @@ def contest(contestId):
             awstools.addParticipation(contestId, username)
             return redirect(f"/contest/{contestId}")
 
-        return render_template("begincontest.html", contest=contestmode.contest(), userinfo=userInfo, contestinfo=contestinfo, form=form, startTime=startTime, users=contestmode.allowedusers(), cppref=contestmode.cppref())
+        login = (username != '')
+
+        return render_template("begincontest.html", contest=contestmode.contest(), userinfo=userInfo, contestinfo=contestinfo, form=form, startTime=startTime, users=contestmode.allowedusers(), cppref=contestmode.cppref(), login=login)
 
     if username in contestinfo["scores"]:
         problemScores = contestinfo["scores"][username]

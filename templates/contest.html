@@ -83,11 +83,7 @@
 						class="pb-1 text-white badge badge-{{"success" if info.yourScore==100 else ("danger" if info.yourScore == 0 else ("secondary" if info.yourScore == "N/A" else "warning"))}}"> {{info.yourScore}}
 					</span> </h6>	
 					</td>
-					{% if not info.EE %}
 					<td>{{info.title}}</td>
-					{% else %}
-					<td>{{info.title}} (EE)</td>
-					{% endif %}
 					<td>
 						{% if info.author != [""]%}
 							{% if info.contestLink != "" %}
