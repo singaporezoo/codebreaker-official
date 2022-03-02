@@ -1,6 +1,6 @@
 # Codebreaker 
 
-Dunjudge 2020 takeover by "Singapore Zoo"
+This is the official Github repository for Codebreaker, an automated platform that allows for easy and quick grading of Informatics Olympiad solutions, created by "Singapore Zoo" in 2020 (due to the gradual discontinuation of [Dunjudge](https://dunjudge.me/)).
 
 ## Reference Links
 
