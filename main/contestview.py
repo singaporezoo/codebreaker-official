@@ -33,12 +33,12 @@ def contest(contestId):
         username = ""
 		
     # not userInfo["username"] in contestinfo.users
-    if contestinfo["public"] == 0 and not username in contestinfo["users"] and userInfo['role'] != 'superadmin' and username not in contestmode.allowedusers():
+    if contestinfo["public"] == 0 and not username in contestinfo["users"] and (userInfo != None or userInfo['role'] != 'superadmin') and username not in contestmode.allowedusers():
         flash("Sorry, you've not been invited to this private contest!", "warning")
         return redirect("/announcements")
     
     showScoreboard = True
-    if not contestinfo["publicScoreboard"] and (userInfo['role'] != "admin" and userInfo['role'] != "superadmin"):
+    if not contestinfo["publicScoreboard"] and (userInfo != None or (userInfo['role'] != "admin" and userInfo['role'] != "superadmin")):
         showScoreboard = False
 
     start = datetime.strptime(contestinfo['startTime'], "%Y-%m-%d %X") 
