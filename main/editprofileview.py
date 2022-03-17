@@ -1,4 +1,4 @@
-from flask import render_template, session, request, redirect
+from flask import render_template, session, request, redirect, flash
 import awstools
 import contestmode
 from forms import EditProfileForm
@@ -22,6 +22,9 @@ def editprofile():
         name = result['name']
         school = result['school']
         theme = result['theme'].lower().replace(' ','-')
+        if theme not in awstools.themes:
+            flash("Invalid theme!", "warning")
+            return redirect('/editprofile')
         if 'hue' in result:
             hue = int(result['hue'])
         else:
