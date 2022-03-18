@@ -18,6 +18,7 @@ class NewUserForm(FlaskForm):
     name = StringField('name')
     school = StringField('school')
     submit = SubmitField('Register')
+    nation = SelectField('nation')
 
 class EditProfileForm(FlaskForm):
     name = StringField('name')

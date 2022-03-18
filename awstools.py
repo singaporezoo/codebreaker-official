@@ -346,11 +346,11 @@ def getCurrentUserInfo():
         return None
     return None
 
-def updateUserInfo(email, username, fullname, school, theme, hue):
+def updateUserInfo(email, username, fullname, school, theme, hue, nation):
      users_table.update_item(
         Key = {'email' : email},
-        UpdateExpression = f'set username =:u, fullname=:f, school =:s, theme =:t, hue=:h',
-        ExpressionAttributeValues={':u' : username, ':f' : fullname, ':s' : school, ':t' : theme, ':h':hue}
+        UpdateExpression = f'set username =:u, fullname=:f, school =:s, theme =:t, hue=:h, nation=:n',
+        ExpressionAttributeValues={':u' : username, ':f' : fullname, ':s' : school, ':t' : theme, ':h':hue, ':n': nation}
     )
 
 def editUserRole(info,newrole,changedby):
