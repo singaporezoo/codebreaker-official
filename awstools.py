@@ -331,6 +331,7 @@ def getUserInfoFromUsername(username):
         'email' : '',
         'school':'',
         'role':'',
+        'nation': '',
         'username':'',
         'problemScores':{},
     }
