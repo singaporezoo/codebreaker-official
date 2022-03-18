@@ -5,3 +5,6 @@
 node_modules/
 password.py
 tmp/submissions/
+__pycache__/
+main/__pycache__/
+admin/__pycache__/
