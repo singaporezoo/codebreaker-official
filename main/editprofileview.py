@@ -30,8 +30,9 @@ def editprofile():
         else:
             hue = userinfo['hue']
         email = userinfo['email']
+        nation = userinfo['nation']
 
-        awstools.updateUserInfo(email, userinfo['username'], name, school, theme, hue)
+        awstools.updateUserInfo(email, userinfo['username'], name, school, theme, hue, nation)
         if theme != userinfo['theme'] and 'custom' in theme:
             return redirect('/editprofile')
         return redirect('/profile/' + userinfo['username'])
