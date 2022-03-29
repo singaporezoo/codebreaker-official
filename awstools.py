@@ -662,6 +662,22 @@ def getRankings():
                 H[i].append(index+1)
         return H
 
+def get_countries():
+    resp = users_table.scan(ProjectionExpression='username,nation')
+    nations = []
+    subs = resp['Items']
+    nations += [i['nation'] for i in subs if i['username'] != '']
+
+    while 'LastEvaluatedKey' in resp:
+        resp = table.scan(ExclusiveStartKey=resp['LastEvaluatedKey'],ProjectionExpression=f'{primaryKey}')
+        subs = resp['Items']
+        nations += [i['nation'] for i in subs if i['username'] != '']
+    
+    nations = list(set(nations))
+    BANNED_NATIONS = ['Outer Space', 'N/A']
+    nations = [i for i in nations if i not in BANNED_NATIONS]
+    return nations
+
 def credits_page():
         def find_length(table, primaryKey):
                 ans = 0
@@ -688,8 +704,9 @@ def credits_page():
         problems = find_length(problems_table,'problemName')
         users = find_length(users_table,'username')
         subs = getSubmissionId()
+        nations = len(get_countries())
 
-        return {'users':users,'problems':problems,'subs':subs}
+        return {'users':users,'problems':problems,'subs':subs, 'nations':nations}
 
 def filterSpace(x):
     y = [i for i in list(x) if i != ' ']
@@ -962,4 +979,4 @@ if __name__ == '__main__':
     # THIS IS FOR DEBUGGING AND WILL ONLY BE ACTIVATED IF YOU DIRECTLY RUN THIS FILE
     # IT DOES NOT OUTPUT ANYTHING ONTO TMUX
     print("TESTING")
-    updateTags('omnomnom', ['trees'])
+    print(credits_page())
