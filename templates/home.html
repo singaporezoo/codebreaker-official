@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+{% block title %} Problem List {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+
+<div class="container">
+    <!--donation banner-->
+	<div class="row">
+        <div class="col-4 container">
+            <div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
+                <div class="card-header bg-white" data-toggle="collapse" data-target="#futurecontests"><b>Ongoing and Future Contests</b></div>
+                <div id="futurecontests" class="collapse">
+                    <div class="card-body">
+                        <div id='calendar'></div>
+                        <script>
+
+                            document.addEventListener('DOMContentLoaded', function() {
+                                var calendarEl = document.getElementById('calendar');
+                                var calendar = new FullCalendar.Calendar(calendarEl, {
+                                    initialView: 'dayGridMonth'
+                                });
+                                {% for info in contestInfos.ongoing %}
+                                    calendar.addEvent({
+                                        title: {{info.contestName}},
+                                        start: {{info.startTime}},
+                                        end: {{info.endTime}}
+                                    })
+                                {% endfor %}
+                                {% for info in contestInfos.future %}
+                                    calendar.addEvent({
+                                        title: {{info.contestName}},
+                                        start: {{info.startTime}},
+                                        end: {{info.endTime}}
+                                    })
+                                {% endfor %}
+
+                                calendar.render();
+                            });
+                      
+                          </script>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-4 container">
+            {% if userinfo %}
+            <div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
+                <div class="card-header bg-white" data-toggle="collapse" data-target="#piechart"><b>Your Progress</b></div>
+                <div id="piechart" class="collapse">
+                    <div class="card-body">
+                        <canvas id="chart" width="600" height="400"></canvas>
+                        <script>
+                            var ac = 0;
+                            var partial = 0;
+                            var failed = 0;
+                            var total = {{statistics['problems']}};
+
+                            {% for problemName, problemScore in userinfo.problemScores %}
+                                if (problemScore == 100) {
+                                    ac++;
+                                } else if (problemScore == 0) {
+                                    failed++;
+                                } else {
+                                    partial++;
+                                }
+                            {% endfor %}
+                        
+                            var pieData = [ { value: ac, label: "Accepted", color: "#72E58D" },
+                                            { value: partial, label: "Partial", color: "#F9D87C" },
+                                            { value: failed, label: "Failed", color: "#E0868F" },
+                                            { value: total - ac - partial - failed, label: "Unattempted", color: "#7F7F7F" }
+                            ];
+
+                            // draw pie chart
+                            new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
+                        </script>
+                    </div>
+                </div>
+            </div>
+            <br>
+            {% endif %}
+
+            <div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
+                <div class="card-header bg-white" data-toggle="collapse" data-target="#globalsubs"><b>Global Recent Submissions</b></div>
+                <div id="globalsubs" class="collapse">
+                    <div class="card-body">
+                        <table class="table table-striped table-sm" id="myTable">
+                            <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Username</th>
+                                <th scope="col">Problem</th>
+                                <th scope="col">Score</th>
+                            </tr>
+                            </thead>
+                            
+                            <tbody>
+                            {% for sub in globalSubmissionList %}
+                                <tr>
+                                    {% if sub != None %}
+                                    <td> <a href="{{url_for('submission', subId = sub.subId)}}">{{sub.subId}}</a> </td>
+                                    <td> <a href="{{url_for('profile', username = sub.username)}}"> {{sub.username}} </a> </td
+                                    {% if sub.problemName %}
+                                    <td> <a href="{{url_for('problem', PROBLEM_NAME = sub.problemName)}}"> {{sub.problemName}} </a> </td>
+                                    {% else %}
+                                    <td> Hidden </td>
+                                    {% endif %}
+                                    <td> <p style="margin: -1px">
+                                    <span style = "width: 42px" 
+                                    class="pb-1 text-white badge badge-{{'success' if sub.totalScore==100 else ('danger' if sub.totalScore == 0 else 'warning')}}"> {{sub.totalScore}}
+                                    </span> </p>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            {% if userinfo %}
+            <br>
+            <div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
+                <div class="card-header bg-white" data-toggle="collapse" data-target="#usersubs"><b>Your Recent Submissions ()</b></div>
+                <div id="usersubs" class="collapse">
+                    <div class="card-body">
+                        <table class="table table-striped table-sm" id="myTable">
+                            <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Problem</th>
+                                <th scope="col">Score</th>
+                            </tr>
+                            </thead>
+                            
+                            <tbody>
+                            {% for sub in userSubmissionList %}
+                                <tr>
+                                    {% if sub != None %}
+                                    <td> <a href="{{url_for('submission', subId = sub.subId)}}">{{sub.subId}}</a> </td>
+                                    {% if sub.problemName %}
+                                    <td> <a href="{{url_for('problem', PROBLEM_NAME = sub.problemName)}}"> {{sub.problemName}} </a> </td>
+                                    {% else %}
+                                    <td> Hidden </td>
+                                    {% endif %}
+                                    <td> <p style="margin: -1px">
+                                    <span style = "width: 42px" 
+                                    class="pb-1 text-white badge badge-{{'success' if sub.totalScore==100 else ('danger' if sub.totalScore == 0 else 'warning')}}"> {{sub.totalScore}}
+                                    </span> </p>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+	</div>
+</div>
+
+{% endblock %}
+
+
+
