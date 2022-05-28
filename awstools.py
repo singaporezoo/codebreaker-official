@@ -243,7 +243,7 @@ def gradeSubmission(problemName,submissionId,username,submissionTime=None,regrad
         submissionTime = (datetime.now()+timedelta(hours=8)).strftime("%Y-%m-%d %X")
     stitch = contestmode.contest() and contestmode.stitch() and contestmode.contestId() != 'analysismirror'
     lambda_input = {"problemName": problemName, "submissionId":submissionId,"username":username,"submissionTime":submissionTime,"stitch":stitch,"regrade":regrade,"regradeall":regradeall,"language":"cpp"}
-    res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-problem-grader-3', InvocationType='Event', Payload = json.dumps(lambda_input))
+    res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-problem-grader', InvocationType='Event', Payload = json.dumps(lambda_input))
 
 def updateScores(problemName):
     stitch = contestmode.contest() and contestmode.stitch()
