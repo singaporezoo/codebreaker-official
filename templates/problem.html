@@ -31,7 +31,10 @@
 						<li class="nav-item">
 							<a class="nav-link" data-toggle="tab" href="#submitCommunication" id="submitlink">Submit Code</a>
 						</li>
-
+						{%elif probleminfo.problem_type == 'Interactive'%}
+						<li class="nav-item">
+							<a class="nav-link" data-toggle="tab" href="#submitInteractive" id="submitlink">Submit Code</a>
+						</li>
 						{%else %}
 						<li class="nav-item">
 							<a class="nav-link" data-toggle="tab" href="#submitCode" id="submitlink">Submit Code</a>
@@ -63,11 +66,7 @@
 						<!-- Tab panes -->
 						<div class="tab-content">
 							<div id="statement" class="container tab-pane {{"active" if compileError == "" else "fade"}}"><br>
-								{% if not probleminfo.EE %}
 								<h3> <b> {{probleminfo.title}}</b> </h3>
-								{% else %}
-								<h3> <b> {{probleminfo.title}} (EE) </b> </h3>
-								{% endif %}
 								{{statementHTML | safe}}
 							</div>
 
@@ -85,7 +84,19 @@
 									{% endif %}
 								</form>
 	                                                        {% endif %}
+							</div>
 
+							<div id="submitInteractive" class="container tab-pane fade"><br>
+								<h3> <b> Submitting to '{{probleminfo.title}}' </b> </h3> <br>
+								{% if not userinfo %}
+								<p> <a href="/login"> You're not logged in! Click here to login </a> </p>
+								{% elif userinfo.role == 'disabled' or userinfo.role == 'locked'%}
+								<p> Your account is unfortunately disabled :( <br> If you just registered, please wait for an admin to enable your account. <p>
+								{% else %}
+								<form autocomplete="off" id = "submitCodeForm" action = "" method = "post" class="form-group">
+									<p> {{form.code(class = 'form-control', id = 'editorI', maxLength = '50')}} </p>
+								</form>
+	                                                        {% endif %}
 							</div>
 
 							<div id='submitCommunication' class="container tab-pane fade"><br>
@@ -243,37 +254,20 @@
 			$('#submitButtonParagraph').children().prop('disabled', false);
 			$('#submitFilesForm').children().prop('disabled', false);
 		});
-		
-		var editorA = CodeMirror.fromTextArea(document.getElementById("editorA"), {
-			tabSize: 4,
-			lineNumbers: true,
-			indentWithTabs: true,
-			indentUnit: 4,
-			mode: 'text/x-c++src',
-			theme: 'monokai',
-		});
-		editorA.setSize("100%", 550);
-		editorA.refresh();
-		var editorB = CodeMirror.fromTextArea(document.getElementById("editorB"), {
-			tabSize: 4,
-			lineNumbers: true,
-			indentWithTabs: true,
-			indentUnit: 4,
-			mode: 'text/x-c++src',
-			theme: 'monokai',
-		});
-		editorB.setSize("100%", 550);
-		editorB.refresh();
-		var editor = CodeMirror.fromTextArea(document.getElementById("editor"), {
-			tabSize: 4,
-			lineNumbers: true,
-			indentWithTabs: true,
-			indentUnit: 4,
-			mode: 'text/x-c++src',
-			theme: 'monokai',
-		});
-		editor.setSize("100%", 550);
-		editor.refresh();
+
+		var editorNames = ['editorA', 'editorB', 'editorI', 'editor']
+		for (let i = 0; i < editorNames.length; i += 1){
+			var editor = CodeMirror.fromTextArea(document.getElementById(editorNames[i]), {
+				tabSize: 4,
+				lineNumbers: true,
+				indentWithTabs: true,
+				indentUnit: 4,
+				mode: 'text/x-c++src',
+				theme: 'monokai',
+			});
+			editor.setSize("100%", 550);
+			editor.refresh();
+		}
 		
 		function checkCookie(){
 	    		var cookieEnabled = navigator.cookieEnabled;
@@ -289,9 +283,18 @@
 		}
 		function refresh(){
 			setTimeout(function(){
-				editor.refresh();
-				editorA.refresh();
-				editorB.refresh();
+				for (let i = 0; i < editorNames.length; i += 1){
+					var editor = CodeMirror.fromTextArea(document.getElementById(editorNames[i]), {
+						tabSize: 4,
+						lineNumbers: true,
+						indentWithTabs: true,
+						indentUnit: 4,
+						mode: 'text/x-c++src',
+						theme: 'monokai',
+					});
+					editor.setSize("100%", 550);
+					editor.refresh();
+				}
 			}, 100);
 		};
 		document.getElementById("submitlink").onclick = refresh;
