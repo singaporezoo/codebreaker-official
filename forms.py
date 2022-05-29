@@ -5,6 +5,7 @@ class SubmitForm(FlaskForm):
     code = TextAreaField('Code Goes Here')
     codeA = TextAreaField('Code Goes Here')
     codeB = TextAreaField('Code Goes Here')
+    language = SelectField('language')
     submit = SubmitField('Submit Code')
 
 class ResubmitForm(FlaskForm):

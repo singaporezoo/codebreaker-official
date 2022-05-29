@@ -9,6 +9,11 @@ from compilesub import check,compilesub,compileCommunication
 from flask import Flask, render_template, request, url_for, redirect, flash, session, get_flashed_messages, make_response, send_file
 from datetime import datetime, timedelta
 
+languages = {
+    'C++ 17': 'cpp',
+    'Python 3': 'py'
+}
+
 def setcookie(template):
     delay = 9
     if contestmode.contest():
@@ -49,6 +54,8 @@ def problem(PROBLEM_NAME):
     if "compileError" in session:
         compileError = session["compileError"]
         session.pop("compileError")
+
+    form.language.choices = list(languages.keys())
         
     problem_info = awstools.getProblemInfo(PROBLEM_NAME)
     if (type(problem_info) is str):
@@ -70,7 +77,6 @@ def problem(PROBLEM_NAME):
     validated = problem_info['validated']
 
     editorials = [i for i in problem_info['editorials'] if i != ""]
-    
 
     if problem_info['problem_type'] == 'Communication':
         if 'nameA' not in problem_info.keys():
@@ -155,7 +161,11 @@ def problem(PROBLEM_NAME):
             mem.seek(0)
             return send_file(mem,as_attachment=True,attachment_filename=filename)
 
-        #print(f"begin: {datetime.now()}")
+        language = result['language']
+        if language not in languages.keys(): # Invalid language
+            flash('Invalid language!', 'warning')
+            return redirect(f'/problem/{PROBLEM_NAME}')
+        language = languages[language]
 
         if userInfo == None or (userInfo['role'] not in ['member','admin','superadmin']):
             flash('You do not have permission to submit!','warning')
@@ -254,7 +264,7 @@ def problem(PROBLEM_NAME):
                 if status == "warning":
                     return redirect("/")
 
-            result = compilesub(code, problem_info)
+            result = compilesub(code, problem_info, language)
         
         if result["status"] == "compileError":
             #print("CE")

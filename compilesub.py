@@ -127,7 +127,7 @@ def compileCommunication(codeA, codeB, problem_info):
 
     return {"status":"success","message":""}
 
-def compilesub(code, problem_info):
+def compilesub(code, problem_info, language):
 
     timeLimit = problem_info['timeLimit']
     memoryLimit = problem_info['memoryLimit']
@@ -145,6 +145,30 @@ def compilesub(code, problem_info):
     PROBLEM_NAME = problem_info['problemName']
 
     compileError=""
+
+    if language == 'py':
+        # Don't need to compile, just save
+        # Save the code
+        subuuid = str(uuid4())
+        sourceName = f"tmp/submissions/{subuuid}.py"
+        with open(sourceName,"w") as sourceFile:
+            sourceFile.write(code)
+            sourceFile.close()
+
+        # Upload python code to source
+        subId = awstools.getNextSubmissionId()
+        uploadTarget=f"source/{subId}.py"
+        awstools.uploadCode(sourceName,uploadTarget)
+
+        #delete the codes
+        subprocess.run(f'sudo rm {sourceName}', shell=True)
+
+        username = awstools.getCurrentUserInfo()['username']
+
+        awstools.gradeSubmission(PROBLEM_NAME,subId,username,language=language)
+
+        time.sleep(1.5)
+        return {"status":"redirect","message":f"/submission/{subId}"}
 
     if problemType == 'Batch':
         subuuid = str(uuid4())

@@ -236,13 +236,13 @@ def updateCountLambda(problemName):
 def uploadCode(sourceName, uploadTarget):
     s3.upload_file(sourceName, CODE_BUCKET_NAME, uploadTarget)
 
-def gradeSubmission(problemName,submissionId,username,submissionTime=None,regradeall=False):
+def gradeSubmission(problemName,submissionId,username,submissionTime=None,regradeall=False,language='cpp'):
     regrade=False
     if submissionTime is None:
         regrade=True
         submissionTime = (datetime.now()+timedelta(hours=8)).strftime("%Y-%m-%d %X")
     stitch = contestmode.contest() and contestmode.stitch() and contestmode.contestId() != 'analysismirror'
-    lambda_input = {"problemName": problemName, "submissionId":submissionId,"username":username,"submissionTime":submissionTime,"stitch":stitch,"regrade":regrade,"regradeall":regradeall,"language":"cpp"}
+    lambda_input = {"problemName": problemName, "submissionId":submissionId,"username":username,"submissionTime":submissionTime,"stitch":stitch,"regrade":regrade,"regradeall":regradeall,"language":language}
     res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-problem-grader', InvocationType='Event', Payload = json.dumps(lambda_input))
 
 def updateScores(problemName):
@@ -257,21 +257,26 @@ def getSubmission(subId, full=True):
         else:
             response = submissions_table.get_item( 
                 Key={"subId": subId },
-                ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, gradingTime, totalScore, username'
+                ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, gradingTime, totalScore, username,language'
             )
         subDetails = response['Item']
-    
-        try:
-            cppfile = s3.get_object(Bucket=CODE_BUCKET_NAME, Key=f'source/{subId}.cpp')
-            code = cppfile['Body'].read().decode("utf-8")
+        
+        if subDetails['language'] == 'py':
+            pyfile = s3.get_object(Bucket=CODE_BUCKET_NAME, Key=f'source/{subId}.py')
+            code = pyfile['Body'].read().decode("utf-8")
             subDetails['code'] = code
-        except:
-            cppfile = s3.get_object(Bucket=CODE_BUCKET_NAME, Key=f'source/{subId}A.cpp')
-            codeA = cppfile['Body'].read().decode("utf-8")
-            subDetails['codeA'] = codeA
-            cppfile = s3.get_object(Bucket=CODE_BUCKET_NAME, Key=f'source/{subId}B.cpp')
-            codeB = cppfile['Body'].read().decode("utf-8")
-            subDetails['codeB'] = codeB
+        else:
+            try:
+                cppfile = s3.get_object(Bucket=CODE_BUCKET_NAME, Key=f'source/{subId}.cpp')
+                code = cppfile['Body'].read().decode("utf-8")
+                subDetails['code'] = code
+            except:
+                cppfile = s3.get_object(Bucket=CODE_BUCKET_NAME, Key=f'source/{subId}A.cpp')
+                codeA = cppfile['Body'].read().decode("utf-8")
+                subDetails['codeA'] = codeA
+                cppfile = s3.get_object(Bucket=CODE_BUCKET_NAME, Key=f'source/{subId}B.cpp')
+                codeB = cppfile['Body'].read().decode("utf-8")
+                subDetails['codeB'] = codeB
 
         return subDetails
     except KeyError:

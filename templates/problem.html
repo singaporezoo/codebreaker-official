@@ -77,7 +77,11 @@
 								{% elif userinfo.role == 'disabled' or userinfo.role == 'locked'%}
 								<p> Your account is unfortunately disabled :( <br> If you just registered, please wait for an admin to enable your account. <p>
 								{% else %}
+
 								<form autocomplete="off" id = "submitCodeForm" action = "" method = "post" class="form-group">
+									<label for="language">Select Submission Language (Under Construction):</label>
+									{{form.language(type="select",class="form-control")}}
+
 									<p> {{form.code(class = 'form-control', id = 'editor', maxLength = '50')}} </p>
 									{% if probleminfo.problemName != 'helloworld2' %}
 									<p id="submitButtonParagraph">  {{form.submit(class="btn btn-primary", onclick="onSubmit()")}} </p>
