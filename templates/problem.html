@@ -288,15 +288,6 @@
 		function refresh(){
 			setTimeout(function(){
 				for (let i = 0; i < editorNames.length; i += 1){
-					var editor = CodeMirror.fromTextArea(document.getElementById(editorNames[i]), {
-						tabSize: 4,
-						lineNumbers: true,
-						indentWithTabs: true,
-						indentUnit: 4,
-						mode: 'text/x-c++src',
-						theme: 'monokai',
-					});
-					editor.setSize("100%", 550);
 					editor.refresh();
 				}
 			}, 100);
