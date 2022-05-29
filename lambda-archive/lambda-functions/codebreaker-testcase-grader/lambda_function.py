@@ -15,7 +15,6 @@ def lambda_handler(event, context):
     language = event["language"]
     
     response = None
-    
     if MLE <= 1024:
         response = lambda_client.invoke(
             FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-testcase-grader-2',
@@ -30,6 +29,7 @@ def lambda_handler(event, context):
         )
     
     result = json.loads(response['Payload'].read())
+    print(result)
 
     result['score'] = Decimal(str(result['score']))
     response = submissions_table.update_item(

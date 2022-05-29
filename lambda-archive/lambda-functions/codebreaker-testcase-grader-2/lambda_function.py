@@ -6,7 +6,7 @@ import resource
 import subprocess
 from random import randrange
 
-import mentalissue
+import wrapper
 from weird import Funny
 from decimal import *
 from time import time
@@ -15,7 +15,6 @@ from math import ceil
 from cmscmp import white_diff_step
 s3 = boto3.resource('s3')
 
-#meow useless comment to restart this thing 6
 def limit_memory(maxsize): 
     soft, hard = resource.getrlimit(resource.RLIMIT_AS) 
     resource.setrlimit(resource.RLIMIT_AS, (maxsize, maxsize)) 
@@ -31,21 +30,27 @@ def lambda_handler(event, context):
     subId = event["submissionId"]
     subHash = str(uuid4())
     testcaseNumber = event["testcaseNumber"]
-    
+    language = event["language"]
     customChecker = event["customChecker"]
     TLE = float(event["timeLimit"])
     MLE = float(event["memoryLimit"])
 
+    os.chdir('/tmp')
     INPUT_FILE = f"{subHash}.in"
     OUTPUT_FILE = f"{subHash}.out"
-    CODE_FILE = "code"
+    if language == 'cpp':
+        CODE_FILE = "code"
 
-    os.chdir('/tmp')
-    binaryPath = "compiled/" + str(subId)
-    s3.Bucket("codebreaker-submissions").download_file(binaryPath,CODE_FILE)
+        binaryPath = f"compiled/{subId}"
+        s3.Bucket("codebreaker-submissions").download_file(binaryPath,CODE_FILE)
+    elif language == 'py':
+        CODE_FILE = "code.py"
+        codePath = f"source/{subId}.py"
+        s3.Bucket("codebreaker-submissions").download_file(codePath,CODE_FILE)
+    
     inputPath = problemName + '/' + str(testcaseNumber) + '.in'
     s3.Bucket("codebreaker-testdata").download_file(inputPath,INPUT_FILE)
-    subprocess.run("chmod +x code", shell=True)
+    subprocess.run(f"chmod +x {CODE_FILE}", shell=True)
 
     info = resource.getrusage(resource.RUSAGE_CHILDREN)
     originalTime = info.ru_utime
@@ -54,7 +59,7 @@ def lambda_handler(event, context):
     cmd = "cd"
     
     try:
-        process = subprocess.run(cmd,preexec_fn=(lambda: mentalissue.pp(allocatedTime, allocatedMemory, INPUT_FILE, CODE_FILE)),capture_output=True)
+        process = subprocess.run(cmd,preexec_fn=(lambda: wrapper.grade(allocatedTime, allocatedMemory, INPUT_FILE, CODE_FILE, language)),capture_output=True)
     except Exception as e:
         result = {
             "verdict": "RTE(9)",

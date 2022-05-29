@@ -79,7 +79,7 @@ def lambda_handler(event, context):
         "language": language
     }
     
-    print(lambda_input)
+    print(submission_upload)
     awstools.uploadSubmission(submission_upload)
     awstools.gradeSubmission(lambda_input)
     print("Graded!")
