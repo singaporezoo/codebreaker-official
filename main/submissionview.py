@@ -319,7 +319,7 @@ def submission(subId):
                         return redirect("/")
             
             if code != None:
-                result = compilesub(code, problem_info)
+                result = compilesub(code, problem_info, subDetails['language'])
             else:
                 result = compileCommunication(codeA, codeB, problem_info)
 
