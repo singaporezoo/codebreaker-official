@@ -260,6 +260,7 @@
 		});
 
 		var editorNames = ['editorA', 'editorB', 'editorI', 'editor']
+		var editors = []
 		for (let i = 0; i < editorNames.length; i += 1){
 			var editor = CodeMirror.fromTextArea(document.getElementById(editorNames[i]), {
 				tabSize: 4,
@@ -271,6 +272,8 @@
 			});
 			editor.setSize("100%", 550);
 			editor.refresh();
+
+			editors.push(editor)
 		}
 		
 		function checkCookie(){
@@ -287,8 +290,8 @@
 		}
 		function refresh(){
 			setTimeout(function(){
-				for (let i = 0; i < editorNames.length; i += 1){
-					editor.refresh();
+				for (let i = 0; i < editors.length; i += 1){
+					editors[i].refresh();
 				}
 			}, 100);
 		};
