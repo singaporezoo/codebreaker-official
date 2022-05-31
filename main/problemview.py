@@ -161,7 +161,9 @@ def problem(PROBLEM_NAME):
             mem.seek(0)
             return send_file(mem,as_attachment=True,attachment_filename=filename)
 
-        language = result['language']
+        language = 'C++ 17'
+        if 'language' in result:
+            language = result['language']
         if language not in languages.keys(): # Invalid language
             flash('Invalid language!', 'warning')
             return redirect(f'/problem/{PROBLEM_NAME}')

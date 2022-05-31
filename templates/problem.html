@@ -99,6 +99,7 @@
 								{% else %}
 								<form autocomplete="off" id = "submitCodeForm" action = "" method = "post" class="form-group">
 									<p> {{form.code(class = 'form-control', id = 'editorI', maxLength = '50')}} </p>
+									<p id="submitButtonParagraph">  {{form.submit(class="btn btn-primary", onclick="onSubmit()")}} </p>
 								</form>
 	                                                        {% endif %}
 							</div>
