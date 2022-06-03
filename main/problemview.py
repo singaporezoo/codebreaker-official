@@ -8,11 +8,8 @@ from forms import SubmitForm
 from compilesub import check,compilesub,compileCommunication
 from flask import Flask, render_template, request, url_for, redirect, flash, session, get_flashed_messages, make_response, send_file
 from datetime import datetime, timedelta
-
-languages = {
-    'C++ 17': 'cpp',
-    'Python 3': 'py'
-}
+from language import get_languages
+languages = get_languages()
 
 def setcookie(template):
     delay = 9

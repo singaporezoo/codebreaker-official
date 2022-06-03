@@ -257,7 +257,7 @@ def getSubmission(subId, full=True):
         else:
             response = submissions_table.get_item( 
                 Key={"subId": subId },
-                ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, gradingTime, totalScore, username,language'
+                ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, gradingTime, totalScore, username, language'
             )
         subDetails = response['Item']
         
