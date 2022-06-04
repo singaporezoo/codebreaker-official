@@ -23,17 +23,18 @@
 <div class="container">
     	<br>
 	<h1>Welcome to Codebreaker!</h1>
-	<a id="promotion" href="https://forms.gle/wKN7wJs6CeXqzDXm8">
-	<div class="navbar" style="display:flex;justify-content:center;align-items:center;">
-		Codebreaker runs on donations from the community. Click here to contribute!
-	</div>
-	</a>
+    <button value="Codebreaker runs on donations from the community. Click here to contribute!" class="btn btn-secondary" onclick="donate()">
+    <script>
+        function donate() {
+            window.location.href = "https://forms.gle/wKN7wJs6CeXqzDXm8";
+        }
+    </script>
 	<div class="row">
         <div class="col" style="padding: 20px;">
            <div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
                 <div class="card-header bg-white" data-toggle="collapse" data-target="#futurecontests"><b>Ongoing and Future Contests</b></div>
                 <div id="futurecontests" class="collapse show">
-		<div class="card-body" style="height: auto;">
+		            <div class="card-body" style="height: auto;">
                         <div id='calendar'></div>
                         <script>
 
@@ -43,20 +44,21 @@
                                     initialView: 'dayGridMonth'
                                 });
                                 calendar.render();
-				{% for info in contestInfos.ongoing %}
+                                var contestInfos = {{contestInfos}};
+                                for (const info of contestInfos.ongoing) {
                                     calendar.addEvent({
-                                        title: {{info.contestName}},
-                                        start: {{info.startTime}},
-                                        end: {{info.endTime}}
-                                    })
-                                {% endfor %}
-                                {% for info in contestInfos.future %}
+                                        title: info.contestName,
+                                        start: info.startTime,
+                                        end: info.endTime
+                                    });
+                                }
+                                for (const info of contestInfos.future) {
                                     calendar.addEvent({
-                                        title: {{info.contestName}},
-                                        start: {{info.startTime}},
-                                        end: {{info.endTime}}
-                                    })
-                                {% endfor %}
+                                        title: info.contestName,
+                                        start: info.startTime,
+                                        end: info.endTime
+                                    });
+                                }
                             });
                       
                           </script>
