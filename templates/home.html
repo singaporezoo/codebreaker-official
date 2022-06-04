@@ -14,12 +14,6 @@
 
 {% block content %}
 
-<style>
-#promotion, #promotion:hover, #promotion:link{
-	text-decoration:none;
-}
-</style>
-
 <div class="container">
     	<br>
 	<h1>Welcome to Codebreaker!</h1>
@@ -29,6 +23,7 @@
             window.location.href = "https://forms.gle/wKN7wJs6CeXqzDXm8";
         }
     </script>
+    </button>
 	<div class="row">
         <div class="col" style="padding: 20px;">
            <div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
@@ -79,9 +74,11 @@
                             var failed = 0;
                             var total = {{statistics['problems']}};
 
+                            var problemScores = {{userinfo.problemScores}};
+
                             {% for problemName in userinfo.problemScores %}
                                 problemScore = userinfo.problemScores[problemName]
-				if (problemScore == 100) {
+				                if (problemScore == 100) {
                                     ac++;
                                 } else if (problemScore == 0) {
                                     failed++;
