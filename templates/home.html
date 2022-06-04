@@ -30,18 +30,20 @@
            <div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
                 <div class="card-header bg-white" data-toggle="collapse" data-target="#futurecontests"><b>Ongoing and Future Contests</b></div>
                 <div id="futurecontests" class="collapse show">
-		            <div class="card-body" style="height: auto;">
+		        <div class="card-body" style="height: auto;">
                         <div id='calendar'></div>
                         <script>
 
                             document.addEventListener('DOMContentLoaded', function() {
+				console.log("hello");
                                 var calendarEl = document.getElementById('calendar');
                                 var calendar = new FullCalendar.Calendar(calendarEl, {
                                     initialView: 'dayGridMonth'
                                 });
-                                calendar.render();
                                 var contestInfos = JSON.parse('{{contestInfos | tojson}}')
+                                calendar.render();
                                 for (const info of contestInfos) {
+				    console.log(info)
                                     calendar.addEvent({
                                         title: info.contestName,
                                         start: info.startTime,
@@ -72,9 +74,9 @@
 
                             for (const problem in problemScores) {
                                 score = problemScores[problem]
-                                if (problemScore == 100) {
+                                if (score == 100) {
                                     ac++;
-                                } else if (problemScore == 0) {
+                                } else if (score == 0) {
                                     failed++;
                                 } else {
                                     partial++;

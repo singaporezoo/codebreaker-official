@@ -22,7 +22,8 @@ def home():
     else:
         username = ""
     
-    contestInfos = [{'contestName':'dummy','startTime':datetime.now(), 'endTime':datetime.now()+timedelta(days=1)}]
+    contestInfos = [{'contestName':'dummy','startTime':datetime.now().isoformat(), 'endTime':(datetime.now()+timedelta(days=1)).isoformat()}]
+    #contestInfos = [{'contestName':'dummy','startTime':"2022-06-04", 'endTime':"2022-06-05"}]
 
     return render_template('home.html',
                            userinfo=userinfo,

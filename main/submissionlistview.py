@@ -71,6 +71,5 @@ def submissionlist():
         username = result['username']
         problem = result['problem']
         return redirect(f'/submissions?username={username}&problem={problem}')
-    print(submissionlist)
 
     return render_template('submissionlist.html', form=form, username=username, problem=problem, pageNo=pageNo, pages=pages, maxPage=maxPage, submissionList=submissionList, linkname=linkname, userinfo=userInfo, contest=contest, users=contestmode.allowedusers(), fullfeedback=fullfeedback, hidetime=contestmode.hidetime(), cppref=contestmode.cppref(), socket=contestmode.socket())
