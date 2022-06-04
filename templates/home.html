@@ -65,7 +65,7 @@
             </div>
         </div>
         <div class="col" style="padding: 20px;">
-            {% if userinfo %}
+            {% if userinfo != None %}
             <div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
                 <div class="card-header bg-white" data-toggle="collapse" data-target="#piechart"><b>Your Progress</b></div>
                 <div id="piechart" class="collapse show">
@@ -142,7 +142,7 @@
                 </div>
             </div>
 
-            {% if userinfo %}
+            {% if userinfo != None %}
             <br>
             <div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
                 <div class="card-header bg-white" data-toggle="collapse" data-target="#usersubs"><b>Your Recent Submissions</b></div>

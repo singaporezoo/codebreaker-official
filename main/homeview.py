@@ -30,7 +30,6 @@ def home():
         else:
             endTime = contestinfo["endTime"]
             startTime = contestinfo["startTime"]
-            duration = contestinfo["duration"]
             if endTime != "Unlimited":
                 start = datetime.strptime(startTime, "%Y-%m-%d %X")
                 end = datetime.strptime(endTime, "%Y-%m-%d %X")
