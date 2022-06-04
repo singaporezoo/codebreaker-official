@@ -25,7 +25,7 @@ def home():
     contests = awstools.getAllContests()
     ongoing = []; future = []; past = [];
     for contestinfo in contests:
-        if contestinfo["public"] == 0 and not username in contestinfo["users"]:
+        if contestinfo["public"] == False and not username in contestinfo["users"]:
             continue
         else:
             endTime = contestinfo["endTime"]

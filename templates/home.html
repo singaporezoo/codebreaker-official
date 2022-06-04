@@ -39,6 +39,7 @@
                                 var calendar = new FullCalendar.Calendar(calendarEl, {
                                     initialView: 'dayGridMonth'
                                 });
+                                console.log("Hello");
                                 calendar.render();
                                 var contestInfos = {{contestInfos}};
                                 for (const info of contestInfos.ongoing) {
@@ -47,7 +48,9 @@
                                         start: info.startTime,
                                         end: info.endTime
                                     });
+                                    console.log("bruh")
                                 }
+                                console.log("hmm");
                                 for (const info of contestInfos.future) {
                                     calendar.addEvent({
                                         title: info.contestName,
