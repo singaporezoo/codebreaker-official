@@ -40,7 +40,7 @@
                                     initialView: 'dayGridMonth'
                                 });
                                 calendar.render();
-                                var contestInfos = {{contestInfos}};
+                                var contestInfos = JSON.parse('{{contestInfos | tojson}}')
                                 for (const info of contestInfos) {
                                     calendar.addEvent({
                                         title: info.contestName,
@@ -66,9 +66,9 @@
                             var ac = 0;
                             var partial = 0;
                             var failed = 0;
-                            var total = {{statistics['problems']}};
+                            var total = JSON.parse('{{statistics["problems"]}}');
 
-                            var problemScores = {{userinfo.problemScores}};
+                            var problemScores = JSON.parse('{{userinfo.problemScores | tojson}}');
 
                             for (const problem in problemScores) {
                                 score = problemScores[problem]
