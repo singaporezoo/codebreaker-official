@@ -22,43 +22,7 @@ def home():
     else:
         username = ""
     
-    contests = awstools.getAllContests()
-    ongoing = []; future = []; past = [];
-    for contestinfo in contests:
-        if contestinfo["public"] == False and not username in contestinfo["users"]:
-            continue
-        else:
-            endTime = contestinfo["endTime"]
-            startTime = contestinfo["startTime"]
-            if endTime != "Unlimited":
-                start = datetime.strptime(startTime, "%Y-%m-%d %X")
-                end = datetime.strptime(endTime, "%Y-%m-%d %X")
-                now = datetime.now() + timedelta(hours = 8)
-                if now < start:
-                    future.append(contestinfo)
-                elif now > end:
-                    past.append(contestinfo)
-                else:
-                    ongoing.append(contestinfo)
-    
-    #ongoing.sort(key = lambda x:x['endTime'])
-    #future.sort(key = lambda x:x['startTime'])
-    #past.sort(key = lambda x:x['endTime'], reverse=True)
-    
-    def convert(s):
-        if s == "Unlimited":
-            return 
-        s = datetime.strptime(s, "%Y-%m-%d %X").strftime("%d %b %Y %H:%M")
-        return s
-    for contestlist in [ongoing, future, past]:
-        for contest in contestlist:
-            contest["startTime"] = convert(contest["startTime"]) 
-            contest["endTime"] = convert(contest["endTime"])
-
-    contestInfos = {}
-    contestInfos['ongoing'] = ongoing
-    contestInfos['future'] = future
-    contestInfos['past'] = past
+    contestInfos = [{'contestName':'dummy','startTime':datetime.now(), 'endTime':datetime.now()+datetime.timedelta(days=1)}]
 
     return render_template('home.html',
                            userinfo=userinfo,

@@ -39,19 +39,9 @@
                                 var calendar = new FullCalendar.Calendar(calendarEl, {
                                     initialView: 'dayGridMonth'
                                 });
-                                console.log("Hello");
                                 calendar.render();
                                 var contestInfos = {{contestInfos}};
-                                for (const info of contestInfos.ongoing) {
-                                    calendar.addEvent({
-                                        title: info.contestName,
-                                        start: info.startTime,
-                                        end: info.endTime
-                                    });
-                                    console.log("bruh")
-                                }
-                                console.log("hmm");
-                                for (const info of contestInfos.future) {
+                                for (const info of contestInfos) {
                                     calendar.addEvent({
                                         title: info.contestName,
                                         start: info.startTime,
@@ -80,16 +70,16 @@
 
                             var problemScores = {{userinfo.problemScores}};
 
-                            {% for problemName in userinfo.problemScores %}
-                                problemScore = userinfo.problemScores[problemName]
-				                if (problemScore == 100) {
+                            for (const problem in problemScores) {
+                                score = problemScores[problem]
+                                if (problemScore == 100) {
                                     ac++;
                                 } else if (problemScore == 0) {
                                     failed++;
                                 } else {
                                     partial++;
                                 }
-                            {% endfor %}
+                            }
                         
                             var pieData = [ { value: ac, label: "Accepted", color: "#72E58D" },
                                             { value: partial, label: "Partial", color: "#F9D87C" },
