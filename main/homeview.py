@@ -11,10 +11,10 @@ def home():
     userinfo = awstools.getCurrentUserInfo()
     if userinfo != None:
         userSubmissionList = awstools.getSubmissionsList(1, None, userinfo['username'])
+        userSubmissionList = userSubmissionList[:8]
     else:
         userSubmissionList = None
     globalSubmissionList = awstools.getSubmissionsList(1, None, None)
-    userSubmissionList = userSubmissionList[:8]
     globalSubmissionList = globalSubmissionList[:8]
 
     if userinfo != None:
