@@ -50,7 +50,24 @@ def contest(contestId):
         end = datetime.strptime(endTime, "%Y-%m-%d %X")
         past = (end < now)
 
-    if not past and (not contestmode.contest() or (userInfo['role'] != 'superadmin' and username not in contestmode.allowedusers())) and ((contestinfo["public"] and not username in contestinfo["users"]) or contestinfo["users"][username] == "0") :
+    if past:
+        startContest = False
+    elif userInfo['role'] == 'superadmin' and (username not in contestinfo["users"] or contestinfo["users"][username] == "0"):
+        startContest = True
+    elif contestmode.contest() and username not in contestmode.allowedusers():
+        startContest = False
+    else:
+        if contestinfo["public"]:
+            if username not in contestinfo["users"]:
+                startContest = True
+            else:
+                startContest = False
+        elif username in contestinfo["users"] and contestinfo["users"][username] == "0":
+            startContest = True
+        else:
+            startContest = False
+
+    if startContest:
         form = beginContestForm()
         startTime = start
         if now >= start:

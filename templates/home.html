@@ -14,9 +14,9 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container col">
     	<br>
-	<h1>Welcome to Codebreaker!</h1>
+	<h1 style="text-align:center;">Welcome to Codebreaker!</h1>
     <button class="btn btn-secondary navbar" style="width:100%;display:flex;justify-content:center;align-items:center;" onclick="donate()">
         Codebreaker runs on donations from the community. Click here to contribute!
     <script>
@@ -35,19 +35,28 @@
                         <script>
 
                             document.addEventListener('DOMContentLoaded', function() {
-				console.log("hello");
                                 var calendarEl = document.getElementById('calendar');
                                 var calendar = new FullCalendar.Calendar(calendarEl, {
-                                    initialView: 'dayGridMonth'
+                                    initialView: 'dayGridMonth',
+				    eventClick: function(info){
+					info.jsEvent.preventDefault();
+					if(info.event.url){
+					    window.open(info.event.url);
+					}
+				    },
+				    eventDidMount: function(info){
+					console.log(info.event.start);
+					$(info.el).tooltip({title: info.event.title + "\n" + info.event.start + " to " + info.event.end});
+				    }
                                 });
                                 var contestInfos = JSON.parse('{{contestInfos | tojson}}')
                                 calendar.render();
                                 for (const info of contestInfos) {
-				    console.log(info)
                                     calendar.addEvent({
                                         title: info.contestName,
                                         start: info.startTime,
-                                        end: info.endTime
+                                        end: info.endTime,
+					url: "/contest/" + info.contestId
                                     });
                                 }
                             });

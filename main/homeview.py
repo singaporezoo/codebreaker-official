@@ -22,9 +22,11 @@ def home():
     else:
         username = ""
     
-    contestInfos = [{'contestName':'dummy','startTime':datetime.now().isoformat(), 'endTime':(datetime.now()+timedelta(days=1)).isoformat()}]
-    #contestInfos = [{'contestName':'dummy','startTime':"2022-06-04", 'endTime':"2022-06-05"}]
+    contestInfos = [i for i in awstools.getAllContests() if i["endTime"] != "Unlimited"]
 
+    if "admin" not in userinfo["role"]:
+        contestInfos = [i for i in contestInfos if (i["public"] or userinfo["username"] in i["users"])]
+    
     return render_template('home.html',
                            userinfo=userinfo,
                            globalSubmissionList=globalSubmissionList,
