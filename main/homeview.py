@@ -14,7 +14,7 @@ def home():
         userSubmissionList = userSubmissionList[:8]
     else:
         userSubmissionList = None
-    globalSubmissionList = awstools.getSubmissionsList(1, None, None)
+    globalSubmissionList = sorted(awstools.getSubmissionsList(1, None, None),key=lambda x:x["subId"], reverse=True)
     globalSubmissionList = globalSubmissionList[:8]
 
     if userinfo != None:
@@ -24,7 +24,9 @@ def home():
     
     contestInfos = [i for i in awstools.getAllContests() if i["endTime"] != "Unlimited"]
 
-    if "admin" not in userinfo["role"]:
+    if userinfo == None:
+        contestInfos = [i for i in contestInfos if i["public"]]
+    elif "admin" not in userinfo["role"]:
         contestInfos = [i for i in contestInfos if (i["public"] or userinfo["username"] in i["users"])]
     
     return render_template('home.html',

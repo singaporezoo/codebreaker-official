@@ -52,6 +52,8 @@ def contest(contestId):
 
     if past:
         startContest = False
+    elif userInfo == None:
+        startContest = False
     elif userInfo['role'] == 'superadmin' and (username not in contestinfo["users"] or contestinfo["users"][username] == "0"):
         startContest = True
     elif contestmode.contest() and username not in contestmode.allowedusers():
@@ -91,7 +93,7 @@ def contest(contestId):
 
     if username in contestinfo["scores"]:
         problemScores = contestinfo["scores"][username]
-    elif not past:
+    elif not past and userInfo != None:
         problemScores = userInfo['problemScores']
     else:
         problemScores = {}

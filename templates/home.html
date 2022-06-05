@@ -31,7 +31,7 @@
                 <div class="card-header bg-white" data-toggle="collapse" data-target="#futurecontests"><b>Ongoing and Future Contests</b></div>
                 <div id="futurecontests" class="collapse show">
 		        <div class="card-body" style="height: auto;">
-                        <div id='calendar'></div>
+                        <div id='calendar' data-toggle="tooltip" data-html="true"></div>
                         <script>
 
                             document.addEventListener('DOMContentLoaded', function() {
@@ -45,8 +45,10 @@
 					}
 				    },
 				    eventDidMount: function(info){
-					console.log(info.event.start);
-					$(info.el).tooltip({title: info.event.title + "\n" + info.event.start + " to " + info.event.end});
+					var tooltip = new bootstrap.Tooltip(info.el, {
+					    title: `<b>${info.event.title}</b> <br> ${info.event.start} to ${info.event.end}`,
+					    html: true
+					});
 				    }
                                 });
                                 var contestInfos = JSON.parse('{{contestInfos | tojson}}')
