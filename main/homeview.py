@@ -2,6 +2,7 @@ from flask import render_template, session, flash, request, redirect
 import tags
 import awstools
 import contestmode
+import language
 from datetime import datetime, timedelta
 
 def home():
@@ -16,6 +17,12 @@ def home():
         userSubmissionList = None
     globalSubmissionList = sorted(awstools.getSubmissionsList(1, None, None),key=lambda x:x["subId"], reverse=True)
     globalSubmissionList = globalSubmissionList[:8]
+
+    languages_inverse = language.get_languages_inverse()
+    for i in userSubmissionList:
+        i['language'] = languages_inverse[i['language']]
+    for i in globalSubmissionList:
+        i['language'] = languages_inverse[i['language']]
 
     if userinfo != None:
         username = userinfo["username"]

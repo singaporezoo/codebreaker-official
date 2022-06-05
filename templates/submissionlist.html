@@ -53,6 +53,7 @@
 				<th scope="col">Username</th>
 				<th scope="col">Problem</th>
 				<th scope="col">Score</th>
+				<th scope="col">Language</th>
 				{% if (fullfeedback and (not contest or not hidetime)) or userinfo.role == 'superadmin' or userinfo.username in users %}
 				<th scope="col">Max Time</th>
 				<th scope="col">Max Memory</th>
@@ -82,6 +83,7 @@
 					class="pb-1 text-white badge badge-{{'success' if sub.totalScore==100 else ('danger' if sub.totalScore == 0 else 'warning')}}"> {{sub.totalScore}}
 					</span> </p>
 					</td>
+					<td>{{sub.language}}</td>
 					{% if (fullfeedback and (not contest or not hidetime)) or userinfo.role == 'superadmin' or userinfo.username in users %}
 					<td>{{sub.maxTime}}</td>
 					<td>{{sub.maxMemory}}</td>
