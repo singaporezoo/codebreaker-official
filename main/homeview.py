@@ -2,7 +2,6 @@ from flask import render_template, session, flash, request, redirect
 import tags
 import awstools
 import contestmode
-import language
 from datetime import datetime, timedelta
 
 def home():
@@ -18,11 +17,7 @@ def home():
     globalSubmissionList = sorted(awstools.getSubmissionsList(1, None, None),key=lambda x:x["subId"], reverse=True)
     globalSubmissionList = globalSubmissionList[:8]
 
-    languages_inverse = language.get_languages_inverse()
-    for i in userSubmissionList:
-        i['language'] = languages_inverse[i['language']]
-    for i in globalSubmissionList:
-        i['language'] = languages_inverse[i['language']]
+
 
     if userinfo != None:
         username = userinfo["username"]
@@ -30,12 +25,28 @@ def home():
         username = ""
     
     contestInfos = [i for i in awstools.getAllContests() if i["endTime"] != "Unlimited"]
-
     if userinfo == None:
         contestInfos = [i for i in contestInfos if i["public"]]
     elif "admin" not in userinfo["role"]:
         contestInfos = [i for i in contestInfos if (i["public"] or userinfo["username"] in i["users"])]
+
+
+
+    lastWeek = datetime.datetime.now() - datetime.timedelta(days=7)
+    weekDate = lastWeek.strftime('%Y-%m-%d')
+    # Looking for the LAST submission of the day
+    low = 0 
+    high = 200000
+    while high > low:
+        mid = int((low+high + 1)/2)
+        submissionTime = awstools.getSubmission(mid)['submissionTime']
+        if query >= submissionTime:
+            low=mid
+        else:
+            high=mid - 1
+    print(low)
     
+
     return render_template('home.html',
                            userinfo=userinfo,
                            globalSubmissionList=globalSubmissionList,
@@ -43,3 +54,5 @@ def home():
                            contestInfos=contestInfos,
                            statistics=awstools.credits_page(),
                            socket=contestmode.socket())
+
+
