@@ -2,6 +2,7 @@ from flask import render_template, session, flash, request, redirect
 import tags
 import awstools
 import contestmode
+import language
 from datetime import datetime, timedelta
 
 def home():
@@ -17,7 +18,11 @@ def home():
     globalSubmissionList = sorted(awstools.getSubmissionsList(1, None, None),key=lambda x:x["subId"], reverse=True)
     globalSubmissionList = globalSubmissionList[:8]
 
-
+    languages_inverse = language.get_languages_inverse()
+    for i in userSubmissionList:
+        i['language'] = languages_inverse[i['language']]
+    for i in globalSubmissionList:
+        i['language'] = languages_inverse[i['language']]
 
     if userinfo != None:
         username = userinfo["username"]
@@ -31,7 +36,8 @@ def home():
         contestInfos = [i for i in contestInfos if (i["public"] or userinfo["username"] in i["users"])]
 
 
-
+    #commented out cos its slow ><
+    """
     lastWeek = datetime.now() - timedelta(days=7)
     weekDate = lastWeek.strftime('%Y-%m-%d')
     # Looking for the LAST submission of the day
@@ -70,6 +76,7 @@ def home():
     problemMap = dict([(i, problemMap[i]) for i in highest])
 
     credits_info = awstools.credits_page()
+    """
 
     return render_template('home.html',
                            userinfo=userinfo,
