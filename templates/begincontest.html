@@ -35,11 +35,15 @@
 	<script>
 		var endTime = document.getElementById("starttime").innerHTML
                 var countDownDate = new Date(endTime).getTime();
-		console.log(new Date().getTime())
-		console.log(countDownDate)
+			
 		function update(){
-			var now = new Date().getTime();
-			var distance = countDownDate - now;
+			var d = new Date();
+		
+			// Offsetting into SG time
+			var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+			var nd = new Date(utc + 3600000 * 8);
+
+			var distance = countDownDate - nd;
 			var days = Math.floor(distance / (1000 * 60 * 60 * 24));
 			var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 			var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -64,7 +68,8 @@
 			}
 		}
 		update()
-		var x = setInterval(update , 1000);
+		
+		setInterval(update , 1000);
 	</script>
 </div>
 {% endblock %}
