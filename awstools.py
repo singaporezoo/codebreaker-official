@@ -1004,12 +1004,14 @@ def getSubsPerDay():
     weekBeforeDate = datetime.now() - timedelta(days = 8)
     weekBefore = weekBeforeDate.strftime('%Y-%m-%d')
 
+    # if date is more than a week away, delete it
     keys = list(lastSubOfDay.keys())
     for key in keys:
         if key <= weekBefore:
             lastSubOfDay.pop(key)
             changed = True
 
+    # if important date isn't here, calculate it
     for i in range(1,8):
         date = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
 
@@ -1017,7 +1019,9 @@ def getSubsPerDay():
             lastSubOfDay[date] = findLastSubOfDay(date)
             changed = True
 
+    # if changed, update DB
     if changed:
+        print("changed")
         misc_table.update_item(
             Key = {'category': 'lastSubOfDay'},
             UpdateExpression = f'set lastSubOfDay=:s',
@@ -1043,4 +1047,6 @@ if __name__ == '__main__':
     # THIS IS FOR DEBUGGING AND WILL ONLY BE ACTIVATED IF YOU DIRECTLY RUN THIS FILE
     # IT DOES NOT OUTPUT ANYTHING ONTO TMUX
     print("TESTING")
-    print(credits_page())
+    print(getProlemInfo("1821"))
+    #print(getSubsPerDay())
+    #print(credits_page())

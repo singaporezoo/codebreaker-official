@@ -30,10 +30,9 @@
            <div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
                 <div class="card-header bg-white" data-toggle="collapse" data-target="#futurecontests"><b>Ongoing and Future Contests</b></div>
                 <div id="futurecontests" class="collapse show">
-		        <div class="card-body" style="height: auto;">
-                        <div id='calendar' data-toggle="tooltip" data-html="true"></div>
+		    <div class="card-body" style="height: auto;">
+                        <div id='calendar'></div>
                         <script>
-
                             document.addEventListener('DOMContentLoaded', function() {
                                 var calendarEl = document.getElementById('calendar');
                                 var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -64,6 +63,24 @@
                             });
                       
                           </script>
+                    </div>
+                </div>
+           </div>
+	   <br>
+           <div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
+                <div class="card-header bg-white" data-toggle="collapse" data-target="#usagestatistics"><b>Usage Statistics</b></div>
+                <div id="usagestatistics" class="collapse show">
+		    <div class="card-body">
+                        <canvas id="bar" style="width: 100%; height: auto; margin: auto;"></canvas>
+			<script>
+			    var barData = [];
+			    {% for key, value in subsPerDay.items() %}
+				var date = {{key}};
+				barData.push({value: {{value}}, label: date, color: "blue"});
+			    {% endfor %}
+			    console.log(barData);
+			    new Chart(document.getElementById("bar").getContext("2d")).Bar(barData);
+			</script>
                     </div>
                 </div>
             </div>
@@ -99,6 +116,7 @@
                                             { value: failed, label: "Failed", color: "#E0868F" },
                                             { value: total - ac - partial - failed, label: "Unattempted", color: "#7F7F7F" }
                             ];
+			    console.log(pieData);
 
                             // draw pie chart
                             new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
