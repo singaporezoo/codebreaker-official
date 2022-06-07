@@ -75,7 +75,7 @@
 			<script>
 			    var barData = [];
 			    {% for key, value in subsPerDay.items() %}
-				var date = {{key}};
+				var date = "{{key}}";
 				barData.push({value: {{value}}, label: date, color: "blue"});
 			    {% endfor %}
 			    console.log(barData);
