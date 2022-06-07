@@ -71,15 +71,26 @@
                 <div class="card-header bg-white" data-toggle="collapse" data-target="#usagestatistics"><b>Usage Statistics</b></div>
                 <div id="usagestatistics" class="collapse show">
 		    <div class="card-body">
-                        <canvas id="bar" style="width: 100%; height: auto; margin: auto;"></canvas>
+                        <canvas id="line" style="width: 20%; height: auto; margin: auto;"></canvas>	
 			<script>
-			    var barData = [];
+			    keys = [];
+			    values = [];
 			    {% for key, value in subsPerDay.items() %}
-				var date = "{{key}}";
-				barData.push({value: {{value}}, label: date, color: "blue"});
+				var date = "{{key}}"
+				keys.push(date);
+				values.push({{value|int}});
 			    {% endfor %}
-			    console.log(barData);
-			    new Chart(document.getElementById("bar").getContext("2d")).Bar(barData);
+			    keys.reverse();
+			    values.reverse();
+			    new Chart(document.getElementById("line"), {
+				type: 'line',
+				data:{
+				    labels: keys,
+				    datasets: [
+					{label: "Number of Submissions", data: values}
+				    ]
+				}
+			    });
 			</script>
                     </div>
                 </div>
@@ -111,15 +122,21 @@
                                 }
                             }
                         
-                            var pieData = [ { value: ac, label: "Accepted", color: "#72E58D" },
-                                            { value: partial, label: "Partial", color: "#F9D87C" },
-                                            { value: failed, label: "Failed", color: "#E0868F" },
-                                            { value: total - ac - partial - failed, label: "Unattempted", color: "#7F7F7F" }
-                            ];
-			    console.log(pieData);
+			    var labels = ["Accepted", "Partial", "Failed", "Unattempted"];
+			    var data = [ac, partial, failed, total - ac - partial - failed];
+			    var bgcolor = ["#72E58D", "#F9D87C", "#E0868F", "#7F7F7F"];
 
                             // draw pie chart
-                            new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
+			    new Chart(document.getElementById("chart"), {
+				type: 'doughnut',
+				data:{
+				    labels: labels,
+				    datasets: [
+					{data: data, backgroundColor: bgcolor}
+				    ]
+				}
+
+			    });
                         </script>
                     </div>
                 </div>
