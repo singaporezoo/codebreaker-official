@@ -72,26 +72,6 @@
                 <div id="usagestatistics" class="collapse show">
 		    <div class="card-body">
                         <canvas id="line" style="width: 20%; height: auto; margin: auto;"></canvas>	
-			<script>
-			    keys = [];
-			    values = [];
-			    {% for key, value in subsPerDay.items() %}
-				var date = "{{key}}"
-				keys.push(date);
-				values.push({{value|int}});
-			    {% endfor %}
-			    keys.reverse();
-			    values.reverse();
-			    new Chart(document.getElementById("line"), {
-				type: 'line',
-				data:{
-				    labels: keys,
-				    datasets: [
-					{label: "Number of Submissions", data: values}
-				    ]
-				}
-			    });
-			</script>
                     </div>
                 </div>
             </div>
@@ -103,41 +83,6 @@
                 <div id="piechart" class="collapse show">
                     <div class="card-body">
                         <canvas id="chart" style="width: 100%; height: auto; margin: auto;"></canvas>
-                        <script>
-                            var ac = 0;
-                            var partial = 0;
-                            var failed = 0;
-                            var total = JSON.parse('{{statistics["problems"]}}');
-
-                            var problemScores = JSON.parse('{{userinfo.problemScores | tojson}}');
-
-                            for (const problem in problemScores) {
-                                score = problemScores[problem]
-                                if (score == 100) {
-                                    ac++;
-                                } else if (score == 0) {
-                                    failed++;
-                                } else {
-                                    partial++;
-                                }
-                            }
-                        
-			    var labels = ["Accepted", "Partial", "Failed", "Unattempted"];
-			    var data = [ac, partial, failed, total - ac - partial - failed];
-			    var bgcolor = ["#72E58D", "#F9D87C", "#E0868F", "#7F7F7F"];
-
-                            // draw pie chart
-			    new Chart(document.getElementById("chart"), {
-				type: 'doughnut',
-				data:{
-				    labels: labels,
-				    datasets: [
-					{data: data, backgroundColor: bgcolor}
-				    ]
-				}
-
-			    });
-                        </script>
                     </div>
                 </div>
             </div>
@@ -228,6 +173,60 @@
             {% endif %}
         </div>
 	</div>
+	<script>
+	    window.onload = function(){
+		keys = [];
+		values = [];
+		{% for key, value in subsPerDay.items() %}
+		    var date = "{{key}}"
+		    keys.push(date);
+		    values.push({{value|int}});
+	        {% endfor %}
+	        keys.reverse();
+	        values.reverse();
+	        new Chart(document.getElementById("line"), {
+		    type: 'line',
+		    data:{
+			labels: keys,
+			datasets: [
+			    {label: "Number of Submissions", data: values, borderColor: '#7F7F7F'}
+			]
+		    }
+		});
+               	var ac = 0;
+                var partial = 0;
+                var failed = 0;
+                var total = JSON.parse('{{statistics["problems"]}}');
+                var problemScores = JSON.parse('{{userinfo.problemScores | tojson}}');
+
+                for (const problem in problemScores) {
+                    score = problemScores[problem]
+                    if (score == 100) {
+                        ac++;
+                    } else if (score == 0) {
+                        failed++;
+                    } else {
+                        partial++;
+                    }
+                }
+                        
+	        var labels = ["Accepted", "Partial", "Failed", "Unattempted"];
+	        var data = [ac, partial, failed, total - ac - partial - failed];
+	        var bgcolor = ["#72E58D", "#F9D87C", "#E0868F", "#7F7F7F"];
+
+                // draw pie chart
+	        new Chart(document.getElementById("chart"), {
+		    type: 'doughnut',
+		    data:{
+		        labels: labels,
+		        datasets: [
+		    	    {data: data, backgroundColor: bgcolor}
+			]
+		    }
+
+		});
+	    }
+	</script>
 </div>
 
 {% endblock %}
