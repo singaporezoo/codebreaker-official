@@ -388,7 +388,7 @@ def regradeCommunication(subId, regrade_type=0):
 
     return {"status":"success","message":""}
 
-def regradeSub(subId, regrade_type = 0):
+def regradeSub(subId, regrade_type = 0, language = 'cpp'):
     subInfo = awstools.getSubmission(subId,False)
     if subInfo is None:
         return {'status':"warning",'message':"This submission doesn't exist"}
@@ -426,6 +426,30 @@ def regradeSub(subId, regrade_type = 0):
     submissionTime = subInfo['submissionTime']
 
     compileError=""
+
+    if language == 'py':
+        # Don't need to compile, just save
+        # Save the code
+        subuuid = str(uuid4())
+        sourceName = f"tmp/submissions/{subuuid}.py"
+        with open(sourceName,"w") as sourceFile:
+            sourceFile.write(code)
+            sourceFile.close()
+
+        # Upload python code to source
+        subId = awstools.getNextSubmissionId()
+        uploadTarget=f"source/{subId}.py"
+        awstools.uploadCode(sourceName,uploadTarget)
+
+        #delete the codes
+        subprocess.run(f'sudo rm {sourceName}', shell=True)
+
+        username = awstools.getCurrentUserInfo()['username']
+
+        awstools.gradeSubmission(PROBLEM_NAME,subId,username,language=language)
+
+        time.sleep(1.5)
+        return {"status":"redirect","message":f"/submission/{subId}"}
 
     if problemType == 'Batch':
         subuuid = str(uuid4())

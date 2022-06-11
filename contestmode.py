@@ -19,7 +19,7 @@ def contestIds():
     return []
 
 def contestproblems():
-    problems = []
+    problems = ['kmxorm', 'wabot2', 'travelling']
     for i in contestIds():
         problems += awstools.getContestInfo(i)['problems']
     return problems

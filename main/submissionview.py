@@ -40,6 +40,7 @@ def submission(subId):
     #print(subDetails)
     subtaskScores = [fixFloat(i) for i in subDetails['subtaskScores']]
     scores = [fixFloat(i) for i in subDetails["score"]]
+    language = subDetails['language']
 
     problemName = subDetails['problemName']
     username = subDetails['username']
@@ -179,7 +180,6 @@ def submission(subId):
     if changedSubtask:
         flash("Some subtasks were added or removed from this question after this submission was graded", "warning")
 
-
     '''RESUBMISSION'''
     form = ResubmitForm()
 
@@ -189,7 +189,6 @@ def submission(subId):
             flash('You are unable to regrade or resubmit this submission!', 'danger')
             return redirect(f'/submission/{subId}')
         
-        
         result = request.form
         if 'form_name' in result and result['form_name'] == 'regrade':
             if userInfo == None or (userInfo['role'] != 'admin' and userInfo['role'] != 'superadmin'):
@@ -198,7 +197,7 @@ def submission(subId):
             if contest and (userInfo['role'] != 'superadmin' and userInfo['username'] not in contestmode.allowedusers()):
                 flash('You cannot regrade in contest mode!', 'warning')
                 return redirect(f'/submission/{subId}')
-            result = regradeSub(int(subId))
+            result = regradeSub(int(subId), language=language)
             if result['status'] == 'warning':
                 flash(result['message'],"warning")
             elif result['status'] == 'compileError':
