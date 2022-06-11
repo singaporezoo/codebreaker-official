@@ -437,7 +437,6 @@ def regradeSub(subId, regrade_type = 0, language = 'cpp'):
             sourceFile.close()
 
         # Upload python code to source
-        subId = awstools.getNextSubmissionId()
         uploadTarget=f"source/{subId}.py"
         awstools.uploadCode(sourceName,uploadTarget)
 
@@ -553,6 +552,9 @@ def regradeProblem(problemName, regrade_type = 0):
     #Please use your discretion (or if you want to donate to codebreaker :p)
     submissions = awstools.getSubmissionsToProblem(problemName)
     for i in submissions:
-        regradeSub(int(i['subId']), regrade_type)
+        subId = int(i['subId'])
+        submissionInfo = awstools.getSubmission(subId)
+        #print(submissionInfo)
+        regradeSub(subId, regrade_type=regrade_type, language=submissionInfo['language'])
 
     awstools.updateScores(problemName)
