@@ -69,7 +69,7 @@ app.add_url_rule('/admin/editgroup/<groupId>', view_func=editcontestgroupview.ed
 app.add_url_rule('/clarifications', view_func=clarificationsview.clarifications, methods=['GET','POST'])
 app.add_url_rule('/admin/editclarifications', view_func=editclarificationsview.editclarifications, methods=['GET','POST'])
 app.add_url_rule('/admin/viewsubmissions/<problemName>', view_func = viewsubmissions.viewsubmissions, methods=['GET','POST'])
-app.add_url_rule('/home', view_func = homeview.home)
+#app.add_url_rule('/home', view_func = homeview.home)
 
 def cppref(path):
     if contestmode.contest() and not contestmode.cppref():
