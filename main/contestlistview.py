@@ -7,13 +7,13 @@ from forms import beginContestForm
 def contestlist():
     contests = awstools.getAllContests()
     
-    if contestmode.contest():
+    userInfo = awstools.getCurrentUserInfo()
+    
+    if contestmode.contest() and (userInfo == None or userInfo['role'] != 'superadmin'):
         flash('Sorry, you cannot view that resource in contest mode', 'warning')
         return redirect(f'/contest/{contestmode.contestId()}')
 
     shownContests = []
-    
-    userInfo = awstools.getCurrentUserInfo()
     
     #if userInfo == None:
         #flash("Please login to view this page", "warning")

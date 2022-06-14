@@ -3,11 +3,12 @@ import awstools
 import contestmode
 
 def credits():
-    if contestmode.contest():
+    userinfo = awstools.getCurrentUserInfo()
+    if contestmode.contest() and (userinfo == None or userinfo['role'] != 'superadmin'):
         flash('Sorry, you cannot view that resource in contest mode', 'warning')
         return redirect(f'/contest/{contestmode.contestId()}')
 
-    return render_template('credits.html',userinfo=awstools.getCurrentUserInfo(),statistics=awstools.credits_page(), socket=contestmode.socket())
+    return render_template('credits.html',userinfo=userinfo,statistics=awstools.credits_page(), socket=contestmode.socket())
 
 
 

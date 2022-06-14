@@ -28,8 +28,8 @@ def contestproblems():
     return problems
 
 def fullfeedback():
+    return False
     return True
-    #return False
 
 # show time and memory info
 def hidetime():
@@ -44,9 +44,9 @@ def stitch():
     #return False
     return True
 
-# people who can see subs
+# people who can see subs (contest admins)
 def allowedusers():
-    return ['zscoder', 'kevinsogo', 'bensonlzl', 'ramapang', 'ace']
+    return ['zscoder', 'kevinsogo', 'bensonlzl', 'ramapang', 'Ace']
 
 def socket():
     if not contest():

@@ -6,16 +6,17 @@ from forms import beginContestForm
 
 def contestgroup(groupId):
     
-    if contestmode.contest():
-        flash('Sorry, you cannot view that resource in contest mode', 'warning')
-        return redirect(f'/contest/{contestmode.contestId()}')
-
     userInfo = awstools.getCurrentUserInfo()
     
     if userInfo != None:
         username = userInfo["username"]
     else:
         username = ""
+
+    if contestmode.contest() and (userInfo == None or userInfo['role'] != 'superadmin'):
+        flash('Sorry, you cannot view that resource in contest mode', 'warning')
+        return redirect(f'/contest/{contestmode.contestId()}')
+
         
     contestgroupinfo = awstools.getContestGroupInfo(groupId)
     if type(contestgroupinfo) == str:
