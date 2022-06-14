@@ -175,8 +175,10 @@ if __name__ == '__main__':
     if len(sys.argv) <= 1 or sys.argv[1] != "develop":
         print("DEPLOY MODE")
         if not contestmode.contest():
+            print("Deploy without contest mode")
             serve(app, host='0.0.0.0', port=5000, url_scheme='https', threads = 16)
         else:
+            print("Deploy with contest mode")
             socketio.run(app, host='0.0.0.0', port=443, certfile='../codebreaker_xyz.crt', keyfile='../codebreaker_xyz.key')
     else:
         print("DEVELOP MODE")
@@ -184,4 +186,5 @@ if __name__ == '__main__':
             print("Develop without contest mode")
             app.run(debug=True, host='0.0.0.0', port=443, ssl_context=('../codebreaker_xyz.crt', '../codebreaker_xyz.key'))
         else:
+            print("Develop with contest mode")
             socketio.run(app, debug=True, host='0.0.0.0', port=443, certfile='../codebreaker_xyz.crt', keyfile='../codebreaker_xyz.key')

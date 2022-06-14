@@ -30,14 +30,15 @@ def problem(PROBLEM_NAME):
 
     userInfo = awstools.getCurrentUserInfo()
 
-    if contestmode.contest() and userInfo['username'] not in contestmode.allowedusers() and userInfo['role'] != 'superadmin':
-        contestinfo = awstools.getContestInfo(contestmode.contestId())
-        start = datetime.strptime(contestinfo['startTime'], "%Y-%m-%d %X") 
-        now = datetime.now() + timedelta(hours = 8)
+    if contestmode.contest():
+        if userInfo == None or (userInfo['username'] not in contestmode.allowedusers() and userInfo['role'] != 'superadmin'):
+            contestinfo = awstools.getContestInfo(contestmode.contestId())
+            start = datetime.strptime(contestinfo['startTime'], "%Y-%m-%d %X") 
+            now = datetime.now() + timedelta(hours = 8)
     
-        if now < start:
-            flash("Sorry, the contest hasn't started yet", "warning")
-            return redirect(f"/contests")
+            if now < start:
+                flash("Sorry, the contest hasn't started yet", "warning")
+                return redirect(f"/contests")
 
     scores = []
     verdicts = []

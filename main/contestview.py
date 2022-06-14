@@ -6,13 +6,21 @@ from forms import beginContestForm
 
 def contest(contestId):
     contestinfo = awstools.getContestInfo(contestId)
+    userInfo = awstools.getCurrentUserInfo()
+    if userInfo != None:
+        username = userInfo["username"]
+    else:
+        username = ""
 
     if contestinfo == None:
         return "sorry this page doesn't exist"
 
     if contestmode.contest() and contestmode.contestId() != contestId:
-        flash('Sorry, this is the only contest you can view in contest mode now', 'warning')
-        return redirect(f'/contest/{contestmode.contestId()}')
+        if userInfo != None and (userInfo['role'] == 'superadmin' or username in contestmode.allowedusers()):
+            pass
+        else:
+            flash('Sorry, this is the only contest you can view in contest mode now', 'warning')
+            return redirect(f'/contest/{contestmode.contestId()}')
 
     problemNames = contestinfo['problems']
     problems = []
@@ -26,12 +34,6 @@ def contest(contestId):
         problems = awstools.getAllProblemsLimited()
         problems = [P for P in problems if P['analysisVisible']]
     
-    userInfo = awstools.getCurrentUserInfo()
-    if userInfo != None:
-        username = userInfo["username"]
-    else:
-        username = ""
-		
     # not userInfo["username"] in contestinfo.users
     if contestinfo["public"] == 0 and not username in contestinfo["users"] and (userInfo != None and userInfo['role'] != 'superadmin') and username not in contestmode.allowedusers():
         flash("Sorry, you've not been invited to this private contest!", "warning")
@@ -56,8 +58,6 @@ def contest(contestId):
         startContest = False
     elif userInfo['role'] == 'superadmin' and (username not in contestinfo["users"] or contestinfo["users"][username] == "0"):
         startContest = True
-    elif contestmode.contest() and username not in contestmode.allowedusers():
-        startContest = False
     else:
         if contestinfo["public"]:
             if username not in contestinfo["users"]:
@@ -100,10 +100,9 @@ def contest(contestId):
     problemInfo = [dict((key,value) for key, value in P.items() if key in ['problemName','analysisVisible','title', 'source', 'author','problem_type','noACs','contestLink','EE']) for P in problems] #impt info goes into the list (key in [list])
     
     for problem in problemInfo:
-        if problem['analysisVisible'] == False and userInfo['role'] == 'member':
+        if problem['analysisVisible'] == False and userInfo != None and userInfo['role'] == 'member':
             problem['analysisVisible'] = True
             awstools.makeAnalysisVisible(problem["problemName"])
-    
      
     totalScore = 0
     maxScore = len(problemInfo) * 100
