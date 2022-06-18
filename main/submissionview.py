@@ -173,7 +173,7 @@ def submission(subId):
 
         subtaskDetails.append(detail)
     
-    if diffInTime > 30:
+    if diffInTime > 60:
         toRefresh = False
     if changed:
         flash("If you see the 'UG' verdict, it means that testcases were added after this submission was graded", "warning")

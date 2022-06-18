@@ -15,9 +15,9 @@ import contestmode
 
 s3 = boto3.client('s3','ap-southeast-1')
 s3_resource = boto3.resource('s3')
-dynamodb = boto3.resource('dynamodb','ap-southeast-1')
-lambda_client = boto3.client('lambda','ap-southeast-1')
-event_client = boto3.client('events','ap-southeast-1')
+dynamodb = boto3.resource('dynamodb')
+lambda_client = boto3.client('lambda')
+event_client = boto3.client('events')
 
 CODE_BUCKET_NAME = 'codebreaker-submissions'
 STATEMENTS_BUCKET_NAME = 'codebreaker-statements'
