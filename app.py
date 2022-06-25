@@ -170,7 +170,11 @@ def addEndParticipation(contestId, username, time):
 if __name__ == '__main__':
 
     for e in awstools.getAllEndContests():
-        scheduler.add_job(id=e['eventId'],func=handleEndParticipation,args=e['eventId'].split(' '),trigger='date',run_date=e['endtime'],timezone=utc)
+        if e['endtime'] < datetime.now():
+            contestId, username = e['eventId'].split(' ')
+            handleEndParticipation(contestId, username)
+        else:
+            scheduler.add_job(id=e['eventId'],func=handleEndParticipation,args=e['eventId'].split(' '),trigger='date',run_date=e['endtime'],timezone=utc)
 
     if len(sys.argv) <= 1 or sys.argv[1] != "develop":
         print("DEPLOY MODE")
