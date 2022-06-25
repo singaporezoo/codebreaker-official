@@ -45,8 +45,17 @@ themes = ['light', 'dark', 'pink', 'brown', 'orange', 'custom', 'custom-dark']
 #this is a dummy change
 subPerPage = 25
 
+def scan(table, ProjectionExpression='', ExpressionAttributeNames = {}, ExpressionAttributeValues = {}):
+    return table.scan(
+        ProjectionExpression=ProjectionExpression,
+        ExpressionAttributeNames = ExpressionAttributeNames,
+        ExpressionAttributeValues = ExpressionAttributeValues
+    )['Items']
+
 def getAllProblems():
-    return problems_table.scan()['Items']
+    value = scan(problems_table)
+    return value
+    # return problems_table.scan()['Items']
 
 def getAllProblemNames():
     problemNames = problems_table.scan(
@@ -55,35 +64,31 @@ def getAllProblemNames():
     return problemNames
 
 def getAllContestIds():
-    contestIds = contests_table.scan(
-        ProjectionExpression = 'contestId'
-    )['Items']
+    contestIds = scan(contests_table, ProjectionExpression='contestId')
     return contestIds
 
 def getAllGroupIds():
-    groupIds = contest_groups_table.scan(
-        ProjectionExpression = 'groupId'
-    )['Items']
+    groupIds = scan(contest_groups_table, ProjectionExpression='groupId')
     return groupIds
 
 def getAllProblemsLimited():
-    return problems_table.scan(
+    return scan(problems_table, 
         ProjectionExpression = 'problemName, analysisVisible, title, #source2, author, problem_type, noACs, validated, contestLink, superhidden,createdTime,EE,allowAccess,tags',
         ExpressionAttributeNames={'#source2':'source'}
-    )['Items']
+    )
 
 def getAllProblemsHidden():
-    return problems_table.scan(
-        ProjectionExpression='problemName, analysisVisible, superhidden',
-    )['Items']
+    return scan(problems_table,
+        ProjectionExpression='problemName, analysisVisible, superhidden'
+    )
 
 def getAllUsers():
-    return users_table.scan()['Items']
+    return scan(users_table)
 
 def getAllUsernames():
-    usernames = users_table.scan(
+    usernames = scan(users_table,
         ProjectionExpression = 'username'
-    )['Items']
+    )
     return usernames
 
 def getProblemInfo(problemName):
@@ -483,10 +488,10 @@ def createProblemWithId(problem_id):
     validateProblem(problem_id)
 
 def getAllContests():
-    return contests_table.scan(
+    return scan(contests_table,
         ProjectionExpression = 'contestId, contestName, startTime, endTime, #PUBLIC, #DURATION, #USERS',
         ExpressionAttributeNames={ "#PUBLIC": "public", "#DURATION" : "duration", '#USERS':'users' } #not direct cause users is a reserved word
-    )['Items']
+    )
 
 def getContestInfo(contestId):
     response= contests_table.query(
@@ -650,14 +655,8 @@ def getRankings():
                         if t[0] != 0:
                                 H.append([t[0],t[1],t[2],t[3],ele['username']])
 
-        resp = users_table.scan(ProjectionExpression='username, problemScores')
-        users = resp['Items']
+        users = scan(users_table, ProjectionExpression='username,problemScores')
         res(users)
-
-        while 'LastEvaluatedKey' in resp:
-                resp = users_table.scan(ExclusiveStartKey=resp['LastEvaluatedKey'],ProjectionExpression='username, problemScores')
-                users = resp['Items']
-                res(users)
 
         H.sort()
         H.reverse()
@@ -671,15 +670,9 @@ def getRankings():
         return H
 
 def get_countries():
-    resp = users_table.scan(ProjectionExpression='username,nation')
+    subs = scan(users_table,ProjectionExpression='username,nation')
     nations = []
-    subs = resp['Items']
     nations += [i['nation'] for i in subs if i['username'] != '']
-
-    while 'LastEvaluatedKey' in resp:
-        resp = table.scan(ExclusiveStartKey=resp['LastEvaluatedKey'],ProjectionExpression=f'{primaryKey}')
-        subs = resp['Items']
-        nations += [i['nation'] for i in subs if i['username'] != '']
     
     nations = list(set(nations))
     BANNED_NATIONS = ['Outer Space', 'N/A']
@@ -689,18 +682,11 @@ def get_countries():
 def credits_page():
         def find_length(table, primaryKey):
                 ans = 0
-                resp = table.scan(ProjectionExpression=f'{primaryKey}')
-                subs = resp['Items']
+                subs = scan(table, ProjectionExpression=f'{primaryKey')
                 if primaryKey == 'username':
                     subs = [i for i in subs if i['username'] != '']
                 ans += len(subs)
 
-                while 'LastEvaluatedKey' in resp:
-                        resp = table.scan(ExclusiveStartKey=resp['LastEvaluatedKey'],ProjectionExpression=f'{primaryKey}')
-                        subs = resp['Items']
-                        if primaryKey == 'username':
-                            subs = [i for i in subs if i['username'] != '']
-                        ans += len(subs)
                 return ans
 
         def getSubmissionId():
@@ -789,20 +775,20 @@ def getContestScore(contestId, username):
     return {'userscore':None, 'totalscore':totalscore,'duration':duration,'contestName':contestName, 'public':public}
 
 def getAllContestGroups():
-    return contest_groups_table.scan(
+    return scan(contest_groups_table,
         ProjectionExpression = 'groupId, groupName, visible',
-    )['Items']
+    )
 
 
 def getAllContestGroupIds():
-    return contest_groups_table.scan(
+    return scan(contest_groups_table,
         ProjectionExpression = 'groupId',
-    )['Items']
+    )
     
 def getAllAnnounces():
-    return announce_table.scan(
+    return scan(announce_table, 
         ProjectionExpression='announceId, priority, visible, aSummary, aTitle, adminOnly, contestLink'
-    )['Items']
+    )
 
 def updateAnnounce(announceId, info):
     announce_table.update_item(
@@ -919,7 +905,7 @@ def getClarificationsByUser(username):
     return response['Items']
 
 def getAllClarifications():
-    return clarifications_table.scan()['Items']
+    return scan(clarifications_table)
 
 def makeStatementPrivate(problemId):
     try:
@@ -957,7 +943,7 @@ def getRecommendedProblems(user):
     return json.load(res["Payload"])
 
 def getAllEndContests():
-    endcontests = end_contest_table.scan()['Items']
+    endcontests = scan(end_contest_table)
     for e in endcontests:
         e['endtime'] = datetime.strptime(e['endtime'],"%Y-%m-%d %X")
     return endcontests
@@ -1047,6 +1033,6 @@ if __name__ == '__main__':
     # THIS IS FOR DEBUGGING AND WILL ONLY BE ACTIVATED IF YOU DIRECTLY RUN THIS FILE
     # IT DOES NOT OUTPUT ANYTHING ONTO TMUX
     print("TESTING")
-    print(getProlemInfo("1821"))
+    print(getAllProblems())
     #print(getSubsPerDay())
     #print(credits_page())
