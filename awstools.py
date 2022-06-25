@@ -45,12 +45,72 @@ themes = ['light', 'dark', 'pink', 'brown', 'orange', 'custom', 'custom-dark']
 #this is a dummy change
 subPerPage = 25
 
-def scan(table, ProjectionExpression='', ExpressionAttributeNames = {}, ExpressionAttributeValues = {}):
-    return table.scan(
-        ProjectionExpression=ProjectionExpression,
-        ExpressionAttributeNames = ExpressionAttributeNames,
-        ExpressionAttributeValues = ExpressionAttributeValues
-    )['Items']
+# Scanning dynamoDB
+def scan(table, ProjectionExpression=None, ExpressionAttributeNames = None, ExpressionAttributeValues = None):
+    results = []
+    if ProjectionExpression == None:
+       # No Expression Attribute Names
+        resp = table.scan()
+        results = results + resp['Items']
+        while 'LastEvaluatedKey' in resp:
+            resp = table.scan(
+                ExclusiveStartKey = resp['LastEvaluatedKey']
+            )
+            results = results + resp['Items']
+    elif ExpressionAttributeNames != None and ExpressionAttributeValues != None:
+        resp = table.scan(
+            ProjectionExpression=ProjectionExpression,
+            ExpressionAttributeNames = ExpressionAttributeNames,
+            ExpressionAttributeValues = ExpressionAttributeValues
+        )
+        results = results + resp['Items']
+        while 'LastEvaluatedKey' in resp:
+            resp = table.scan(
+                ProjectionExpression=ProjectionExpression,
+                ExpressionAttributeNames = ExpressionAttributeNames,
+                ExpressionAttributeValues = ExpressionAttributeValues,
+                ExclusiveStartKey = resp['LastEvaluatedKey']
+            )
+            results = results + resp['Items']
+
+    elif ExpressionAttributeNames != None:
+        resp = table.scan(
+            ProjectionExpression=ProjectionExpression,
+            ExpressionAttributeNames = ExpressionAttributeNames,
+        )
+        results = results + resp['Items']
+        while 'LastEvaluatedKey' in resp:
+            resp = table.scan(
+                ProjectionExpression=ProjectionExpression,
+                ExpressionAttributeNames = ExpressionAttributeNames,
+                ExclusiveStartKey = resp['LastEvaluatedKey']
+            )
+            results = results + resp['Items']
+    elif ExpressionAttributeValues != None:
+        resp = table.scan(
+            ProjectionExpression=ProjectionExpression,
+            ExpressionAttributeValues = ExpressionAttributeValues
+        )
+        results = results + resp['Items']
+        while 'LastEvaluatedKey' in resp:
+            resp = table.scan(
+                ProjectionExpression=ProjectionExpression,
+                ExpressionAttributeValues = ExpressionAttributeValues,
+                ExclusiveStartKey = resp['LastEvaluatedKey']
+            )
+            results = results + resp['Items']
+    else:
+        resp = table.scan(
+            ProjectionExpression=ProjectionExpression,
+        )
+        results = results + resp['Items']
+        while 'LastEvaluatedKey' in resp:
+            resp = table.scan(
+                ProjectionExpression=ProjectionExpression,
+                ExclusiveStartKey = resp['LastEvaluatedKey']
+            )
+            results = results + resp['Items']
+    return results
 
 def getAllProblems():
     value = scan(problems_table)
@@ -682,7 +742,7 @@ def get_countries():
 def credits_page():
         def find_length(table, primaryKey):
                 ans = 0
-                subs = scan(table, ProjectionExpression=f'{primaryKey')
+                subs = scan(table, ProjectionExpression=f'{primaryKey}')
                 if primaryKey == 'username':
                     subs = [i for i in subs if i['username'] != '']
                 ans += len(subs)
@@ -1033,6 +1093,6 @@ if __name__ == '__main__':
     # THIS IS FOR DEBUGGING AND WILL ONLY BE ACTIVATED IF YOU DIRECTLY RUN THIS FILE
     # IT DOES NOT OUTPUT ANYTHING ONTO TMUX
     print("TESTING")
-    print(getAllProblems())
+    print(len(getAllProblems()))
     #print(getSubsPerDay())
     #print(credits_page())

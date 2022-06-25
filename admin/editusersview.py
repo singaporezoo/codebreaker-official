@@ -44,7 +44,7 @@ def editusers():
         flash("You do not have access in contest mode", "warning")
         return redirect("/")
 
-    allUsersInfo = [dict((key,value) for key, value in U.items() if key in ['username','fullname','school','role']) for U in users] #impt info goes into the list (key in [list]) 
+    allUsersInfo = [dict((key,value) for key, value in U.items() if key in ['username','fullname','school','role', 'nation']) for U in users] #impt info goes into the list (key in [list]) 
     allUsersInfo = [user for user in allUsersInfo if 'fullname' in user.keys()]
     allUsersInfo = [user for user in allUsersInfo if user['fullname'] != "" and user['username'] != ""]
     allUsersInfo.sort(key=lambda x:x['fullname'])
