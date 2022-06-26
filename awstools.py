@@ -12,6 +12,9 @@ from botocore.client import Config
 from boto3.dynamodb.conditions import Key, Attr
 from flask import session
 import contestmode
+import os
+
+#os.environ['AWS_DEFAULT_REGION']='ap-southeast-1'
 
 s3 = boto3.client('s3','ap-southeast-1')
 s3_resource = boto3.resource('s3')
