@@ -137,7 +137,13 @@ def lambda_handler(event,context):
 		obj = {'username':username,'problemScores':problemScores, 'totalScore':totalScore}
 		scoreboard.append(obj)
 
-	scoreboard.sort(key = lambda x:x['totalScore']) 
+	def intoSeconds(username):
+		if username not in lastScoreChange.keys(): return 0
+		if lastScoreChange[username] == 'N/A': return 0
+		time = (datetime.datetime.strptime(lastScoreChange[username], '%H:%M:%S') - datetime.datetime(1900, 1, 1)).total_seconds()
+		return int(time)
+
+	scoreboard.sort(key = lambda x:x['totalScore'] * 100000 - intoSeconds(x['username'])) 
 	scoreboard.reverse() # Write with largest first
 	trueRank = 0
 	currentRank = 0
@@ -178,3 +184,5 @@ def lambda_handler(event,context):
 		'status':200
 	}
 
+if __name__ == '__main__':
+	lambda_handler({'contestId': 'sgpsparring21'},None)

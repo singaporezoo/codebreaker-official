@@ -76,7 +76,8 @@ def lambda_handler(event, context):
         subprocess.run("rm -rf /tmp/*",shell=True)
         
         return result
-        
+    
+    # print(process.stdout)
     dum = process.stdout.split()
     returnCode = int(dum[0])
     userTime = float(dum[1])
