@@ -21,6 +21,7 @@ s3_resource = boto3.resource('s3')
 dynamodb = boto3.resource('dynamodb')
 lambda_client = boto3.client('lambda')
 event_client = boto3.client('events')
+SFclient = boto3.client('stepfunctions')
 
 CODE_BUCKET_NAME = 'codebreaker-submissions'
 STATEMENTS_BUCKET_NAME = 'codebreaker-statements'
@@ -311,7 +312,9 @@ def gradeSubmission(problemName,submissionId,username,submissionTime=None,regrad
         submissionTime = (datetime.now()+timedelta(hours=8)).strftime("%Y-%m-%d %X")
     stitch = contestmode.contest() and contestmode.stitch() and contestmode.contestId() != 'analysismirror'
     lambda_input = {"problemName": problemName, "submissionId":submissionId,"username":username,"submissionTime":submissionTime,"stitch":stitch,"regrade":regrade,"regradeall":regradeall,"language":language}
-    res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-problem-grader', InvocationType='Event', Payload = json.dumps(lambda_input))
+    stepFunctionARN = "arn:aws:states:ap-southeast-1:354145626860:stateMachine:CodebreakerGrading"
+    res = SFclient.start_execution(stateMachineArn = stepFunctionARN, input = json.dumps(lambda_input))
+
 
 def updateScores(problemName):
     stitch = contestmode.contest() and contestmode.stitch()

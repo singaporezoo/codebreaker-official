@@ -27,7 +27,7 @@ def lambda_handler(event, context):
             InvocationType='RequestResponse',
             Payload = json.dumps(event)
         )
-    
+        
     result = json.loads(response['Payload'].read())
     print(result)
 
