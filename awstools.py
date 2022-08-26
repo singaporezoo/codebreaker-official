@@ -312,7 +312,7 @@ def gradeSubmission(problemName,submissionId,username,submissionTime=None,regrad
         submissionTime = (datetime.now()+timedelta(hours=8)).strftime("%Y-%m-%d %X")
     stitch = contestmode.contest() and contestmode.stitch() and contestmode.contestId() != 'analysismirror'
     lambda_input = {"problemName": problemName, "submissionId":submissionId,"username":username,"submissionTime":submissionTime,"stitch":stitch,"regrade":regrade,"regradeall":regradeall,"language":language}
-    stepFunctionARN = "arn:aws:states:ap-southeast-1:354145626860:stateMachine:CodebreakerGrading"
+    stepFunctionARN = "arn:aws:states:ap-southeast-1:354145626860:stateMachine:CodebreakerGradingv2"
     res = SFclient.start_execution(stateMachineArn = stepFunctionARN, input = json.dumps(lambda_input))
 
 
