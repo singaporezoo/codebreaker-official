@@ -15,7 +15,7 @@
 {% block content %}
 <br>
 
-<div class="container col">
+<div class="container-fluid col">
 	<div class="container">
 		<br>
 		<h1 style="text-align:center;">Welcome to Codebreaker!</h1>
@@ -25,7 +25,7 @@
 	<div class="row">
 		<div class="col home-box m-2 d-flex flex-column justify-content-end">
 			<div class="row d-flex flex-row justify-content-center p-2 pt-5">
-				<h2 style="text-align: center;">2118 problems</h2>
+				<h2 style="text-align: center;">{{statistics['problems']}} problems</h2>
 			</div>
 			<a href="/problems?command=newest" class="row home-click p-2">
 				<p style="margin:0;">
@@ -38,7 +38,7 @@
 		</div>
 		<div class="col home-box m-2 d-flex flex-column justify-content-end">
 			<div class="row d-flex flex-row justify-content-center p-2 pt-5">
-				<h2 style="text-align: center;">2118 submissions</h2>
+				<h2 style="text-align: center;">{{statistics['subs']}} submissions</h2>
 			</div>
 			<a href="/submissions" class="row home-click p-2">
 				<p style="margin:0;">
@@ -51,7 +51,7 @@
 		</div>
 		<div class="col home-box m-2 d-flex flex-column justify-content-end">
 			<div class="row d-flex flex-row justify-content-center p-2 pt-5">
-					<h2 style="text-align: center;">2118 users</h2>
+				<h2 style="text-align: center;">{{statistics['users']}} users</h2>
 			</div>
 			<a href="/rankings" class="row home-click p-2">
 				<p style="margin:0;">
@@ -64,7 +64,7 @@
 		</div>
 		<div class="col home-box m-2 d-flex flex-column justify-content-end">
 			<div class="row d-flex flex-row justify-content-center p-2 pt-5">
-					<h2 style="text-align: center;">21 countries</h2>
+				<h2 style="text-align: center;">{{statistics['nations']}} countries</h2>
 			</div>
 			<a href="https://en.wikipedia.org/wiki/Lists_of_countries_and_territories" class="row home-click p-2">
 				<p style="margin:0;">
@@ -137,12 +137,16 @@
 					<div class="card-body"><iframe class="chartjs-hidden-iframe" style="width: 100%; display: block; border: 0px none; height: 0px; margin: 0px; position: absolute; inset: 0px;"></iframe>
 						<canvas id="pageviews-line" style="height: auto; width: auto;"></canvas>	
 						<script>
-							const labels = ['ahh', 'ahhh', 'ahhhh', 'cry', 'cryy', 'cryyy', 'cryyyy']; // last 7 days
+							labels = [];
+							{% for i in dates %}
+							labels.push("{{i}}");
+							{% endfor %}
+							console.log(labels);
 							const data = {
 								labels: labels,
 								datasets: [{
 									label: 'Page Views',
-									data: [65, 59, 80, 81, 56, 55, 40],
+									data: {{statistics['pageviews']}},
 									pointBackgroundColor: 'white',
 									borderWidth: 1,
 									borderColor: 'red',
@@ -208,14 +212,16 @@
 						<thead class="thead-dark">
 							<tr>
 								<th scope="col">Problem</th>
-								<th scope="col"># of Submissions</th>
+								<th scope="col">Users</th>
 							</tr>
 						</thead>
 						<tbody>
+							{% for problemName, subs in statistics['mostsub'].items() %}
 							<tr>
-								<td> <a href="/problems">problemName</a> </td>
-								<td> # subs </td>
+								<td> <a href="/problem/{{problemName}}">{{problemName}}</a> </td>
+								<td> {{subs}} </td>
 							</tr>
+							{% endfor %}
 						</tbody>
 					</table>
 				</div>
