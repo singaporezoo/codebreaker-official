@@ -36,14 +36,14 @@ def home():
 
 
     subsPerDay = awstools.getSubsPerDay()
-    credits_info = awstools.credits_page()
+    credits_info = awstools.homepageInfo()
 
     return render_template('home.html',
                            userinfo=userinfo,
                            globalSubmissionList=globalSubmissionList,
                            userSubmissionList=userSubmissionList,
                            contestInfos=contestInfos,
-                           statistics=awstools.credits_page(),
+                           statistics=awstools.homepageInfo(),
                            socket=contestmode.socket(),
                            subsPerDay=subsPerDay)
 

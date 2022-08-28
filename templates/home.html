@@ -13,223 +13,213 @@
 {% endwith %}
 
 {% block content %}
+<br>
 
 <div class="container col">
-    	<br>
-	<h1 style="text-align:center;">Welcome to Codebreaker!</h1>
-    <button class="btn btn-secondary navbar" style="width:100%;display:flex;justify-content:center;align-items:center;" onclick="donate()">
-        Codebreaker runs on donations from the community. Click here to contribute!
-    <script>
-        function donate() {
-            window.location.href = "https://forms.gle/wKN7wJs6CeXqzDXm8";
-        }
-    </script>
-    </button>
-	<div class="row">
-        <div class="col" style="padding: 20px;">
-           <div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
-                <div class="card-header bg-white" data-toggle="collapse" data-target="#futurecontests"><b>Ongoing and Future Contests</b></div>
-                <div id="futurecontests" class="collapse show">
-		    <div class="card-body" style="height: auto;">
-                        <div id='calendar'></div>
-                        <script>
-                            document.addEventListener('DOMContentLoaded', function() {
-                                var calendarEl = document.getElementById('calendar');
-                                var calendar = new FullCalendar.Calendar(calendarEl, {
-                                    initialView: 'dayGridMonth',
-				    eventClick: function(info){
-					info.jsEvent.preventDefault();
-					if(info.event.url){
-					    window.open(info.event.url);
-					}
-				    },
-				    eventDidMount: function(info){
-					var tooltip = new bootstrap.Tooltip(info.el, {
-					    title: `<b>${info.event.title}</b> <br> ${info.event.start} to ${info.event.end}`,
-					    html: true
-					});
-				    }
-                                });
-                                var contestInfos = JSON.parse('{{contestInfos | tojson}}')
-                                calendar.render();
-                                for (const info of contestInfos) {
-                                    calendar.addEvent({
-                                        title: info.contestName,
-                                        start: info.startTime,
-                                        end: info.endTime,
-					url: "/contest/" + info.contestId
-                                    });
-                                }
-                            });
-                      
-                          </script>
-                    </div>
-                </div>
-           </div>
-	   <br>
-           <div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
-                <div class="card-header bg-white" data-toggle="collapse" data-target="#usagestatistics"><b>Usage Statistics</b></div>
-                <div id="usagestatistics" class="collapse show">
-		    <div class="card-body">
-                        <canvas id="line" style="width: 20%; height: auto; margin: auto;"></canvas>	
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col" style="padding: 20px;">
-            {% if userinfo != None %}
-            <div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
-                <div class="card-header bg-white" data-toggle="collapse" data-target="#piechart"><b>Your Progress</b></div>
-                <div id="piechart" class="collapse show">
-                    <div class="card-body">
-                        <canvas id="chart" style="width: 100%; height: auto; margin: auto;"></canvas>
-                    </div>
-                </div>
-            </div>
-            <br>
-            {% endif %}
-
-            <div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
-                <div class="card-header bg-white" data-toggle="collapse" data-target="#globalsubs"><b>All Recent Submissions</b></div>
-                <div id="globalsubs" class="collapse show">
-                    <div class="card-body">
-                        <table class="table table-striped table-sm" id="myTable">
-                            <thead class="thead-dark">
-                            <tr>
-                                <th scope="col">ID</th>
-                                <th scope="col">Username</th>
-                                <th scope="col">Problem</th>
-                                <th scope="col">Score</th>
-				<th scope="col">Language</th>
-                            </tr>
-                            </thead>
-                            
-                            <tbody>
-                            {% for sub in globalSubmissionList %}
-                                <tr>
-                                    {% if sub != None %}
-                                    <td> <a href="{{url_for('submission', subId = sub.subId)}}">{{sub.subId}}</a> </td>
-				    <td> <a href="{{url_for('profile', username = sub.username)}}"> {{sub.username}} </a> </td>
-                                    {% if sub.problemName %}
-                            	    <td> <a href="{{url_for('problem', PROBLEM_NAME = sub.problemName)}}"> {{sub.problemName}} </a> </td>
-                                    {% else %}
-                                    <td> Hidden </td>
-                                    {% endif %}
-                                    <td> <p style="margin: -1px">
-                                    <span style = "width: 42px" 
-                                    class="pb-1 text-white badge badge-{{'success' if sub.totalScore==100 else ('danger' if sub.totalScore == 0 else 'warning')}}"> {{sub.totalScore}}
-                                    </span> </p>
-                                    </td>
-                                    {% endif %}
-				    <td> {{sub.language}} </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            {% if userinfo != None %}
-            <br>
-            <div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
-                <div class="card-header bg-white" data-toggle="collapse" data-target="#usersubs"><b>Your Recent Submissions</b></div>
-                <div id="usersubs" class="collapse show">
-                    <div class="card-body">
-                        <table class="table table-striped table-sm" id="myTable">
-                            <thead class="thead-dark">
-                            <tr>
-                                <th scope="col">ID</th>
-                                <th scope="col">Problem</th>
-                                <th scope="col">Score</th>
-				<th scope="col">Language</th>
-                            </tr>
-                            </thead>
-                            
-                            <tbody>
-                            {% for sub in userSubmissionList %}
-                                <tr>
-                                    {% if sub != None %}
-                                    <td> <a href="{{url_for('submission', subId = sub.subId)}}">{{sub.subId}}</a> </td>
-                                    {% if sub.problemName %}
-                                    <td> <a href="{{url_for('problem', PROBLEM_NAME = sub.problemName)}}"> {{sub.problemName}} </a> </td>
-                                    {% else %}
-                                    <td> Hidden </td>
-                                    {% endif %}
-                                    <td> <p style="margin: -1px">
-                                    <span style = "width: 42px" 
-                                    class="pb-1 text-white badge badge-{{'success' if sub.totalScore==100 else ('danger' if sub.totalScore == 0 else 'warning')}}"> {{sub.totalScore}}
-                                    </span> </p>
-                                    </td>
-                                    {% endif %}
-				    <td> {{sub.language}} </td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            {% endif %}
-        </div>
+	<div class="container">
+		<br>
+		<h1 style="text-align:center;">Welcome to Codebreaker!</h1>
+		<p>insert description here</p>
 	</div>
-	<script>
-	    window.onload = function(){
-		keys = [];
-		values = [];
-		{% for key, value in subsPerDay.items() %}
-		    var date = "{{key}}"
-		    keys.push(date);
-		    values.push({{value|int}});
-	        {% endfor %}
-	        keys.reverse();
-	        values.reverse();
-	        new Chart(document.getElementById("line"), {
-		    type: 'line',
-		    data:{
-			labels: keys,
-			datasets: [
-			    {label: "Number of Submissions", data: values, borderColor: '#7F7F7F'}
-			]
-		    }
-		});
-               	var ac = 0;
-                var partial = 0;
-                var failed = 0;
-                var total = JSON.parse('{{statistics["problems"]}}');
-                var problemScores = JSON.parse('{{userinfo.problemScores | tojson}}');
 
-                for (const problem in problemScores) {
-                    score = problemScores[problem]
-                    if (score == 100) {
-                        ac++;
-                    } else if (score == 0) {
-                        failed++;
-                    } else {
-                        partial++;
-                    }
-                }
-                        
-	        var labels = ["Accepted", "Partial", "Failed", "Unattempted"];
-	        var data = [ac, partial, failed, total - ac - partial - failed];
-	        var bgcolor = ["#72E58D", "#F9D87C", "#E0868F", "#7F7F7F"];
+	<div class="row">
+		<div class="col home-box m-2 d-flex flex-column justify-content-end">
+			<div class="row d-flex flex-row justify-content-center p-2 pt-5">
+				<h2 style="text-align: center;">2118 problems</h2>
+			</div>
+			<a href="/problems?command=newest" class="row home-click p-2">
+				<p style="margin:0;">
+					Recently uploaded
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+						<path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+					</svg>
+				</p>
+			</a>
+		</div>
+		<div class="col home-box m-2 d-flex flex-column justify-content-end">
+			<div class="row d-flex flex-row justify-content-center p-2 pt-5">
+				<h2 style="text-align: center;">2118 submissions</h2>
+			</div>
+			<a href="/submissions" class="row home-click p-2">
+				<p style="margin:0;">
+					Recent submissions
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+						<path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+					</svg>
+				</p>
+			</a>
+		</div>
+		<div class="col home-box m-2 d-flex flex-column justify-content-end">
+			<div class="row d-flex flex-row justify-content-center p-2 pt-5">
+					<h2 style="text-align: center;">2118 users</h2>
+			</div>
+			<a href="/rankings" class="row home-click p-2">
+				<p style="margin:0;">
+					Rankings
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+						<path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+					</svg>
+				</p>
+			</a>
+		</div>
+		<div class="col home-box m-2 d-flex flex-column justify-content-end">
+			<div class="row d-flex flex-row justify-content-center p-2 pt-5">
+					<h2 style="text-align: center;">21 countries</h2>
+			</div>
+			<a href="https://en.wikipedia.org/wiki/Lists_of_countries_and_territories" class="row home-click p-2">
+				<p style="margin:0;">
+					Countries of the World
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+						<path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+					</svg>
+				</p>
+			</a>
+		</div>
+		<div class="col home-box m-2 d-flex flex-column justify-content-end">
+			<div class="row d-flex flex-row justify-content-center p-2 pt-5">
+				<h2 style="text-align: center;">New to Codebreaker?</h2>
+			</div>
+			<a href="#" class="row home-click p-2">
+				<p style="margin:0;">
+					Click here to start tour
+					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
+						<path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
+					</svg>
+				</p>
+			</a>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col" id="calendar-div" style="padding: 20px;">
+			<div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
+				<div class="card-header bg-white" data-toggle="collapse" data-target="#contests" aria-expanded="true"><b>Public Contests</b></div>
+				<div id="contests" class="collapse show" style="">
+					<div class="card-body" style="height: auto;">
+						<div id="calendar"></div>
+						<script>
+							document.addEventListener('DOMContentLoaded', function() {
+								var calendarEl = document.getElementById('calendar');
+								var calendar = new FullCalendar.Calendar(calendarEl, {
+									initialView: 'dayGridMonth',
+									eventClick: function(info){
+										info.jsEvent.preventDefault();
+										if(info.event.url){
+											window.open(info.event.url);
+										}
+									},
+									eventDidMount: function(info){
+										var tooltip = new bootstrap.Tooltip(info.el, {
+											title: `<b>${info.event.title}</b> <br> ${info.event.start} to ${info.event.end}`,
+											html: true
+										});
+									}
+								});
+								var contestInfos = JSON.parse('')
+								calendar.render();
+								for (const info of contestInfos) {
+									calendar.addEvent({
+										title: info.contestName,
+										start: info.startTime,
+										end: info.endTime,
+										url: "/contest/" + info.contestId
+									});
+								}
+							});
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col" id="pageviews-div" style="padding: 20px;">
+			<div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
+				<div class="card-header bg-white" data-toggle="collapse" data-target="#pageviews" aria-expanded="true"><b>Page Views (Past Week)</b></div>
+				<div id="pageviews" class="collapse show">
+					<div class="card-body"><iframe class="chartjs-hidden-iframe" style="width: 100%; display: block; border: 0px none; height: 0px; margin: 0px; position: absolute; inset: 0px;"></iframe>
+						<canvas id="pageviews-line"></canvas>	
+						<script>
+							const labels = ['ahh', 'ahhh', 'ahhhh', 'cry', 'cryy', 'cryyy', 'cryyyy']; // last 7 days
+							const data = {
+								labels: labels,
+								datasets: [{
+									label: 'Page Views',
+									data: [65, 59, 80, 81, 56, 55, 40],
+									pointBackgroundColor: 'white',
+									borderWidth: 1,
+									borderColor: 'red',
+									tension: 0.1
+								}]
+							};
 
-                // draw pie chart
-	        new Chart(document.getElementById("chart"), {
-		    type: 'doughnut',
-		    data:{
-		        labels: labels,
-		        datasets: [
-		    	    {data: data, backgroundColor: bgcolor}
-			]
-		    }
+							var chart = document.getElementById('pageviews-line').getContext('2d');
 
-		});
-	    }
-	</script>
-</div>
+							var options = {
+								responsive: true,
+								maintainAspectRatio: true,
+								animation: {
+									easing: 'easeInOutQuad',
+									duration: 520
+								},
+								scales: {
+									xAxes: [{
+										gridLines: {
+											color: 'rgba(180, 180, 180, 0.5)',
+											lineWidth: 1
+										}
+									}],
+									yAxes: [{
+										gridLines: {
+											color: 'rgba(180, 180, 180, 0.5)',
+											lineWidth: 1
+										}
+									}]
+								},
+								legend: {
+									display: false
+								},
+								point: {
+									backgroundColor: 'white'
+								},
+								tooltips: {
+									backgroundColor: 'rgba(0,0,0,0.5)',
+									titleFontColor: 'white',
+									caretSize: 5,
+									cornerRadius: 2,
+									xPadding: 10,
+									yPadding: 10
+								}
+							};
 
-{% endblock %}
+							var chartInstance = new Chart(chart, {
+								type: 'line',
+								data: data,
+								options: options
+							});
+						</script>
+					</div>
+				</div>
+			</div>
+		</div><div class="col" id="mostsubs-div" style="padding: 20px;">
+		<div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
+			<div class="card-header bg-white" data-toggle="collapse" data-target="#mostsubs" aria-expanded="true"><b>Most Submitted Problems (Past Week)</b></div>
+			<div id="mostsubs" class="collapse show" style="">
+				<div class="card-body">
 
-
-
+					<table class="table table-striped table-sm" id="myTable">
+						<thead class="thead-dark">
+							<tr>
+								<th scope="col">Problem</th>
+								<th scope="col"># of Submissions</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td> <a href="/problems">problemName</a> </td>
+								<td> # subs </td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		</div></div></div>
+		{% endblock %}

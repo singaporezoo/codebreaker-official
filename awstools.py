@@ -13,6 +13,7 @@ from boto3.dynamodb.conditions import Key, Attr
 from flask import session
 import contestmode
 import os
+import cloudflare
 
 #os.environ['AWS_DEFAULT_REGION']='ap-southeast-1'
 
@@ -369,6 +370,22 @@ def batchGetSubmissions(start, end):
     )
     return response
 
+def batchGetSubmissionsLimited(start, end):
+    submissions = []
+    for i in range(start, end+1):
+        submissions.append({'subId' : i})
+    response = dynamodb.batch_get_item(
+        RequestItems={
+            'codebreaker-submissions': {
+            'Keys': submissions,            
+            'ConsistentRead': True,
+            'ProjectionExpression': 'problemName, submissionTime, username'
+            }
+        },
+        ReturnConsumedCapacity='TOTAL'
+    )
+    return response
+
 def getUserInfo(email):
     response = users_table.query(
         KeyConditionExpression = Key('email').eq(email)
@@ -559,6 +576,12 @@ def getAllContests():
         ExpressionAttributeNames={ "#PUBLIC": "public", "#DURATION" : "duration", '#USERS':'users' } #not direct cause users is a reserved word
     )
 
+def getAllContestsLimited():
+    return scan(contests_table,
+        ProjectionExpression = 'contestId, contestName, startTime, endTime, #PUBLIC',
+        ExpressionAttributeNames={ "#PUBLIC": "public"} #not direct cause users is a reserved word
+    )
+
 def getContestInfo(contestId):
     response= contests_table.query(
         KeyConditionExpression = Key('contestId').eq(contestId)
@@ -745,28 +768,103 @@ def get_countries():
     nations = [i for i in nations if i not in BANNED_NATIONS]
     return nations
 
-def credits_page():
-        def find_length(table, primaryKey):
-                ans = 0
-                subs = scan(table, ProjectionExpression=f'{primaryKey}')
-                if primaryKey == 'username':
-                    subs = [i for i in subs if i['username'] != '']
-                ans += len(subs)
+def findLength(table, primaryKey):
+    ans = 0
+    subs = scan(table, ProjectionExpression=f'{primaryKey}')
+    if primaryKey == 'username':
+        subs = [i for i in subs if i['username'] != '']
+    ans += len(subs)
+    return ans
 
-                return ans
+def getSubmissionId():
+    subId = s3.get_object(Bucket='codebreaker-submission-number',Key=f'submissionNumber.txt')['Body'].read().decode('utf-8')
+    subId = int(subId)
+    subId = 1000*round(subId/1000)
+    return subId
 
-        def getSubmissionId():
-                subId = s3.get_object(Bucket='codebreaker-submission-number',Key=f'submissionNumber.txt')['Body'].read().decode('utf-8')
-                subId = int(subId)
-                subId = 1000*round(subId/1000)
-                return subId
+def mostSubmittedProblems():
+    curSub = getSubmissionId()
+    subCounts = {}
+    while(curSub > 0):
+        subs = batchGetSubmissionsLimited(curSub - 99, curSub)['Responses']['codebreaker-submissions']
+        stop = False
+        for sub in subs:
+            if type(sub) == str:
+                continue
+            subTime = datetime.strptime(sub['submissionTime'], "%Y-%m-%d %X")
+            if subTime + timedelta(days = 7) < datetime.now():
+                stop = True
+            else:
+                problem = sub['problemName']
+                if problem not in subCounts:
+                    subCounts[problem] = 0
+                subCounts[problem] += 1
+        if stop:
+            break
+        curSub = curSub - 100
+    top = sorted(subCounts, key=subCounts.get, reverse=True)[:5]
+    res = {}
+    for i in top:
+        res[i] = subCounts[i]
+    return res
 
-        problems = find_length(problems_table,'problemName')
-        users = find_length(users_table,'username')
+def mostSubmittedProblemsUser():
+    curSub = getSubmissionId()
+    uniqueSubs = {}
+    while(curSub > 0):
+        subs = batchGetSubmissionsLimited(curSub - 99, curSub)['Responses']['codebreaker-submissions']
+        stop = False
+        for sub in subs:
+            if type(sub) == str:
+                continue
+            subTime = datetime.strptime(sub['submissionTime'], "%Y-%m-%d %X")
+            if subTime + timedelta(days = 7) < datetime.now():
+                stop = True
+            else:
+                uniqueSubs[f"{sub['problemName']};{sub['username']}"] = 0
+        if stop:
+            break
+        curSub = curSub - 100
+    subCounts = {}
+    for s in uniqueSubs.keys():
+        problem = s.split(';')[0]
+        if problem not in subCounts:
+            subCounts[problem] = 0
+        subCounts[problem] += 1
+    top = sorted(subCounts, key=subCounts.get, reverse=True)[:5]
+    res = {}
+    for i in top:
+        res[i] = subCounts[i]
+    return res
+
+def homepageInfo(recalc = False):
+    try:
+        data = json.load(open('homepage.json'))
+        parseDate = datetime.strptime(data['date'], "%d/%m/%Y")
+        problems = int(data['problems'])
+        users = int(data['users'])
+        subs = int(data['subs'])
+        nations = int(data['nations'])
+        mostsub = data['mostsub']
+        contests = data['contests']
+        pageviews = data['pageviews']
+    except Exception as e:
+        recalc = True
+
+    if recalc or parseDate + timedelta(days=1) < datetime.now():
+        print("recalculate homepage data")
+        problems = findLength(problems_table,'problemName')
+        users = findLength(users_table,'username')
         subs = getSubmissionId()
         nations = len(get_countries())
+        mostsub = mostSubmittedProblemsUser()
+        contests = getAllContestsLimited()
+        contests = [i for i in contests if i['public']]
+        pageviews = cloudflare.getWeek()
+        parseDate = datetime.now().strftime("%d/%m/%Y")
+        json.dump({'users':users,'problems':problems,'subs':subs,'nations':nations,'date':parseDate,'mostsub':mostsub,'contests':contests,'pageviews':pageviews}, open('homepage.json', 'w'))
 
-        return {'users':users,'problems':problems,'subs':subs, 'nations':nations}
+    return {'users':users,'problems':problems,'subs':subs,'nations':nations,'mostsub':mostsub,'contests':contests,'pageviews':pageviews}
 
 def filterSpace(x):
     y = [i for i in list(x) if i != ' ']
@@ -1099,6 +1197,5 @@ if __name__ == '__main__':
     # THIS IS FOR DEBUGGING AND WILL ONLY BE ACTIVATED IF YOU DIRECTLY RUN THIS FILE
     # IT DOES NOT OUTPUT ANYTHING ONTO TMUX
     print("TESTING")
-    print(len(getAllProblems()))
-    #print(getSubsPerDay())
-    #print(credits_page())
+    #print(mostSubmittedProblems())
+    print(homepageInfo())

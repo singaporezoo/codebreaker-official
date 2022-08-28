@@ -101,10 +101,10 @@ select {
 }
 
 a:not(.btn) {
-        color: hsl(var(--hue), 72%, 43%) !important;
+        color: hsl(var(--hue), 72%, 43%);
 }
 a:not(.btn):hover {
-        color: hsl(var(--hue), 50%, 68%) !important;
+        color: hsl(var(--hue), 50%, 68%);
 }
 
 .navbar-dark a.nav-link {
@@ -137,3 +137,17 @@ a:not(.btn):hover {
 	color: white !important;
 }
 
+.home-box {
+	background-color: hsl(var(--hue), 50%, 97%) !important;
+	box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+}
+
+.home-click {
+	color: white !important;
+	background-color: hsl(var(--hue), 44%, 43%) !important;
+	box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+}
+.home-click:hover {
+	color: white !important;
+	box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+}
