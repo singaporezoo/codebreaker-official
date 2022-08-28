@@ -742,9 +742,9 @@ def getRankings():
                                 continue
                         t = sm(ele['problemScores'])
                         if t[0] != 0:
-                                H.append([t[0],t[1],t[2],t[3],ele['username']])
+                                H.append([t[0],t[1],t[2],t[3],ele['username'],ele['nation']])
 
-        users = scan(users_table, ProjectionExpression='username,problemScores')
+        users = scan(users_table, ProjectionExpression='username,problemScores,nation')
         res(users)
 
         H.sort()
@@ -860,6 +860,7 @@ def homepageInfo(recalc = False):
         mostsub = mostSubmittedProblemsUser()
         contests = getAllContestsLimited()
         contests = [i for i in contests if i['public']]
+        contests = [i for i in contests if i['endTime'] != "Unlimited"]
         pageviews = cloudflare.getWeek()
         parseDate = datetime.now().strftime("%d/%m/%Y")
         json.dump({'users':users,'problems':problems,'subs':subs,'nations':nations,'date':parseDate,'mostsub':mostsub,'contests':contests,'pageviews':pageviews}, open('homepage.json', 'w'))

@@ -23,7 +23,7 @@
 	</div>
 
 	<div class="row">
-		<div class="col home-box m-2 d-flex flex-column justify-content-end">
+		<div class="col-md home-box m-2 d-flex flex-column justify-content-end">
 			<div class="row d-flex flex-row justify-content-center p-2 pt-5">
 				<h2 style="text-align: center;">{{statistics['problems']}} problems</h2>
 			</div>
@@ -36,7 +36,7 @@
 				</p>
 			</a>
 		</div>
-		<div class="col home-box m-2 d-flex flex-column justify-content-end">
+		<div class="col-md home-box m-2 d-flex flex-column justify-content-end">
 			<div class="row d-flex flex-row justify-content-center p-2 pt-5">
 				<h2 style="text-align: center;">{{statistics['subs']}} submissions</h2>
 			</div>
@@ -49,7 +49,7 @@
 				</p>
 			</a>
 		</div>
-		<div class="col home-box m-2 d-flex flex-column justify-content-end">
+		<div class="col-md home-box m-2 d-flex flex-column justify-content-end">
 			<div class="row d-flex flex-row justify-content-center p-2 pt-5">
 				<h2 style="text-align: center;">{{statistics['users']}} users</h2>
 			</div>
@@ -62,7 +62,7 @@
 				</p>
 			</a>
 		</div>
-		<div class="col home-box m-2 d-flex flex-column justify-content-end">
+		<div class="col-md home-box m-2 d-flex flex-column justify-content-end">
 			<div class="row d-flex flex-row justify-content-center p-2 pt-5">
 				<h2 style="text-align: center;">{{statistics['nations']}} countries</h2>
 			</div>
@@ -75,7 +75,7 @@
 				</p>
 			</a>
 		</div>
-		<div class="col home-box m-2 d-flex flex-column justify-content-end">
+		<div class="col-md home-box m-2 d-flex flex-column justify-content-end">
 			<div class="row d-flex flex-row justify-content-center p-2 pt-5">
 				<h2 style="text-align: center;">New to Codebreaker?</h2>
 			</div>
@@ -90,13 +90,18 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col" id="calendar-div" style="padding: 20px;">
+		<div class="col-md-5" id="calendar-div" style="padding: 20px;">
 			<div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
 				<div class="card-header bg-white" data-toggle="collapse" data-target="#contests" aria-expanded="true"><b>Public Contests</b></div>
 				<div id="contests" class="collapse show" style="">
 					<div class="card-body" style="height: auto;">
 						<div id="calendar"></div>
 						<script>
+							function decodeHtml(html) {
+							    var txt = document.createElement("textarea");
+							    txt.innerHTML = html;
+							    return txt.value;
+							}
 							document.addEventListener('DOMContentLoaded', function() {
 								var calendarEl = document.getElementById('calendar');
 								var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -114,23 +119,22 @@
 										});
 									}
 								});
-								var contestInfos = JSON.parse('')
 								calendar.render();
-								for (const info of contestInfos) {
+								{% for contest in contestInfo %}
 									calendar.addEvent({
-										title: info.contestName,
-										start: info.startTime,
-										end: info.endTime,
-										url: "/contest/" + info.contestId
+										title: decodeHtml("{{contest['contestName']}}"),
+										start: "{{contest['startTime']}}",
+										end: "{{contest['endTime']}}",
+										url: "{{"/contest/" + contest['contestId']}}",
 									});
-								}
+								{% endfor %}
 							});
 						</script>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div class="col" id="pageviews-div" style="padding: 20px;">
+		<div class="col-md-4" id="pageviews-div" style="padding: 20px;">
 			<div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
 				<div class="card-header bg-white" data-toggle="collapse" data-target="#pageviews" aria-expanded="true"><b>Page Views (Past Week)</b></div>
 				<div id="pageviews" class="collapse show">
@@ -202,7 +206,7 @@
 					</div>
 				</div>
 			</div>
-		</div><div class="col" id="mostsubs-div" style="padding: 20px;">
+		</div><div class="col-md-3" id="mostsubs-div" style="padding: 20px;">
 		<div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
 			<div class="card-header bg-white" data-toggle="collapse" data-target="#mostsubs" aria-expanded="true"><b>Most Submitted Problems (Past Week)</b></div>
 			<div id="mostsubs" class="collapse show" style="">

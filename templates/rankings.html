@@ -23,6 +23,7 @@
 				<th scope="col">Rank</th>
 				<th scope="col">Username</th>
 				<th scope="col">Score</th>
+				<th scope="col">Country</th>
 				<th scope="col">Accepted</th>
 				<th scope="col">Partial</th>
 				<th scope="col">Failed</th>
@@ -37,9 +38,10 @@
 				class="own-row"
 				{%endif%}
 			>
-			<th scope=row>{{user[5]}}</th>
+			<th scope=row>{{user[6]}}</th>
 			<td> <a href='/profile/{{user[4]}}'>{{user[4]}}</a> </td>
 			<td> {{user[0]}} </td>
+			<td> {{user[5]}} </td>
 			<td> {{user[1]}} </td>
 			<td> {{user[2]}} </td>
 			<td> {{user[3]}} </td>
