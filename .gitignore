@@ -10,3 +10,4 @@ __pycache__/
 main/__pycache__/
 admin/__pycache__/
 static/cppreference
+homepage.json

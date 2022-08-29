@@ -4,6 +4,7 @@ import awstools
 import contestmode
 import language
 from datetime import datetime, timedelta
+from pprint import pprint
 
 def home():
     if contestmode.contest():
@@ -21,11 +22,10 @@ def home():
         contestInfo = [i for i in contestInfo if i["public"]]
     elif "admin" not in userinfo["role"]:
         contestInfo = [i for i in contestInfo if (i["public"] or userinfo["username"] in i["users"])]
+    pprint(statistics['pageviews'])
 
-    dates = []
-    for i in range(7,0,-1):
-        day = datetime.now() - timedelta(days=i)
-        dates.append(day.strftime('%d/%m'))
+    dates = statistics['pageviews'].keys()
+    statistics['pageviews'] = [statistics['pageviews'][i] for i in dates]
 
     return render_template('home.html',
                            userinfo=userinfo,

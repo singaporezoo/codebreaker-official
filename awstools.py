@@ -851,7 +851,7 @@ def homepageInfo(recalc = False):
     except Exception as e:
         recalc = True
 
-    if recalc or parseDate + timedelta(days=1) < datetime.now():
+    if recalc or parseDate + timedelta(days=2) < datetime.now():
         print("recalculate homepage data")
         problems = findLength(problems_table,'problemName')
         users = findLength(users_table,'username')
@@ -861,8 +861,8 @@ def homepageInfo(recalc = False):
         contests = getAllContestsLimited()
         contests = [i for i in contests if i['public']]
         contests = [i for i in contests if i['endTime'] != "Unlimited"]
-        pageviews = cloudflare.getWeek()
-        parseDate = datetime.now().strftime("%d/%m/%Y")
+        pageviews = cloudflare.main()
+        parseDate = (datetime.now() + timedelta(days = 1)) .strftime("%d/%m/%Y")
         json.dump({'users':users,'problems':problems,'subs':subs,'nations':nations,'date':parseDate,'mostsub':mostsub,'contests':contests,'pageviews':pageviews}, open('homepage.json', 'w'))
 
     return {'users':users,'problems':problems,'subs':subs,'nations':nations,'mostsub':mostsub,'contests':contests,'pageviews':pageviews}
@@ -1199,4 +1199,5 @@ if __name__ == '__main__':
     # IT DOES NOT OUTPUT ANYTHING ONTO TMUX
     print("TESTING")
     #print(mostSubmittedProblems())
-    print(homepageInfo())
+    #print(cloudflare.getWeek())
+    print(homepageInfo(recalc=True))
