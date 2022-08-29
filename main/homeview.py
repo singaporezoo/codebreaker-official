@@ -22,7 +22,6 @@ def home():
         contestInfo = [i for i in contestInfo if i["public"]]
     elif "admin" not in userinfo["role"]:
         contestInfo = [i for i in contestInfo if (i["public"] or userinfo["username"] in i["users"])]
-    pprint(statistics['pageviews'])
 
     dates = statistics['pageviews'].keys()
     statistics['pageviews'] = [statistics['pageviews'][i] for i in dates]
