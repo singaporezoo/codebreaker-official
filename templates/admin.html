@@ -38,19 +38,25 @@
 				element: "#myTable",
 				title: "testing the different page tour",
 				content: "Content of my next step"
+			},
+			{
+				path: "/credits",
+				element: "#title",
+				title: "why is this not working i am sad",
+				content: "content"
 			}],
 			animation: true,
 			smartPlacement: true
 		});
 		
 		btn.addEventListener('click', event => {
-			console.log(tour);
 			// Initialize the tour
 			tour.init();
 			console.log("hello");
 			// Start the tour
 			tour.restart();
 			console.log("hello");
+			console.log(tour);
 		});
 	</script>
 </div>
