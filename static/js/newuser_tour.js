@@ -18,13 +18,11 @@ var tour = new Tour({
     element: "#myTable",
     title: "testing the different page tour",
     content: "Content of my next step"
-  },
-  {
-    path: "/credits",
-    element: "#title",
-    title: "why is this not working i am sad",
-    content: "content"
   }],
-  animation: true,
-  smartPlacement: true
+  backdrop: true,
+  storage: false
+});
+tour.init();
+$("#start-tour-btn").click(function() {
+  tour.restart();
 });
