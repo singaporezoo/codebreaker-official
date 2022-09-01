@@ -19,8 +19,3 @@ var tour = new Tour({
     }
   ]});
   
-  // Initialize the tour
-  tour.init();
-  
-  // Start the tour
-  tour.start();
