@@ -13,9 +13,8 @@
 
 	<iframe width="560" height="315" src="https://www.youtube.com/embed/mTrbiuUjnfI" title="Problem Upload" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen> </iframe>
 
-	<script src="{{ url_for('static', filename='js/newuser_tour.js') }}"></script>
-
 	<button class="btn btn-secondary" id="tour-btn">Start Tour</button>
+	<script src="{{ url_for('static', filename='js/newuser_tour.js') }}"></script>
 	<script>
 		let btn = document.getElementById("tour-btn");
 		btn.addEventListener('click', event => {
