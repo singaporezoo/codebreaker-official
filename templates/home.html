@@ -215,6 +215,78 @@
 					</div>
 				</div>
 			</div>
+			<br>
+			<div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
+				<div class="card-header bg-white" data-toggle="collapse" data-target="#subsperday" aria-expanded="true"><b>Submissions Per Day</b></div>
+				<div id="subsperday" class="collapse show">
+					<div class="card-body"><iframe class="chartjs-hidden-iframe" style="width: 100%; display: block; border: 0px none; height: 0px; margin: 0px; position: absolute; inset: 0px;"></iframe>
+						<canvas id="subs-line" style="height: auto; width: auto;"></canvas>	
+						<script>
+							labels = [];
+							{% for i in dates %}
+							labels.push("{{i}}");
+							{% endfor %}
+							console.log(labels);
+							const data2 = {
+								labels: labels,
+								datasets: [{
+									label: 'Submissions',
+									data: {{statistics['subsperday']}},
+									pointBackgroundColor: '#9ec5fe',
+									borderWidth: 1,
+									borderColor: '#007bff',
+									tension: 0.1
+								}]
+							};
+
+							var chart = document.getElementById('subs-line').getContext('2d');
+
+							var options = {
+								responsive: true,
+								maintainAspectRatio: true,
+								animation: {
+									easing: 'easeInOutQuad',
+									duration: 520
+								},
+								scales: {
+									xAxes: [{
+										gridLines: {
+											color: 'rgba(180, 180, 180, 0.5)',
+											lineWidth: 1
+										}
+									}],
+									yAxes: [{
+										gridLines: {
+											color: 'rgba(180, 180, 180, 0.5)',
+											lineWidth: 1
+										}
+									}]
+								},
+								legend: {
+									display: false
+								},
+								point: {
+									backgroundColor: 'white'
+								},
+								tooltips: {
+									backgroundColor: 'rgba(0,0,0,0.5)',
+									titleFontColor: 'white',
+									caretSize: 5,
+									cornerRadius: 2,
+									xPadding: 10,
+									yPadding: 10
+								}
+							};
+
+							var chartInstance = new Chart(chart, {
+								type: 'line',
+								data: data2,
+								options: options
+							});
+						</script>
+					</div>
+				</div>
+			</div>
 		</div>
 		<div class="col-md-3" id="mostsubs-div" style="padding: 20px;">
 		<div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">

@@ -23,8 +23,12 @@ def home():
     elif "admin" not in userinfo["role"]:
         contestInfo = [i for i in contestInfo if (i["public"] or userinfo["username"] in i["users"])]
 
-    dates = statistics['pageviews'].keys()
-    statistics['pageviews'] = [statistics['pageviews'][i] for i in dates]
+    dates = []
+    for i in range(7,0,-1):
+        day = datetime.now() - timedelta(days=i)
+        dates.append(day.strftime('%d/%m'))
+    dates2 = statistics['pageviews'].keys()
+    statistics['pageviews'] = [statistics['pageviews'][i] for i in dates2]
 
     print(statistics['subsperday'])
 

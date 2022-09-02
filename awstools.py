@@ -59,61 +59,61 @@ def scan(table, ProjectionExpression=None, ExpressionAttributeNames = None, Expr
         results = results + resp['Items']
         while 'LastEvaluatedKey' in resp:
             resp = table.scan(
-                    ExclusiveStartKey = resp['LastEvaluatedKey']
-                    )
+                ExclusiveStartKey = resp['LastEvaluatedKey']
+            )
             results = results + resp['Items']
     elif ExpressionAttributeNames != None and ExpressionAttributeValues != None:
         resp = table.scan(
-                ProjectionExpression=ProjectionExpression,
-                ExpressionAttributeNames = ExpressionAttributeNames,
-                ExpressionAttributeValues = ExpressionAttributeValues
-                )
+            ProjectionExpression=ProjectionExpression,
+            ExpressionAttributeNames = ExpressionAttributeNames,
+            ExpressionAttributeValues = ExpressionAttributeValues
+        )
         results = results + resp['Items']
         while 'LastEvaluatedKey' in resp:
             resp = table.scan(
-                    ProjectionExpression=ProjectionExpression,
-                    ExpressionAttributeNames = ExpressionAttributeNames,
-                    ExpressionAttributeValues = ExpressionAttributeValues,
-                    ExclusiveStartKey = resp['LastEvaluatedKey']
-                    )
+                ProjectionExpression=ProjectionExpression,
+                ExpressionAttributeNames = ExpressionAttributeNames,
+                ExpressionAttributeValues = ExpressionAttributeValues,
+                ExclusiveStartKey = resp['LastEvaluatedKey']
+            )
             results = results + resp['Items']
 
     elif ExpressionAttributeNames != None:
         resp = table.scan(
-                ProjectionExpression=ProjectionExpression,
-                ExpressionAttributeNames = ExpressionAttributeNames,
-                )
+            ProjectionExpression=ProjectionExpression,
+            ExpressionAttributeNames = ExpressionAttributeNames,
+        )
         results = results + resp['Items']
         while 'LastEvaluatedKey' in resp:
             resp = table.scan(
-                    ProjectionExpression=ProjectionExpression,
-                    ExpressionAttributeNames = ExpressionAttributeNames,
-                    ExclusiveStartKey = resp['LastEvaluatedKey']
-                    )
+                ProjectionExpression=ProjectionExpression,
+                ExpressionAttributeNames = ExpressionAttributeNames,
+                ExclusiveStartKey = resp['LastEvaluatedKey']
+            )
             results = results + resp['Items']
     elif ExpressionAttributeValues != None:
         resp = table.scan(
-                ProjectionExpression=ProjectionExpression,
-                ExpressionAttributeValues = ExpressionAttributeValues
-                )
+            ProjectionExpression=ProjectionExpression,
+            ExpressionAttributeValues = ExpressionAttributeValues
+        )
         results = results + resp['Items']
         while 'LastEvaluatedKey' in resp:
             resp = table.scan(
-                    ProjectionExpression=ProjectionExpression,
-                    ExpressionAttributeValues = ExpressionAttributeValues,
-                    ExclusiveStartKey = resp['LastEvaluatedKey']
-                    )
+                ProjectionExpression=ProjectionExpression,
+                ExpressionAttributeValues = ExpressionAttributeValues,
+                ExclusiveStartKey = resp['LastEvaluatedKey']
+            )
             results = results + resp['Items']
     else:
         resp = table.scan(
-                ProjectionExpression=ProjectionExpression,
-                )
+            ProjectionExpression=ProjectionExpression,
+        )
         results = results + resp['Items']
         while 'LastEvaluatedKey' in resp:
             resp = table.scan(
-                    ProjectionExpression=ProjectionExpression,
-                    ExclusiveStartKey = resp['LastEvaluatedKey']
-                    )
+                ProjectionExpression=ProjectionExpression,
+                ExclusiveStartKey = resp['LastEvaluatedKey']
+            )
             results = results + resp['Items']
     return results
 
@@ -124,8 +124,8 @@ def getAllProblems():
 
 def getAllProblemNames():
     problemNames = problems_table.scan(
-            ProjectionExpression = 'problemName'
-            )['Items']
+        ProjectionExpression = 'problemName'
+    )['Items']
     return problemNames
 
 def getAllContestIds():
@@ -138,28 +138,28 @@ def getAllGroupIds():
 
 def getAllProblemsLimited():
     return scan(problems_table, 
-            ProjectionExpression = 'problemName, analysisVisible, title, #source2, author, problem_type, noACs, validated, contestLink, superhidden,createdTime,EE,allowAccess,tags',
-            ExpressionAttributeNames={'#source2':'source'}
-            )
+        ProjectionExpression = 'problemName, analysisVisible, title, #source2, author, problem_type, noACs, validated, contestLink, superhidden,createdTime,EE,allowAccess,tags',
+        ExpressionAttributeNames={'#source2':'source'}
+    )
 
-    def getAllProblemsHidden():
-        return scan(problems_table,
-                ProjectionExpression='problemName, analysisVisible, superhidden'
-                )
+def getAllProblemsHidden():
+    return scan(problems_table,
+        ProjectionExpression='problemName, analysisVisible, superhidden'
+    )
 
-        def getAllUsers():
-            return scan(users_table)
+def getAllUsers():
+    return scan(users_table)
 
 def getAllUsernames():
     usernames = scan(users_table,
-            ProjectionExpression = 'username'
-            )
+        ProjectionExpression = 'username'
+    )
     return usernames
 
 def getProblemInfo(problemName):
     response= problems_table.query(
-            KeyConditionExpression = Key('problemName').eq(problemName)
-            )
+        KeyConditionExpression = Key('problemName').eq(problemName)
+    )
     problem_info=response['Items']
     if len(problem_info) == 0:
         return "This problem doesn't exist"
@@ -179,58 +179,58 @@ def uploadAttachments(attachments, s3Name):
 
 def getSuperhiddenProblems():
     response = misc_table.query(
-            KeyConditionExpression = Key('category').eq('superhiddenProblems')
-            )
+        KeyConditionExpression = Key('category').eq('superhiddenProblems')
+    )
     return response['Items'][0]['problems']
 
 def setSuperhidden(problemName, superhidden):
     problems_table.update_item(
-            Key = {'problemName' : problemName},
-            UpdateExpression = f'set superhidden=:l',
-            ExpressionAttributeValues={':l':superhidden},
-            )
+        Key = {'problemName' : problemName},
+        UpdateExpression = f'set superhidden=:l',
+        ExpressionAttributeValues={':l':superhidden},
+    )
     if superhidden:
         misc_table.update_item(
-                Key = {'category': 'superhiddenProblems'},
-                UpdateExpression = f'add problems :p',
-                ExpressionAttributeValues={':p' : set([problemName])}
-                )
+            Key = {'category': 'superhiddenProblems'},
+            UpdateExpression = f'add problems :p',
+            ExpressionAttributeValues={':p' : set([problemName])}
+        )
     else:
         try:
             misc_table.update_item(
-                    Key = {'category': 'superhiddenProblems'},
-                    UpdateExpression = f'delete problems :p',
-                    ExpressionAttributeValues={':p' : set([problemName])}
-                    )
+                Key = {'category': 'superhiddenProblems'},
+                UpdateExpression = f'delete problems :p',
+                ExpressionAttributeValues={':p' : set([problemName])}
+            )
         except e:
             pass
 
 def updateProblemInfo(problemName, info): 
     setSuperhidden(problemName, info['superhidden'])
     problems_table.update_item(
-            Key = {'problemName' : problemName},
-            UpdateExpression = f'set title=:a, #kys=:b, author=:c, problem_type=:d, timeLimit=:e, memoryLimit=:f, fullFeedback=:g, analysisVisible=:h, customChecker=:i,attachments=:j,contestLink=:k,superhidden=:l,createdTime=:m, editorials=:n, editorialVisible=:o, EE=:p, publicStatement=:q',
-            ExpressionAttributeValues={':a':info['title'], ':b':info['source'], ':c':info['author'], ':d':info['problem_type'], ':e':info['timeLimit'], ':f':info['memoryLimit'], ':g':info['fullFeedback'], ':h':info['analysisVisible'], ':i':info['customChecker'], ':j':info['attachments'], ':k':info['contestLink'], ':l':info['superhidden'], ':m':info['createdTime'], ':n':info['editorials'], ':o':info['editorialVisible'],':p':info['EE'], ':q':info['publicStatement']},
-            ExpressionAttributeNames={'#kys':'source'}
-            )
+        Key = {'problemName' : problemName},
+        UpdateExpression = f'set title=:a, #kys=:b, author=:c, problem_type=:d, timeLimit=:e, memoryLimit=:f, fullFeedback=:g, analysisVisible=:h, customChecker=:i,attachments=:j,contestLink=:k,superhidden=:l,createdTime=:m, editorials=:n, editorialVisible=:o, EE=:p, publicStatement=:q',
+        ExpressionAttributeValues={':a':info['title'], ':b':info['source'], ':c':info['author'], ':d':info['problem_type'], ':e':info['timeLimit'], ':f':info['memoryLimit'], ':g':info['fullFeedback'], ':h':info['analysisVisible'], ':i':info['customChecker'], ':j':info['attachments'], ':k':info['contestLink'], ':l':info['superhidden'], ':m':info['createdTime'], ':n':info['editorials'], ':o':info['editorialVisible'],':p':info['EE'], ':q':info['publicStatement']},
+        ExpressionAttributeNames={'#kys':'source'}
+    )
 
-    def makeAnalysisVisible(problemName):
-        problems_table.update_item(
-                Key = {'problemName' : problemName},
-                UpdateExpression = f'set analysisVisible=:h',
-                ExpressionAttributeValues={':h':1},
-                )
-        setSuperhidden(problemName, False)
+def makeAnalysisVisible(problemName):
+    problems_table.update_item(
+        Key = {'problemName' : problemName},
+        UpdateExpression = f'set analysisVisible=:h',
+        ExpressionAttributeValues={':h':1},
+    )
+    setSuperhidden(problemName, False)
 
 def addAllowAccess(problemName):
     problems_table.update_item(
-            Key = {'problemName': problemName},
-            UpdateExpression = f'set allowAccess=:a',
-            ExpressionAttributeValues={':a':[]},
-            )
+        Key = {'problemName': problemName},
+        UpdateExpression = f'set allowAccess=:a',
+        ExpressionAttributeValues={':a':[]},
+    )
 
-    def getProblemStatementHTML(problemName):
-        statement = ''
+def getProblemStatementHTML(problemName):
+    statement = ''
     try:
         htmlfile = s3.get_object(Bucket=STATEMENTS_BUCKET_NAME, Key=f'{problemName}.html') 
         body = htmlfile['Body'].read().decode("utf-8") 
@@ -276,27 +276,27 @@ def deleteStatement(statementName):
 
 def updateSubtaskInfo(problemName, info):
     problems_table.update_item(
-            Key = {'problemName' : problemName},
-            UpdateExpression = f'set subtaskScores=:a, subtaskDependency=:b',
-            ExpressionAttributeValues={':a':info['subtaskScores'], ':b':info['subtaskDependency']}
-            )
+        Key = {'problemName' : problemName},
+        UpdateExpression = f'set subtaskScores=:a, subtaskDependency=:b',
+        ExpressionAttributeValues={':a':info['subtaskScores'], ':b':info['subtaskDependency']}
+    )
 
-    def updateEditorialInfo(problemName, info):
-        problems_table.update_item(
-                Key = {'problemName': problemName},
-                UpdateExpression = f'set editorials=:a',
-                ExpressionAttributeValues = {':a':info['editorials']}
-                )
+def updateEditorialInfo(problemName, info):
+    problems_table.update_item(
+        Key = {'problemName': problemName},
+        UpdateExpression = f'set editorials=:a',
+        ExpressionAttributeValues = {':a':info['editorials']}
+    )
 
-        def updateAccessInfo(problemName, info):
-            problems_table.update_item(
-                    Key = {'problemName': problemName},
-                    UpdateExpression = f'set allowAccess=:a',
-                    ExpressionAttributeValues = {':a':info['allowAccess']}
-                    )
+def updateAccessInfo(problemName, info):
+    problems_table.update_item(
+        Key = {'problemName': problemName},
+        UpdateExpression = f'set allowAccess=:a',
+        ExpressionAttributeValues = {':a':info['allowAccess']}
+    )
 
-            def testcaseUploadLambda(problemName):
-                lambda_input = {"problemName": problemName}
+def testcaseUploadLambda(problemName):
+    lambda_input = {"problemName": problemName}
     res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-problem-upload-2', InvocationType='Event', Payload = json.dumps(lambda_input))
 
 def updateCountLambda(problemName):
@@ -328,11 +328,11 @@ def getSubmission(subId, full=True):
             response= submissions_table.get_item( Key={ "subId": subId } )
         else:
             response = submissions_table.get_item( 
-                    Key={"subId": subId },
-                    ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, gradingTime, totalScore, username, #l',
-                    ExpressionAttributeNames = {'#l': 'language'}
-                    )
-            subDetails = response['Item']
+                Key={"subId": subId },
+                ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, gradingTime, totalScore, username, #l',
+                ExpressionAttributeNames = {'#l': 'language'}
+            )
+        subDetails = response['Item']
 
         if subDetails['language'] == 'py':
             pyfile = s3.get_object(Bucket=CODE_BUCKET_NAME, Key=f'source/{subId}.py')
@@ -360,14 +360,14 @@ def batchGetSubmissions(start, end):
     for i in range(start, end+1):
         submissions.append({'subId' : i})
     response = dynamodb.batch_get_item(
-            RequestItems={
-                'codebreaker-submissions': {
-                    'Keys': submissions,            
-                    'ConsistentRead': True            
-                    }
-                },
-            ReturnConsumedCapacity='TOTAL'
-            )
+        RequestItems={
+            'codebreaker-submissions': {
+                'Keys': submissions,            
+                'ConsistentRead': True            
+                }
+            },
+        ReturnConsumedCapacity='TOTAL'
+    )
     return response
 
 def batchGetSubmissionsLimited(start, end):
@@ -375,30 +375,30 @@ def batchGetSubmissionsLimited(start, end):
     for i in range(start, end+1):
         submissions.append({'subId' : i})
     response = dynamodb.batch_get_item(
-            RequestItems={
-                'codebreaker-submissions': {
-                    'Keys': submissions,            
-                    'ConsistentRead': True,
-                    'ProjectionExpression': 'problemName, submissionTime, username'
-                    }
-                },
-            ReturnConsumedCapacity='TOTAL'
-            )
+        RequestItems={
+            'codebreaker-submissions': {
+                'Keys': submissions,            
+                'ConsistentRead': True,
+                'ProjectionExpression': 'problemName, submissionTime, username'
+                }
+            },
+        ReturnConsumedCapacity='TOTAL'
+    )
     return response
 
 def getUserInfo(email):
     response = users_table.query(
-            KeyConditionExpression = Key('email').eq(email)
-            )
+        KeyConditionExpression = Key('email').eq(email)
+    )
     user_info = response['Items']
     if len(user_info) == 0:
         newUserInfo = {
-                'email' : email,
-                'role' : 'disabled',
-                'username' : '',
-                'theme' : 'light',
-                'problemScores' : {},
-                }
+            'email' : email,
+            'role' : 'disabled',
+            'username' : '',
+            'theme' : 'light',
+            'problemScores' : {},
+        }
         users_table.put_item(Item = newUserInfo)
         return getUserInfo(email)
 
@@ -406,8 +406,8 @@ def getUserInfo(email):
 
 def getUserInfoFromUsername(username):
     scan_kwargs = {
-            'FilterExpression':Key('username').eq(username)
-            }
+        'FilterExpression':Key('username').eq(username)
+    }
     done = False
     start_key = None
     while not done:
@@ -421,13 +421,13 @@ def getUserInfoFromUsername(username):
         done = start_key is None
 
     placeHolder = {
-            'email' : '',
-            'school':'',
-            'role':'',
-            'nation': '',
-            'username':'',
-            'problemScores':{},
-            }
+        'email' : '',
+        'school':'',
+        'role':'',
+        'nation': '',
+        'username':'',
+        'problemScores':{},
+    }
     return placeHolder
 
 def getCurrentUserInfo():
@@ -441,10 +441,10 @@ def getCurrentUserInfo():
 
 def updateUserInfo(email, username, fullname, school, theme, hue, nation):
     users_table.update_item(
-            Key = {'email' : email},
-            UpdateExpression = f'set username =:u, fullname=:f, school =:s, theme =:t, hue=:h, nation=:n',
-            ExpressionAttributeValues={':u' : username, ':f' : fullname, ':s' : school, ':t' : theme, ':h':hue, ':n': nation}
-            )
+        Key = {'email' : email},
+        UpdateExpression = f'set username =:u, fullname=:f, school =:s, theme =:t, hue=:h, nation=:n',
+        ExpressionAttributeValues={':u' : username, ':f' : fullname, ':s' : school, ':t' : theme, ':h':hue, ':n': nation}
+    )
 
     def editUserRole(info,newrole,changedby):
         if info['role'] == newrole:
@@ -452,11 +452,11 @@ def updateUserInfo(email, username, fullname, school, theme, hue, nation):
 
     email = info['email']
     users_table.update_item(
-            Key = {'email' : email},
-            UpdateExpression = f'set #ts =:r',
-            ExpressionAttributeValues={':r' : newrole},
-            ExpressionAttributeNames={'#ts':'role'}
-            )
+        Key = {'email' : email},
+        UpdateExpression = f'set #ts =:r',
+        ExpressionAttributeValues={':r' : newrole},
+        ExpressionAttributeNames={'#ts':'role'}
+    )
 
     emailType = sendemail.ROLE_CHANGED
 
@@ -470,9 +470,9 @@ def updateUserInfo(email, username, fullname, school, theme, hue, nation):
 
 def getNextSubmissionId():
     res = lambda_client.invoke(
-            FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-submission-queue-response',
-            InvocationType = 'RequestResponse'
-            )
+        FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-submission-queue-response',
+        InvocationType = 'RequestResponse'
+    )
     submission_index = json.load(res["Payload"])
     return submission_index['submissionId']
 
@@ -491,48 +491,48 @@ def getSubmissionsList(pageNo, problem, username): #this is for all submissions 
         return submissions
     elif username != None and problem == None:
         response = submissions_table.query(
-                IndexName = 'usernameIndex3',
-                KeyConditionExpression=Key('username').eq(username),
-                Limit = (pageNo+1)*subPerPage + 2,
-                ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, totalScore, username, #a',
-                ExpressionAttributeNames = {'#a': 'language'},
-                ScanIndexForward = False
-                )
+            IndexName = 'usernameIndex3',
+            KeyConditionExpression=Key('username').eq(username),
+            Limit = (pageNo+1)*subPerPage + 2,
+            ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, totalScore, username, #a',
+            ExpressionAttributeNames = {'#a': 'language'},
+            ScanIndexForward = False
+        )
         return response['Items']
     elif username == None and problem != None:
         response = submissions_table.query(
-                IndexName = 'problemIndex5',
-                KeyConditionExpression=Key('problemName').eq(problem),
-                ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, totalScore, username, #a',
-                ExpressionAttributeNames = {'#a': 'language'},
-                Limit = (pageNo+1)*subPerPage + 2,
-                ScanIndexForward = False
-                )
+            IndexName = 'problemIndex5',
+            KeyConditionExpression=Key('problemName').eq(problem),
+            ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, totalScore, username, #a',
+            ExpressionAttributeNames = {'#a': 'language'},
+            Limit = (pageNo+1)*subPerPage + 2,
+            ScanIndexForward = False
+        )
         return response['Items']
     else:
         response = submissions_table.query(
-                IndexName = 'problemIndex5',
-                KeyConditionExpression=Key('problemName').eq(problem),
-                ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, totalScore, username, #a',
-                ExpressionAttributeNames = {'#a': 'language'},
-                FilterExpression = Attr('username').eq(username),
-                ScanIndexForward = False
-                )
+            IndexName = 'problemIndex5',
+            KeyConditionExpression=Key('problemName').eq(problem),
+            ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, totalScore, username, #a',
+            ExpressionAttributeNames = {'#a': 'language'},
+            FilterExpression = Attr('username').eq(username),
+            ScanIndexForward = False
+        )
         return response['Items']
 
 def getSubmissionsToProblem(problemName):
     response = submissions_table.query(
-            IndexName = 'problemIndex5',
-            KeyConditionExpression = Key('problemName').eq(problemName),
-            ProjectionExpression = 'subId',
-            ScanIndexForward = False
-            )
+        IndexName = 'problemIndex5',
+        KeyConditionExpression = Key('problemName').eq(problemName),
+        ProjectionExpression = 'subId',
+        ScanIndexForward = False
+    )
     return response['Items']
 
 def getNumberOfSubmissions():
     subId = s3.get_object(Bucket=SUBMISSION_NUMBER_BUCKET_NAME,Key=f'submissionNumber.txt')['Body'].read().decode('utf-8')
-     subId = int(subId)
-     return subId-1
+    subId = int(subId)
+    return subId-1
 
 def createProblemWithId(problem_id):
     info = {}
@@ -564,29 +564,29 @@ def createProblemWithId(problem_id):
     extras['noACs'] = 0
     extras['testcaseCount'] = 0
     problems_table.update_item(
-            Key = {'problemName' : problem_id},
-            UpdateExpression = f'set noACs=:a, testcaseCount=:b',
-            ExpressionAttributeValues={':a':extras['noACs'], ':b':extras['testcaseCount']}
-            )
+        Key = {'problemName' : problem_id},
+        UpdateExpression = f'set noACs=:a, testcaseCount=:b',
+        ExpressionAttributeValues={':a':extras['noACs'], ':b':extras['testcaseCount']}
+    )
     validateProblem(problem_id)
 
 def getAllContests():
     return scan(contests_table,
-            ProjectionExpression = 'contestId, contestName, startTime, endTime, #PUBLIC, #DURATION, #USERS',
-            ExpressionAttributeNames={ "#PUBLIC": "public", "#DURATION" : "duration", '#USERS':'users' } #not direct cause users is a reserved word
-            )
+        ProjectionExpression = 'contestId, contestName, startTime, endTime, #PUBLIC, #DURATION, #USERS',
+        ExpressionAttributeNames={ "#PUBLIC": "public", "#DURATION" : "duration", '#USERS':'users' } #not direct cause users is a reserved word
+    )
 
-    def getAllContestsLimited():
-        return scan(contests_table,
-                ProjectionExpression = 'contestId, contestName, startTime, endTime, #PUBLIC',
-                ExpressionAttributeNames={ "#PUBLIC": "public"} #not direct cause users is a reserved word
-                )
+def getAllContestsLimited():
+    return scan(contests_table,
+        ProjectionExpression = 'contestId, contestName, startTime, endTime, #PUBLIC',
+        ExpressionAttributeNames={ "#PUBLIC": "public"} #not direct cause users is a reserved word
+    )
 
-        def getContestInfo(contestId):
-            response= contests_table.query(
-                    KeyConditionExpression = Key('contestId').eq(contestId)
-                    )
-            contest_info=response['Items']
+def getContestInfo(contestId):
+    response= contests_table.query(
+        KeyConditionExpression = Key('contestId').eq(contestId)
+    )
+    contest_info=response['Items']
     if len(contest_info) == 0:
         return None
     return contest_info[0]
@@ -596,16 +596,16 @@ def addParticipation(contestId, username):
     if username != "ALLUSERS":
         #change this later
         contests_table.update_item(
-                Key = {'contestId' : contestId},
-                UpdateExpression = f'set #USERS.#username = :t',
-                ExpressionAttributeNames={ "#username": username, "#USERS" : "users" }, #not direct cause users is a reserved word
-                ExpressionAttributeValues={ ":t" : datetime.now().strftime("%Y-%m-%d %X") }
-                )
+            Key = {'contestId' : contestId},
+            UpdateExpression = f'set #USERS.#username = :t',
+            ExpressionAttributeNames={ "#username": username, "#USERS" : "users" }, #not direct cause users is a reserved word
+            ExpressionAttributeValues={ ":t" : datetime.now().strftime("%Y-%m-%d %X") }
+        )
 
-        response = contests_table.query(
-                KeyConditionExpression = Key('contestId').eq(contestId)
-                )
-        contest_info=response['Items'][0]
+    response = contests_table.query(
+        KeyConditionExpression = Key('contestId').eq(contestId)
+    )
+    contest_info=response['Items'][0]
     endTimeStr = contest_info['endTime']
     duration = contest_info['duration']
 
@@ -666,21 +666,18 @@ def uploadGrader(sourceName, uploadTarget):
     s3.upload_fileobj(sourceName, GRADERS_BUCKET_NAME, uploadTarget)
 
 def updateContestInfo(contest_id, info):
-    #try:
-        if info['endTime'] != "Unlimited":
-            testtime = datetime.strptime(info['endTime'], "%Y-%m-%d %X")
-        testtime = datetime.strptime(info['startTime'], "%Y-%m-%d %X")
-        contests_table.update_item(
-                Key = {'contestId' : contest_id},
-                UpdateExpression = f'set contestName=:b, #wtf=:c, problems=:d, #kms=:e, #die=:f, scores=:g, startTime=:h, endTime=:i, description=:j, publicScoreboard=:k, editorial=:l, editorialVisible=:m, subLimit=:n, subDelay=:o',
-                ExpressionAttributeValues={':b':info['contestName'], ':c':info['duration'], ':d':info['problems'], ':e':info['public'], ':f':info['users'], ':g':info['scores'], ':h':info['startTime'], ':i':info['endTime'], ':j':info['description'], ':k':info['publicScoreboard'], ':l':info['editorial'], ':m':info['editorialVisible'], ':n':info['subLimit'], ':o':info['subDelay']},
-                ExpressionAttributeNames={'#wtf':'duration', '#kms':'public', '#die':'users'}
-                )
-        addParticipation(contest_id, "ALLUSERS")
-        return True
-    #except Exception as e:
-     #   print(e)
-      #  return False
+    if info['endTime'] != "Unlimited":
+        testtime = datetime.strptime(info['endTime'], "%Y-%m-%d %X")
+    testtime = datetime.strptime(info['startTime'], "%Y-%m-%d %X")
+    contests_table.update_item(
+        Key = {'contestId' : contest_id},
+        UpdateExpression = f'set contestName=:b, #wtf=:c, problems=:d, #kms=:e, #die=:f, scores=:g, startTime=:h, endTime=:i, description=:j, publicScoreboard=:k, editorial=:l, editorialVisible=:m, subLimit=:n, subDelay=:o',
+        ExpressionAttributeValues={':b':info['contestName'], ':c':info['duration'], ':d':info['problems'], ':e':info['public'], ':f':info['users'], ':g':info['scores'], ':h':info['startTime'], ':i':info['endTime'], ':j':info['description'], ':k':info['publicScoreboard'], ':l':info['editorial'], ':m':info['editorialVisible'], ':n':info['subLimit'], ':o':info['subDelay']},
+        ExpressionAttributeNames={'#wtf':'duration', '#kms':'public', '#die':'users'}
+    )
+    addParticipation(contest_id, "ALLUSERS")
+    recalcContestInfo()
+    return True
 
 def createContestWithId(contest_id):
     info = {}
@@ -713,50 +710,50 @@ def createGroupWithId(group_id):
 
 def count_objects(table_name):
     cmd = f'aws dynamodb scan --table-name {table_name} --select "COUNT"'
-        # obj = dynamodb.scan(TableName=table_name,Select='COUNT')
-        process = subprocess.run(cmd, shell=True, capture_output=True)
-        output = process.stdout
-        obj=output.decode()
-        return json.loads(obj)['Count']
+    # obj = dynamodb.scan(TableName=table_name,Select='COUNT')
+    process = subprocess.run(cmd, shell=True, capture_output=True)
+    output = process.stdout
+    obj=output.decode()
+    return json.loads(obj)['Count']
 
 def getRankings():
     H = []
 
-        def sm(y):
-            r = [0,0,0]
-                res=0
-                for i in y:
-                    if y[i]==100:r[0]+=1
-                    elif y[i]==0:r[2]+=1
-                else: r[1]+=1
-                        res+=float(y[i])
-                        res=float(res)
-                        if int(res)  == res:
-                            res=int(res)
-                res = round(res, 2)
-                return [res,r[0],r[1],r[2]]
+    def sm(y):
+        r = [0,0,0]
+        res=0
+        for i in y:
+            if y[i]==100:r[0]+=1
+            elif y[i]==0:r[2]+=1
+            else: r[1]+=1
+            res+=float(y[i])
+            res=float(res)
+            if int(res)  == res:
+                res=int(res)
+        res = round(res, 2)
+        return [res,r[0],r[1],r[2]]
 
-        def res(x):
-            for ele in x:
-                if ele['username'] == '':
-                    continue
-                t = sm(ele['problemScores'])
-                        if t[0] != 0:
-                            H.append([t[0],t[1],t[2],t[3],ele['username'],ele['nation']])
+    def res(x):
+        for ele in x:
+            if ele['username'] == '':
+                continue
+            t = sm(ele['problemScores'])
+            if t[0] != 0:
+                H.append([t[0],t[1],t[2],t[3],ele['username'],ele['nation']])
 
-        users = scan(users_table, ProjectionExpression='username,problemScores,nation')
-        res(users)
+    users = scan(users_table, ProjectionExpression='username,problemScores,nation')
+    res(users)
 
-        H.sort()
-        H.reverse()
+    H.sort()
+    H.reverse()
 
-        # Inserting tied-indices
-        index = 0
-        for i in range(len(H)):
-            if (H[i][0] != H[index][0]):
-                index = i
-                H[i].append(index+1)
-        return H
+    # Inserting tied-indices
+    index = 0
+    for i in range(len(H)):
+        if (H[i][0] != H[index][0]):
+            index = i
+            H[i].append(index+1)
+    return H
 
 def get_countries():
     subs = scan(users_table,ProjectionExpression='username,nation')
@@ -837,6 +834,17 @@ def mostAttemptedProblems():
         res[i] = subCounts[i]
     return res
 
+def recalcContestInfo():
+    try:
+        data = json.load(open('homepage.json'))
+        contests = getAllContestsLimited()
+        contests = [i for i in contests if i['public']]
+        contests = [i for i in contests if i['endTime'] != "Unlimited"]
+        data['contests'] = contests
+        json.dump(data, open('homepage.json', 'w'))
+    except Exception as e:
+        homepageInfo(recalc=True)
+
 def homepageInfo(recalc = False):
     try:
         data = json.load(open('homepage.json'))
@@ -879,32 +887,31 @@ def updateContestProblems(contestId, problems):
     contestId = filterSpace(contestId)
     problems = json.loads(filterSpace(problems))
     contests_table.update_item(
-            Key = {'contestId' : str(contestId)},
-            UpdateExpression = f'set problems=:a',
-            ExpressionAttributeValues = {':a':problems}
-            )
+        Key = {'contestId' : str(contestId)},
+        UpdateExpression = f'set problems=:a',
+        ExpressionAttributeValues = {':a':problems}
+    )
 
-    def updateContestGroupContests(contestGroupId, contests):
-        contestGroupId = filterSpace(contestGroupId)
+def updateContestGroupContests(contestGroupId, contests):
+    contestGroupId = filterSpace(contestGroupId)
     contests = json.loads(filterSpace(contests))
     contest_groups_table.update_item(
-            Key = {'groupId': str(contestGroupId)},
-            UpdateExpression = f'set contests=:a',
-            ExpressionAttributeValues = {':a':contests}
-            )
+        Key = {'groupId': str(contestGroupId)},
+        UpdateExpression = f'set contests=:a',
+        ExpressionAttributeValues = {':a':contests}
+    )
 
-    def updateContestGroupGroups(contestGroupId, groups):
-        contestGroupId = filterSpace(contestGroupId)
+def updateContestGroupGroups(contestGroupId, groups):
+    contestGroupId = filterSpace(contestGroupId)
     groups = json.loads(filterSpace(groups))
     contest_groups_table.update_item(
-            Key = {'groupId': str(contestGroupId)},
-            UpdateExpression = f'set contestGroups=:a',
-            ExpressionAttributeValues = {':a':groups}
-            )
+        Key = {'groupId': str(contestGroupId)},
+        UpdateExpression = f'set contestGroups=:a',
+        ExpressionAttributeValues = {':a':groups}
+    )
 
-
-    def getContestGroupInfo(groupId):
-        info = contest_groups_table.get_item(Key={ "groupId": groupId })
+def getContestGroupInfo(groupId):
+    info = contest_groups_table.get_item(Key={ "groupId": groupId })
     if 'Item' in info:
         return info['Item']
     else:
@@ -912,14 +919,14 @@ def updateContestProblems(contestId, problems):
 
 def updateContestGroupInfo(groupId, info):
     contest_groups_table.update_item(
-            Key = {'groupId' : groupId},
-            UpdateExpression = f'set contests=:a, description=:b, groupName=:c, visible=:d, contestGroups=:e',
-            ExpressionAttributeValues = {':a':info['contests'], ':b':info['description'], ':c':info['groupName'], ':d':info['visible'], ':e':info['contestGroups']}
-            )
+        Key = {'groupId' : groupId},
+        UpdateExpression = f'set contests=:a, description=:b, groupName=:c, visible=:d, contestGroups=:e',
+        ExpressionAttributeValues = {':a':info['contests'], ':b':info['description'], ':c':info['groupName'], ':d':info['visible'], ':e':info['contestGroups']}
+    )
 
 
-    def getContestScore(contestId, username):
-        contestinfo = getContestInfo(contestId)
+def getContestScore(contestId, username):
+    contestinfo = getContestInfo(contestId)
 
     start = datetime.strptime(contestinfo['startTime'], "%Y-%m-%d %X")
     now = datetime.now() + timedelta(hours = 8)
@@ -945,29 +952,29 @@ def updateContestGroupInfo(groupId, info):
 
 def getAllContestGroups():
     return scan(contest_groups_table,
-            ProjectionExpression = 'groupId, groupName, visible',
-            )
+        ProjectionExpression = 'groupId, groupName, visible',
+    )
 
 
-    def getAllContestGroupIds():
-        return scan(contest_groups_table,
-                ProjectionExpression = 'groupId',
-                )
+def getAllContestGroupIds():
+    return scan(contest_groups_table,
+        ProjectionExpression = 'groupId',
+    )
 
-        def getAllAnnounces():
-            return scan(announce_table, 
-                    ProjectionExpression='announceId, priority, visible, aSummary, aTitle, adminOnly, contestLink'
-                    )
+def getAllAnnounces():
+    return scan(announce_table, 
+        ProjectionExpression='announceId, priority, visible, aSummary, aTitle, adminOnly, contestLink'
+    )
 
-            def updateAnnounce(announceId, info):
-                announce_table.update_item(
-                        Key = {'announceId': announceId},
-                        UpdateExpression = f'set priority=:a, visible=:b, aTitle=:c, aSummary=:d, aText=:e, adminOnly=:f, contestLink = :g',
-                        ExpressionAttributeValues={':a':info['priority'], ':b':info['visible'], ':c':info['aTitle'], ':d':info['aSummary'], ':e':info['aText'], ':f':info['adminOnly'], ':g':info['contestLink']}
-                        )
+def updateAnnounce(announceId, info):
+    announce_table.update_item(
+        Key = {'announceId': announceId},
+        UpdateExpression = f'set priority=:a, visible=:b, aTitle=:c, aSummary=:d, aText=:e, adminOnly=:f, contestLink = :g',
+        ExpressionAttributeValues={':a':info['priority'], ':b':info['visible'], ':c':info['aTitle'], ':d':info['aSummary'], ':e':info['aText'], ':f':info['adminOnly'], ':g':info['contestLink']}
+    )
 
-                def createAnnounceWithId(announceId):
-                    ann = getAllAnnounces()
+def createAnnounceWithId(announceId):
+    ann = getAllAnnounces()
     info = {}
     info['priority'] = 1
     for an in ann:
@@ -983,8 +990,8 @@ def getAllContestGroups():
 
 def getAnnounceWithId(announceId):
     response=announce_table.query(
-            KeyConditionExpression = Key('announceId').eq(announceId)
-            )
+        KeyConditionExpression = Key('announceId').eq(announceId)
+    )
     info=response['Items']
     if len(info) == 0:
         return "This announcement doesn't exist"
@@ -1028,27 +1035,27 @@ def isAllowedAccess(problem_info, userInfo):
 
 def updateCommunicationFileNames(problemName, info):
     problems_table.update_item(
-            Key = {'problemName' : problemName},
-            UpdateExpression = f'set nameA=:a, nameB=:b',
-            ExpressionAttributeValues = {':a':info['nameA'], ':b':info['nameB']}
-            )
+        Key = {'problemName' : problemName},
+        UpdateExpression = f'set nameA=:a, nameB=:b',
+        ExpressionAttributeValues = {':a':info['nameA'], ':b':info['nameB']}
+    )
 
-    def getNextClarificationId():
-        res = lambda_client.invoke(
-                FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-next-clarification-id',
-                InvocationType = 'RequestResponse'
-                )
-        return json.load(res['Payload'])['clarificationId']
+def getNextClarificationId():
+    res = lambda_client.invoke(
+        FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-next-clarification-id',
+        InvocationType = 'RequestResponse'
+    )
+    return json.load(res['Payload'])['clarificationId']
 
 def updateClarificationInfo(clarificationId, info):
     clarifications_table.update_item(
-            Key = {'clarificationId':clarificationId},
-            UpdateExpression = f'set askedBy=:a,question=:b,problemId=:c,answer=:d,answeredBy=:e',
-            ExpressionAttributeValues={':a':info['askedBy'],':b':info['question'],':c':info['problemId'],':d':info['answer'],':e':info['answeredBy']}
-            )
+        Key = {'clarificationId':clarificationId},
+        UpdateExpression = f'set askedBy=:a,question=:b,problemId=:c,answer=:d,answeredBy=:e',
+        ExpressionAttributeValues={':a':info['askedBy'],':b':info['question'],':c':info['problemId'],':d':info['answer'],':e':info['answeredBy']}
+    )
 
-    def createClarification(username, question, problemId):
-        clarificationId = getNextClarificationId()
+def createClarification(username, question, problemId):
+    clarificationId = getNextClarificationId()
     info = {}
     info['askedBy'] = username
     info['question'] = question
@@ -1059,8 +1066,8 @@ def updateClarificationInfo(clarificationId, info):
 
 def getClarificationInfo(clarificationId):
     response = clarifications_table.query(
-            KeyConditionExpression = Key('clarificationId').eq(clarificationId)
-            )
+        KeyConditionExpression = Key('clarificationId').eq(clarificationId)
+    )
     clarification_info = response['Items']
     if len(clarification_info) == 0:
         return None
@@ -1068,9 +1075,9 @@ def getClarificationInfo(clarificationId):
 
 def getClarificationsByUser(username):
     response = clarifications_table.query(
-            IndexName = 'askedByIndex',
-            KeyConditionExpression = Key('askedBy').eq(username),
-            )
+        IndexName = 'askedByIndex',
+        KeyConditionExpression = Key('askedBy').eq(username),
+    )
     return response['Items']
 
 def getAllClarifications():
@@ -1119,26 +1126,26 @@ def getAllEndContests():
 
 def updateEndContest(eventId, time):
     end_contest_table.update_item(
-            Key = {'eventId': eventId},
-            UpdateExpression = f'set endtime=:t',
-            ExpressionAttributeValues = {':t':time.strftime("%Y-%m-%d %X")}
-            )
+        Key = {'eventId': eventId},
+        UpdateExpression = f'set endtime=:t',
+        ExpressionAttributeValues = {':t':time.strftime("%Y-%m-%d %X")}
+    )
 
-    def removeEndContest(eventId):
-        end_contest_table.delete_item(
-                Key = {'eventId':eventId}
-                )
+def removeEndContest(eventId):
+    end_contest_table.delete_item(
+        Key = {'eventId':eventId}
+    )
 
-        def updateTags(problemName, tags):
-            # Tags is an array
+def updateTags(problemName, tags):
+    # Tags is an array
     problems_table.update_item(
-            Key = {'problemName': problemName},
-            UpdateExpression = f'set tags =:a',
-            ExpressionAttributeValues = {':a':tags}
-            )
+        Key = {'problemName': problemName},
+        UpdateExpression = f'set tags =:a',
+        ExpressionAttributeValues = {':a':tags}
+    )
 
-    def findLastSubOfDay(date):
-        low = 0 
+def findLastSubOfDay(date):
+    low = 0 
     high = 200000
     while high > low:
         mid = int((low+high + 1)/2)
@@ -1156,7 +1163,7 @@ def getSubsPerDay():
 
     changed = False
 
-    weekBeforeDate = datetime.now() - timedelta(days = 8)
+    weekBeforeDate = datetime.now() - timedelta(days=9)
     weekBefore = weekBeforeDate.strftime('%Y-%m-%d')
 
     # if date is more than a week away, delete it
@@ -1167,7 +1174,7 @@ def getSubsPerDay():
             changed = True
 
     # if important date isn't here, calculate it
-    for i in range(1,8):
+    for i in range(1,9):
         date = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
 
         if date not in lastSubOfDay:
@@ -1183,16 +1190,15 @@ def getSubsPerDay():
             ExpressionAttributeValues={':s': lastSubOfDay}
         )
 
-    today = datetime.now().strftime('%Y-%m-%d')
-    lastSubOfDay[today] = findLastSubOfDay(today)
-
     subsPerDay = {}
 
-    for i in range(0, 7):
+    for i in range(1,8):
         curDay = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
         prevDay = (datetime.now() - timedelta(days=i+1)).strftime('%Y-%m-%d')
 
         subsPerDay[curDay] = lastSubOfDay[curDay] - lastSubOfDay[prevDay]
+    
+    subsPerDay = [int(value) for key, value in subsPerDay.items()][::-1]
 
     return subsPerDay
 
@@ -1202,6 +1208,4 @@ if __name__ == '__main__':
     # THIS IS FOR DEBUGGING AND WILL ONLY BE ACTIVATED IF YOU DIRECTLY RUN THIS FILE
     # IT DOES NOT OUTPUT ANYTHING ONTO TMUX
     print("TESTING")
-    #print(mostSubmittedProblems())
-    #print(cloudflare.getWeek())
     print(homepageInfo(recalc=True))
