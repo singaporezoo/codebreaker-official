@@ -27,4 +27,5 @@ var tour = new Tour({
 tour.init();
 $("#start-tour-btn").click(function() {
   tour.restart();
+  console.log("hello");
 });
