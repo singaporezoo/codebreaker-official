@@ -22,10 +22,11 @@ var tour = new Tour({
     content: "Content of my next step",
     placement: "bottom"
   }],
-  backdrop: true
+  backdrop: true,
+  storage: window.localStorage,
+  debug: true
 });
 tour.init();
-$("#start-tour-btn").click(function() {
+$("start-tour-btn").click(function() {
   tour.restart();
-  console.log("hello");
 });
