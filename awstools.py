@@ -1151,66 +1151,48 @@ def updateEndContest(eventId, time):
 
 def getSubsPerDay():
     lastSubOfDay = misc_table.query(
-            KeyConditionExpression = Key('category').eq('lastSubOfDay')
-            )['Items'][0]['lastSubOfDay']
+        KeyConditionExpression = Key('category').eq('lastSubOfDay')
+    )['Items'][0]['lastSubOfDay']
 
     changed = False
 
-        weekBeforeDate = datetime.now() - timedelta(days = 8)
-            weekBefore = weekBeforeDate.strftime('%Y-%m-%d')
-
-                # if date is more than a week away, delete it
-                    keys = list(lastSubOfDay.keys())
-                        for key in keys:
-                            if key <= weekBefore:
-                                lastSubOfDay.pop(key)
-                                                                changed = True
-
-                                                                    # if important date isn't here, calculate it
-                                                                        for i in range(1,8):
-                                                                            date = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
-
-                                                                                            if date not in lastSubOfDay:
-                                                                                                lastSubOfDay[date] = findLastSubOfDay(date)
-                                                                                                                        changed = True
-
-                                                                                                                            # if changed, update DB
-                                                                                                                                if changed:
-                                                                                                                                    print("changed")
-                                                                                                                                                    misc_table.update_item(
-                                                                                                                                                            Key = {'category': 'lastSubOfDay'},
-                                                                                                                                                            UpdateExpression = f'set lastSubOfDay=:s',
-                                                                                                                                                            ExpressionAttributeValues={':s': lastSubOfDay}
-                                                                                                                                                            )
-
-                                                                                                                                                    today = datetime.now().strftime('%Y-%m-%d')
-                                                                                                                                                            lastSubOfDay[today] = findLastSubOfDay(today)
-
-                                                                                                                                                                subsPerDay = {}
-
-                                                                                                                                                                    for i in range(0, 7):
-                                                                                                                                                                        curDay = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
-                                                                                                                                                                                        prevDay = (datetime.now() - timedelta(days=i+1)).strftime('%Y-%m-%d')
-
-                                                                                                                                                                                                subsPerDay[curDay] = lastSubOfDay[curDay] - lastSubOfDay[prevDay]
-
-                                                                                                                                                                                                    return subsPerDayweekBeforeDate = datetime.now() - timedelta(days = 8)
+    weekBeforeDate = datetime.now() - timedelta(days = 8)
     weekBefore = weekBeforeDate.strftime('%Y-%m-%d')
 
+    # if date is more than a week away, delete it
+    keys = list(lastSubOfDay.keys())
+    for key in keys:
+        if key <= weekBefore:
+            lastSubOfDay.pop(key)
+            changed = True
+
     # if important date isn't here, calculate it
-    for i in range(1,9):
+    for i in range(1,8):
         date = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
-        lastSubOfDay[date] = findLastSubOfDay(date)
+
+        if date not in lastSubOfDay:
+            lastSubOfDay[date] = findLastSubOfDay(date)
+            changed = True
+
+    # if changed, update DB
+    if changed:
+        print("changed")
+        misc_table.update_item(
+            Key = {'category': 'lastSubOfDay'},
+            UpdateExpression = f'set lastSubOfDay=:s',
+            ExpressionAttributeValues={':s': lastSubOfDay}
+        )
+
+    today = datetime.now().strftime('%Y-%m-%d')
+    lastSubOfDay[today] = findLastSubOfDay(today)
 
     subsPerDay = {}
-    for i in range(1,8):
+
+    for i in range(0, 7):
         curDay = (datetime.now() - timedelta(days=i)).strftime('%Y-%m-%d')
         prevDay = (datetime.now() - timedelta(days=i+1)).strftime('%Y-%m-%d')
 
         subsPerDay[curDay] = lastSubOfDay[curDay] - lastSubOfDay[prevDay]
-
-    print(subsPerDay)
-    subsPerDay = [int(i) for i in subsPerDay]
 
     return subsPerDay
 
