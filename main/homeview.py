@@ -26,6 +26,8 @@ def home():
     dates = statistics['pageviews'].keys()
     statistics['pageviews'] = [statistics['pageviews'][i] for i in dates]
 
+    print(statistics['subsperday'])
+
     return render_template('home.html',
                            userinfo=userinfo,
                            contestInfo = contestInfo,

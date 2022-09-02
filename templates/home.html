@@ -33,9 +33,9 @@
 			<div class="row d-flex flex-row justify-content-center p-2 pt-5">
 				<h2 style="text-align: center;">{{statistics['problems']}} problems</h2>
 			</div>
-			<a href="/problems?command=newest" class="row home-click p-2">
+			<a href="/problems" class="row home-click p-2">
 				<p style="margin:0;" id="recently-uploaded-text">
-					Recently uploaded
+					All problems
 					<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-right" viewBox="0 0 16 16">
 						<path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
 					</svg>
@@ -215,7 +215,33 @@
 					</div>
 				</div>
 			</div>
-		</div><div class="col-md-3" id="mostsubs-div" style="padding: 20px;">
+		</div>
+		<div class="col-md-3" id="mostsubs-div" style="padding: 20px;">
+		<div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
+			<div class="card-header bg-white" data-toggle="collapse" data-target="#mostsubs" aria-expanded="true"><b>Most Attempted Problems (Past Week)</b></div>
+			<div id="mostsubs" class="collapse show" style="">
+				<div class="card-body">
+
+					<table class="table table-striped table-sm">
+						<thead class="thead-dark">
+							<tr>
+								<th scope="col">Problem</th>
+								<th scope="col">Users</th>
+							</tr>
+						</thead>
+						<tbody>
+							{% for problemName, subs in statistics['mostattempt'].items() %}
+							<tr>
+								<td> <a href="/problem/{{problemName}}">{{problemName}}</a> </td>
+								<td> {{subs}} </td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<br>
 		<div class="card text-left" style="margin-bottom: -1px; margin-right: 12px;">
 			<div class="card-header bg-white" data-toggle="collapse" data-target="#mostsubs" aria-expanded="true"><b>Most Submitted Problems (Past Week)</b></div>
 			<div id="mostsubs" class="collapse show" style="">

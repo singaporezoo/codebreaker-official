@@ -25,6 +25,9 @@ var tour = new Tour({
   backdrop: true,
   storage: window.localStorage,
   debug: true,
-  framework: "bootstrap4"
+  framework: "bootstrap4",
+  onEnd: function(tour){
+    document.location.href="/";
+  }
 });
 
