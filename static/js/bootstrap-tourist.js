@@ -239,10 +239,10 @@
 					defaultWhiteList = $.fn.popover.Constructor.Default.whiteList;
 				}
 
-				if(this._options.framework == "bootstrap3" && $.fn.popover.Constructor.DEFAULTS.whiteList !== undefined)
-				{
-					defaultWhiteList = $.fn.popover.Constructor.DEFAULTS.whiteList;
-				}
+//				if(this._options.framework == "bootstrap3" && $.fn.popover.Constructor.DEFAULTS.whiteList !== undefined)
+//				{
+//					defaultWhiteList = $.fn.popover.Constructor.DEFAULTS.whiteList;
+//				}
 
 				var whiteListAdditions = {
 											"button":	["data-role", "style"],

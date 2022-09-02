@@ -2,14 +2,14 @@
 var tour = new Tour({
   steps: [
   {
-    path: "",
+    path: "/",
     element: "#recently-uploaded-text",
     title: "Title of my step",
     content: "Content of my step",
     placement: "top"
   },
   {
-    path: "",
+    path: "/",
     element: "#new-user-box",
     title: "Title of my next step",
     content: "Content of my next step",
@@ -17,16 +17,14 @@ var tour = new Tour({
   },
   {
     path: "/problems",
-    element: "#myTable",
+    element: "#problemlist-table-head",
     title: "testing the different page tour",
     content: "Content of my next step",
-    placement: "bottom"
+    placement: "top"
   }],
   backdrop: true,
   storage: window.localStorage,
-  debug: true
+  debug: true,
+  framework: "bootstrap4"
 });
-tour.init();
-$("start-tour-btn").click(function() {
-  tour.restart();
-});
+

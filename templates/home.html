@@ -16,6 +16,12 @@
 <br>
 
 <div class="container-fluid col">
+        <script type="text/javascript" src="{{ url_for('static', filename='js/newuser_tour.js') }}"></script>
+	<script>
+		window.onload = function(){
+			tour.start();
+		}
+	</script>
 	<div class="container">
 		<br>
 		<h1 style="text-align:center;">Welcome to Codebreaker!</h1>
@@ -86,6 +92,9 @@
 						<path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"/>
 					</svg>
 				</p>
+				<script type="text/javascript">
+					$("#start-tour-btn").click(function(){tour.restart();});
+				</script>
 			</a>
 		</div>
 	</div>
@@ -169,7 +178,6 @@
 								},
 								scales: {
 									xAxes: [{
-									xAxes: [{
 										gridLines: {
 											color: 'rgba(180, 180, 180, 0.5)',
 											lineWidth: 1
@@ -234,7 +242,6 @@
 		</div>
 		</div>
 	</div>
-	<script type="text/javascript" src="{{ url_for('static', filename='js/newuser_tour.js') }}"></script>
 </div>
 
 {% endblock %}

@@ -19,6 +19,12 @@
 <br>
 
 <div class="container">
+	<script type="text/javascript" src="{{url_for('static',filename='js/newuser_tour.js')}}"></script>
+	<script>
+		window.onload=function(){
+			tour.start();
+		}
+	</script>
 	{% if command != 'recommended' %}	
 	<div class="card" style="margin-bottom: -1px; margin-right: 12px;">
 		<div class="card-header bg-white" data-toggle="collapse" data-target="#updateHeader" >
@@ -78,7 +84,7 @@
 	{% endif %}
 	<div style="width:100%;overflow-x:auto">
 		<table class="table table-hover" id="myTable">
-			<thead class="sortable thead-dark">
+			<thead class="sortable thead-dark" id="problemlist-table-head">
 				<tr>
 					<th scope="col" data-type="string">
 						<div 
