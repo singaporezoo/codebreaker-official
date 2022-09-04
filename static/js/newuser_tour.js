@@ -2,14 +2,14 @@
 var tour = new Tour({
   steps: [
   {
-    path: "/",
+    path: "/?tour=true",
     element: "#recently-uploaded-text",
     title: "Title of my step",
     content: "Content of my step",
     placement: "top"
   },
   {
-    path: "/",
+    path: "/?tour=true",
     element: "#new-user-box",
     title: "Title of my next step",
     content: "Content of my next step",

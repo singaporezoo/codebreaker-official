@@ -30,13 +30,17 @@ def home():
     dates2 = statistics['pageviews'].keys()
     statistics['pageviews'] = [statistics['pageviews'][i] for i in dates2]
 
-    print(statistics['subsperday'])
+    startTour = False
+    tour = request.args.get('tour')
+    if tour == 'true':
+        startTour = True
 
     return render_template('home.html',
                            userinfo=userinfo,
                            contestInfo = contestInfo,
                            statistics=statistics,
                            socket=contestmode.socket(),
-                           dates=dates)
+                           dates=dates,
+                           startTour=startTour)
 
 

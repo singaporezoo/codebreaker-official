@@ -17,11 +17,13 @@
 
 <div class="container-fluid col">
         <script type="text/javascript" src="{{ url_for('static', filename='js/newuser_tour.js') }}"></script>
+	{% if startTour %}
 	<script>
 		window.onload = function(){
 			tour.start();
 		}
 	</script>
+	{% endif %}
 	<div class="container">
 		<br>
 		<h1 style="text-align:center;">Welcome to Codebreaker!</h1>
@@ -111,6 +113,9 @@
 							    txt.innerHTML = html;
 							    return txt.value;
 							}
+							function getDateString(date){
+							    return date.toLocaleString('en-GB');
+							}
 							document.addEventListener('DOMContentLoaded', function() {
 								var calendarEl = document.getElementById('calendar');
 								var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -123,7 +128,7 @@
 									},
 									eventDidMount: function(info){
 										var tooltip = new bootstrap.Tooltip(info.el, {
-											title: `<b>${info.event.title}</b> <br> ${info.event.start} to ${info.event.end}`,
+											title: `<b>${info.event.title}</b> <br> ${getDateString(info.event.start)} to ${getDateString(info.event.end)}`,
 											html: true
 										});
 									}
@@ -154,7 +159,6 @@
 							{% for i in dates %}
 							labels.push("{{i}}");
 							{% endfor %}
-							console.log(labels);
 							const data = {
 								labels: labels,
 								datasets: [{
@@ -226,7 +230,6 @@
 							{% for i in dates %}
 							labels.push("{{i}}");
 							{% endfor %}
-							console.log(labels);
 							const data2 = {
 								labels: labels,
 								datasets: [{
@@ -323,7 +326,7 @@
 						<thead class="thead-dark">
 							<tr>
 								<th scope="col">Problem</th>
-								<th scope="col">Users</th>
+								<th scope="col">Submissions</th>
 							</tr>
 						</thead>
 						<tbody>

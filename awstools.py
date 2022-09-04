@@ -446,9 +446,9 @@ def updateUserInfo(email, username, fullname, school, theme, hue, nation):
         ExpressionAttributeValues={':u' : username, ':f' : fullname, ':s' : school, ':t' : theme, ':h':hue, ':n': nation}
     )
 
-    def editUserRole(info,newrole,changedby):
-        if info['role'] == newrole:
-            return
+def editUserRole(info,newrole,changedby):
+    if info['role'] == newrole:
+        return
 
     email = info['email']
     users_table.update_item(
