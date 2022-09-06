@@ -752,7 +752,7 @@ def getRankings():
     for i in range(len(H)):
         if (H[i][0] != H[index][0]):
             index = i
-            H[i].append(index+1)
+        H[i].append(index+1)
     return H
 
 def get_countries():
@@ -863,6 +863,7 @@ def homepageInfo(recalc = False):
 
     if recalc or parseDate + timedelta(days=1) < datetime.now():
         print("recalculate homepage data")
+        print(datetime.now())
         problems = findLength(problems_table,'problemName')
         users = findLength(users_table,'username')
         subs = getSubmissionId()
@@ -874,7 +875,7 @@ def homepageInfo(recalc = False):
         contests = [i for i in contests if i['endTime'] != "Unlimited"]
         pageviews = cloudflare.main()
         subsperday = getSubsPerDay()
-        parseDate = (datetime.now() + timedelta(days = 1)) .strftime("%d/%m/%Y")
+        parseDate = datetime.now().strftime("%d/%m/%Y")
         json.dump({'date':parseDate,'users':users,'problems':problems,'subs':subs,'nations':nations,'mostsub':mostsub,'mostattempt':mostattempt,'contests':contests,'pageviews':pageviews,'subsperday':subsperday}, open('homepage.json', 'w'))
 
     return {'users':users,'problems':problems,'subs':subs,'nations':nations,'mostsub':mostsub,'mostattempt':mostattempt,'contests':contests,'pageviews':pageviews,'subsperday':subsperday}
@@ -1208,4 +1209,6 @@ if __name__ == '__main__':
     # THIS IS FOR DEBUGGING AND WILL ONLY BE ACTIVATED IF YOU DIRECTLY RUN THIS FILE
     # IT DOES NOT OUTPUT ANYTHING ONTO TMUX
     print("TESTING")
-    print(homepageInfo(recalc=True))
+    print(homepageInfo())
+    #print(datetime.now())
+    #print(getSubsPerDay())
