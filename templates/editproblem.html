@@ -99,7 +99,7 @@
 		</div>
 		{%endif%}
 	        	
-		<a href='/admin/viewsubmissions/{{info.problemName}}' > View Submissions </a>
+		<a class="btn btn-secondary" href='/admin/viewsubmissions/{{info.problemName}}' > View Submissions </a>
 		<br>
 		
 		{{form.feedback(type="checkbox", checked=(info['fullFeedback'] == 1))}}
@@ -151,7 +151,7 @@
 		<input type="hidden" name="form_name" value="problem_info">
 		{{form.submit(type="submit", class="btn btn-secondary")}}
 	</form>
-	<a class="btn" href="/admin/viewsubmissions/{{info.problemName}}">View Submissions</a>
+	<a class="btn btn-secondary" href="/admin/viewsubmissions/{{info.problemName}}">View Submissions</a>
 	<br>
 	<br>
 	<hr class="hr-text" data-content="">

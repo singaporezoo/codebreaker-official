@@ -14,12 +14,17 @@
 
 {% block content %}
 <div class = "container-fluid p-4">
-	
+        <script type="text/javascript" src="{{url_for('static',filename='js/newuser_tour.js')}}"></script>
+        <script>
+                window.onload=function(){
+                        tour.start();
+                }
+        </script>	
 	<div class = "row">
 	
 	<div class = "col-sm-4">
 		<div class = "container">
-			<div class = "card shadow-sm">
+			<div class = "card shadow-sm" id="profile-card">
 				<h4 class = "card-header"> {{profileinfo.username}}'s profile </h4>
 
 				<div class = "card-body">

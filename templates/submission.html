@@ -3,7 +3,12 @@
 {% block head %} {{ super() }} {% endblock %}
 
 {% block content %}
-
+	<script type="text/javascript" src="{{url_for('static',filename='js/newuser_tour.js')}}"></script>
+        <script>
+                window.onload=function(){
+                        tour.start();
+                }
+        </script>
 	<div class="container-fluid">
 		
 		{%if blockpage %}
@@ -93,7 +98,7 @@
 			</div>
 			
 			<div class="col-md-6">
-				<div class = "container">	
+				<div class = "container" id="submission-subtasks-container">	
 					{% for subtask in subtaskDetails %}
 					<div class="card text-white" style="margin-bottom: 12px; margin-right: 12px;">
 						<div class="card-header bg-{{'secondary' if subtask.done == False else ('success' if subtask.verdict=='AC' else ('warning' if subtask.verdict=='PS' else'danger'))}}" data-toggle="collapse" data-target="#subtask{{subtask.number}}" >

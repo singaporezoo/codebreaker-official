@@ -13,17 +13,22 @@
 {% endwith %}
 
 {% block content %}
-	
+	<script type="text/javascript" src="{{url_for('static',filename='js/newuser_tour.js')}}"></script>
+        <script>
+                window.onload=function(){
+                        tour.start();
+                }
+        </script>	
+
 	<br>
 	<div class="container-fluid pr-md-5">
-		
 		<!-- This is the part which is the main part (statements, submit code)-->
 		<div class="row">
 			<div class="col-md-8">
 				<div class="container">
 		
 					<!-- Nav tabs -->
-					<ul class="nav nav-tabs" role="tablist">
+					<ul class="nav nav-tabs" role="tablist" id="problem-all-tabs">
 						<li class="nav-item">
 							<a class="nav-link {{"active" if compileError == "" else ""}}" data-toggle="tab" href="#statement">Statement</a>
 						</li>
@@ -64,7 +69,7 @@
 
 					</ul>
 						<!-- Tab panes -->
-						<div class="tab-content">
+						<div class="tab-content" id="problem-tab-content">
 							<div id="statement" class="container tab-pane {{"active" if compileError == "" else "fade"}}"><br>
 								<h3> <b> {{probleminfo.title}}</b> </h3>
 								{{statementHTML | safe}}
@@ -133,7 +138,7 @@
 			
 			<!-- This is the additional info-->
 			<div class="col-md-4">
-				<div class = "container">
+				<div class = "container" id="problem-right-column">
 					
 					<div class="card m-0">
 						<div class="card-body shadow-sm">

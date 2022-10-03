@@ -17,7 +17,12 @@
 <br>
 
 <div class="container">
-	
+        <script type="text/javascript" src="{{url_for('static',filename='js/newuser_tour.js')}}"></script>
+        <script>
+                window.onload=function(){
+                        tour.start();
+                }
+        </script>	
 	<h1> {{contestgroupinfo.groupName}} </h1>
 
 	{% if userinfo['role']=='admin' or userinfo['role'] == 'superadmin' %}

@@ -13,12 +13,17 @@
 {% endwith %}
 
 {% block content %}
-
+	<script type="text/javascript" src="{{url_for('static',filename='js/newuser_tour.js')}}"></script>
+        <script>
+                window.onload=function(){
+                        tour.start();
+                }
+        </script>
 <br>
 
 <div class="container">
 	
-	<ul class="nav nav-pills nav-fill" role="tablist">
+	<ul class="nav nav-pills nav-fill" role="tablist" id="contest-all-tabs">
 		<li class="nav-item">
 			<a class="nav-link {{'active' if havecurrent}}" data-toggle="tab" href="#ongoing">Ongoing</a>
 		</li>
@@ -34,7 +39,7 @@
 		<li class="nav-item">
 			<a class="nav-link" data-toggle="tab" href="#collections">Collections</a>
 		</li>
-		<li class="nav-item">
+		<li class="nav-item" id="contest-groups-tab">
 			<a class="nav-link {{'active' if not havecurrent}}" data-toggle="tab" href="#groups">Groups</a>
 		</li>
 	</ul>

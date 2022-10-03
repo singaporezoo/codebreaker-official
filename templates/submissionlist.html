@@ -13,17 +13,32 @@
 {% endwith %}
 
 {% block content %}
+	<script type="text/javascript" src="{{url_for('static',filename='js/newuser_tour.js')}}"></script>
+        <script>
+                window.onload=function(){
+                        tour.start();
+                }
+        </script>
 
 <br>
 
 <div class="container">
-	<form id = "searchsubmissionform" action = "" method = "post" class="form-group">
-		<div class="input-group mb-3">
+	<form id = "searchsubmissionform" action = "" method = "post" class="form-group" autocomplete="off">
+		<div class="autocomplete input-group mb-3">
 			{{form.username(type="text", placeholder="Username", class="form-control", value=("" if username == None else username) ) }}
 			{{form.problem(type="text", placeholder="Problem", class="form-control", value=("" if problem == None else problem) )}}
 			{{form.submit(type="submit", class="btn btn-secondary")}}
 		</div>
 	</form>
+	<!--
+	<script src={{url_for('static',filename='js/editcontest.js')}}></script>
+	<script>
+		var problems = {{problem_names | tojson}};
+		var usernames = {{usernames | tojson}};
+		autocomplete(document.getElementById("problem"), problems);
+		autocomplete(document.getElementById("username"), usernames);
+	</script>
+	-->
 	<nav aria-label="...">
 	<ul class="pagination">
 	
