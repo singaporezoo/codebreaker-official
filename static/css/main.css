@@ -79,3 +79,19 @@ label {
 .tour-highlight {
 	opacity: 0.1 !important;
 }
+
+.tour-tour-element {
+    pointer-events: none;
+}
+
+.popover {
+    pointer-events: all;
+}
+
+.popover[class*="tour-"] .popover-navigation [data-role="prev"].disabled,
+.popover[class*="tour-"] .popover-navigation [data-role="next"].disabled,
+.popover[class*="tour-"] .popover-navigation [data-role="end"].disabled {
+  cursor: default;
+  pointer-events: none !important;
+}
+

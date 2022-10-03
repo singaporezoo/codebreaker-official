@@ -64,6 +64,13 @@ var tour = new Tour({
     placement: "auto"
   },
   {
+    path: "/group/deccourse",
+    orphan: true,
+    title: "Example Contest Group",
+    content: "Within a contest group, there are folders to further organise the contests. From here, you can access individual contests and past years' series as well.",
+    placement: "auto"
+  },
+  {
     path: "/contest/dec2020c1",
     orphan: true,
     title: "Example Contest",
@@ -85,10 +92,24 @@ var tour = new Tour({
     placement: "auto"
   },
   {
+    path: "/profile/jamielim",
+    orphan: true,
+    title: "Example Profile",
+    content: "The profile page can be used to see problems that you and others have solved.",
+    placement: "auto"
+  },
+  {
+    path: "/profile/jamielim",
+    element: "#profile-card",
+    title: "Profile Details",
+    content: "On your own profile page, you can edit your profile details and colour scheme.",
+    placement: "auto"
+  },
+  {
     path: "/?tour=true",
     orphan: true,
     title: "Last Words",
-    content: "That's all for our main features for now. Do contact the Codebreaker admins for any further queries.",
+    content: "That's all for our main features for now. Do contact the Codebreaker admins at singaporezoo090@gmail.com for any further queries.",
     placement: "auto"
   },
   {

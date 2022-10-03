@@ -182,8 +182,12 @@ pre {
 }
 
 .btn-secondary {
-	background-color: hsl(var(--hue), 24%, 15%);
-	border-color: hsl(var(--hue), 21%, 16%);
+        background-color: #1d212f;
+        border-color: #212b33;
+}
+.btn-outline-secondary {
+        border-color: #ccc !important;
+        color: #ccc !important;
 }
 
 hr {
@@ -204,3 +208,32 @@ hr {
 	color: white !important;
 	box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
 }
+
+.popover {
+        background-color: hsl(var(--hue), 40%, 15%) !important;
+        color: white !important;
+}
+.popover-header {
+        background-color: hsl(var(--hue), 40%, 25%) !important;
+        color: white !important;
+}
+.popover-body {
+	color: white !important;
+}
+.bs-popover-top .arrow::after,
+.bs-popover-auto[x-placement^="top"] .arrow::after {
+    border-top-color: hsl(var(--hue), 40%, 15%) !important;
+}
+.bs-popover-bottom .arrow::after,
+.bs-popover-auto[x-placement^="bottom"] .arrow::after {
+    border-bottom-color: hsl(var(--hue), 40%, 25%) !important;
+}
+.bs-popover-left .arrow::after,
+.bs-popover-auto[x-placement^="left"] .arrow::after {
+    border-left-color: hsl(var(--hue), 40%, 15%) !important;
+}
+.bs-popover-right .arrow::after,
+.bs-popover-auto[x-placement^="right"] .arrow::after {
+    border-right-color: hsl(var(--hue), 40%, 15%) !important;
+}
+

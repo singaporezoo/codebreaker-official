@@ -164,6 +164,10 @@ pre {
 	background-color: #1d212f;
 	border-color: #212b33;
 }
+.btn-outline-secondary {
+	border-color: #b2beca !important;
+	color: #b2beca !important;
+}
 
 hr {
 	background-color: white !important;
@@ -182,5 +186,17 @@ hr {
 .home-click:hover {
         color: white !important;
         box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
+}
+
+.popover {
+        background-color: hsl(var(--hue), 40%, 10%) !important;
+        color: white !important;
+}
+.popover-header {
+        background-color: hsl(var(--hue), 40%, 20%) !important;
+        color: white !important;
+}
+.popover-body {
+        color: white !important;
 }
 

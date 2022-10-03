@@ -77,4 +77,15 @@ def submissionlist():
     for i in submissionList:
         i['language'] = languages_inverse[i['language']]
 
-    return render_template('submissionlist.html', form=form, username=username, problem=problem, pageNo=pageNo, pages=pages, maxPage=maxPage, submissionList=submissionList, linkname=linkname, userinfo=userInfo, contest=contest, users=contestmode.allowedusers(), fullfeedback=fullfeedback, hidetime=contestmode.hidetime(), cppref=contestmode.cppref(), socket=contestmode.socket())
+    problem_names = awstools.getAllProblemNames()
+    names = []
+    for i in range(len(problem_names)):
+        names.append(problem_names[i]["problemName"])
+    names.sort()
+    raw_usernames = awstools.getAllUsernames()
+    usernames = []
+    for i in range(len(raw_usernames)):
+        usernames.append(raw_usernames[i]["username"])
+    usernames.sort()
+
+    return render_template('submissionlist.html', form=form, username=username, problem=problem, pageNo=pageNo, pages=pages, maxPage=maxPage, submissionList=submissionList, linkname=linkname, userinfo=userInfo, contest=contest, users=contestmode.allowedusers(), fullfeedback=fullfeedback, hidetime=contestmode.hidetime(), cppref=contestmode.cppref(), socket=contestmode.socket(), problem_names=names, usernames=usernames)
