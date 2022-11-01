@@ -68,10 +68,6 @@ def submission(subId):
     if problem_info['problem_type'] == 'Communication' and code != None:
         flash('This submission was made before the problem type was converted to communication', 'warning')
     
-    if (userInfo == None):
-        flash("Please login to view this page","warning")
-        return redirect("/")
-    
     if not awstools.isAllowedAccess(problem_info,userInfo):
         return "Sorry, this submission is hidden or this problem doesn't exist"
     """
