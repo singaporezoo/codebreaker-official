@@ -8,11 +8,11 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
-		<link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-tourist.css') }}">
+		<!--link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-tourist.css') }}"-->
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
-		<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-tourist.js') }}"></script>
+		<!--script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap-tourist.js') }}"></script-->
 
 		<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.css">
@@ -89,16 +89,18 @@
 			<ul class="nav navbar-nav">
 
 				{% if not contest %}
-				<li class="nav-item dropdown">
-					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						Problems
-					</a>
-				<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-					<a class="dropdown-item" href="/problems">All Problems</a>
-					<a class="dropdown-item" href="/problems?command=newest">Newest Problems</a>
-					<a class="dropdown-item" href="/problems?command=unsolved">Unsolved Problems</a>
-					<a class="dropdown-item" href="/problems?command=recommended">Recommended Problems</a>
-				</div>
+				<li class="nav-item">
+					<a class="nav-link" href="/problems" style="margin-right:0px;padding-right:0px;">Problems</a>
+				</li>
+				<li class="nav-item dropdown show">
+					<a class="nav-link dropdown-toggle dropdown-toggle-split" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="/problems">All Problems</a>
+						<a class="dropdown-item" href="/problems?command=newest">Newest Problems</a>
+						<a class="dropdown-item" href="/problems?command=unsolved">Unsolved Problems</a>
+						<a class="dropdown-item" href="/problems?command=recommended">Recommended Problems</a>
+					</div>
+				</li>	
 				<li class="nav-item">
 					<a class="nav-link" href="/contests">Contests</a>
 				</li>
@@ -211,6 +213,10 @@
 					{% endfor %}
 				{% endif %}
 			{% endwith %}
+			<!-- FOR DEC COURSE; REMOVE AFTER DEC COURSE STARTS-->
+			<div class="alert alert-warning fade show mt-4" role="alert">
+				VERY IMPORTANT NOTE TO ALL DEC COURSE 2022 PARTICIPANTS (due to delays in email communication): Elementary is gone, so Advanced has a diagnostic test (if you fail, no Dec Course). Syllabus of diagnostic is anything in these prerequisite notes, please review them <a href="https://drive.google.com/drive/folders/18_1-7iAyDC8yC__AiDIRSOUzLA6ZqOox" >at this link</a>.
+			</div>
 		</div>
 
 		{% block content %}{% endblock %}
