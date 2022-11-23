@@ -32,7 +32,7 @@ def home():
 
     startTour = False
     tour = request.args.get('tour')
-    if tour == 'true':
+    if tour == 'true' and not contestmode.contest():
         startTour = True
 
     return render_template('home.html',

@@ -229,7 +229,7 @@ def addAllowAccess(problemName):
         ExpressionAttributeValues={':a':[]},
     )
 
-def getProblemStatementHTML(problemName):
+def getProblemStatementHTML(problemName, privatePDF):
     statement = ''
     try:
         htmlfile = s3.get_object(Bucket=STATEMENTS_BUCKET_NAME, Key=f'{problemName}.html') 
@@ -242,16 +242,22 @@ def getProblemStatementHTML(problemName):
         s3.head_object(Bucket=STATEMENTS_BUCKET_NAME, Key=name)
         if (len(statement) > 0):
             statement += '<br>'
-        statement += '<iframe src=\"' + STATEMENTS_DOMAIN_NAME + name + '\" width=\"100%\" height=\"700px\"></iframe>'
+        if not privatePDF:  
+            statement += '<iframe src=\"' + STATEMENTS_DOMAIN_NAME + name + '\" width=\"100%\" height=\"700px\"></iframe>'
+        else:
+            url = s3.generate_presigned_url(
+                ClientMethod='get_object',
+                Params={'Bucket': STATEMENTS_BUCKET_NAME, 'Key': name},
+                ExpiresIn=60)
+            statement += '<iframe src=\"' + url + '\" width=\"100%\" height=\"700px\"></iframe>'
     except ClientError as e:
         pass
     if (len(statement) == 0):
-        return 'No statement is currently available'
+        return {'status': 404, 'response':'No statement is currently available'}
     else:
-        return statement
+        return {'status': 200, 'response':statement}
 
 def uploadStatement(statement, s3Name):
-    #s3.upload_fileobj(statement, STATEMENTS_BUCKET_NAME, s3Name, ExtraArgs = {"ContentType" : statement.content_type})
     s3.upload_fileobj(statement, STATEMENTS_BUCKET_NAME, s3Name, ExtraArgs={"ACL": 'public-read', "ContentType":statement.content_type})
 
 def uploadChecker(checker, s3Name):
@@ -1209,6 +1215,4 @@ if __name__ == '__main__':
     # THIS IS FOR DEBUGGING AND WILL ONLY BE ACTIVATED IF YOU DIRECTLY RUN THIS FILE
     # IT DOES NOT OUTPUT ANYTHING ONTO TMUX
     print("TESTING")
-    print(homepageInfo())
-    #print(datetime.now())
-    #print(getSubsPerDay())
+    print(getContestInfo('rinovsel2022')['users'].keys())

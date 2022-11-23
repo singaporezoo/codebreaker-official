@@ -84,18 +84,7 @@ def problem(PROBLEM_NAME):
     
     if not awstools.isAllowedAccess(problem_info,userInfo):
         return "Sorry, this problem does not exist"
-    """
-    if not analysisVisible:
-        # REDIRECT
-        if userInfo == None:
-            return 'Sorry, this problem does not exist'
-        elif (userInfo['role'] != 'admin' and userInfo['role'] != 'superadmin'):
-            return "Sorry, this problem does not exist"
 
-    if (userInfo != None and userInfo['role'] != 'superadmin') and ('superhidden' in problem_info and problem_info['superhidden']):
-        if userInfo['role'] != 'admin' or 'allowAccess' not in problem_info or userInfo['username'] not in problem_info['allowAccess']:
-            return "Sorry, this problem does not exist"
-    """
     if not validated:
         if (userInfo == None or (userInfo['role'] != 'admin' and userInfo['role'] != 'superadmin')):
             flash("Sorry, this problem still has issues. Please contact the administrators.", 'warning')
@@ -104,9 +93,10 @@ def problem(PROBLEM_NAME):
             canSubmit = False
             flash("Problem has 1 or more issues that require fixing",'danger')
 
-    statementHTML = awstools.getProblemStatementHTML(PROBLEM_NAME)
-    
-    if not problem_info['publicStatement']:
+    result = awstools.getProblemStatementHTML(PROBLEM_NAME, not problem_info['publicStatement'])
+    if result['status'] == 200:
+        statementHTML = result['response']
+    else:
         flash("Statement is private", "warning")
         statementHTML = ""
     
