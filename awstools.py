@@ -1086,36 +1086,6 @@ def getClarificationsByUser(username):
 def getAllClarifications():
     return scan(clarifications_table)
 
-def makeStatementPrivate(problemId):
-    try:
-        object_acl = s3_resource.ObjectAcl(STATEMENTS_BUCKET_NAME,f'{problemId}.pdf')
-        response = object_acl.put(ACL='private')
-        return
-    except Exception as e:
-        pass
-    try:
-        object_acl = s3_resource.ObjectAcl(STATEMENTS_BUCKET_NAME,f'{problemId}.html')
-        response = object_acl.put(ACL='private')
-        return
-    except Exception as e:
-        pass
-
-def makeStatementPublic(problemId):
-    try:
-        object_acl = s3_resource.ObjectAcl(STATEMENTS_BUCKET_NAME,f'{problemId}.pdf')
-        response = object_acl.put(ACL='public-read')
-        return
-    except Exception as e:
-        # No PDF statement
-        pass
-    try:
-        object_acl = s3_resource.ObjectAcl(STATEMENTS_BUCKET_NAME,f'{problemId}.html')
-        response = object_acl.put(ACL='public-read')
-        return
-    except Exception as e:
-        # No HTML statement
-        pass
-
 def getRecommendedProblems(user):
     lambda_input = {'user':user}
     res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-recommend-problem', InvocationType='RequestResponse', Payload = json.dumps(lambda_input))
