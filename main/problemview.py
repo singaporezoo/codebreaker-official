@@ -93,11 +93,12 @@ def problem(PROBLEM_NAME):
             canSubmit = False
             flash("Problem has 1 or more issues that require fixing",'danger')
 
-    result = awstools.getProblemStatementHTML(PROBLEM_NAME, not problem_info['publicStatement'])
+    result = awstools.getProblemStatementHTML(PROBLEM_NAME)
+
     if result['status'] == 200:
         statementHTML = result['response']
-    else:
-        flash("Statement is private", "warning")
+    else:  # No statement found
+        flash("Statement not found", "warning")
         statementHTML = ""
     
     delay = 9

@@ -23,9 +23,7 @@ def editProblemTags():
             return {'status':300,'error':'Invalid Tag!'}
 
     awstools.updateTags(problemId, newTags)
-    print()
-    print("DONE ", problemId, userInfo['username'])
-    print()
+
     return {'status':200,'error':''}
 
 def verifyDependency(dependency):
@@ -118,11 +116,6 @@ def editproblem(problem_id):
             info['timeLimit'] = result['time_limit']
             info['EE'] = ('ee' in result)
             info['editorialVisible'] = ('editorial_visible' in result)
-            info['publicStatement'] = ('public_statement' in result)
-            if info['publicStatement']:
-                awstools.makeStatementPublic(problem_id)
-            else:
-                awstools.makeStatementPrivate(problem_id)
             info['memoryLimit'] = result['memory_limit']
             info['createdTime'] = problem_info['createdTime']
             info['editorials'] = problem_info['editorials']

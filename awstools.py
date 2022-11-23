@@ -33,8 +33,6 @@ ATTACHMENTS_BUCKET_NAME = 'codebreaker-attachments'
 TESTDATA_BUCKET_NAME = 'codebreaker-testdata'
 SCOREBOARDS_BUCKET_NAME = 'codebreaker-contest-static-scoreboards'
 
-STATEMENTS_DOMAIN_NAME = 'https://codebreaker-statements.s3-ap-southeast-1.amazonaws.com/'
-
 problems_table = dynamodb.Table('codebreaker-problems')
 submissions_table = dynamodb.Table('codebreaker-submissions')
 users_table = dynamodb.Table('codebreaker-users')
@@ -229,7 +227,7 @@ def addAllowAccess(problemName):
         ExpressionAttributeValues={':a':[]},
     )
 
-def getProblemStatementHTML(problemName, privatePDF):
+def getProblemStatementHTML(problemName):
     statement = ''
     try:
         htmlfile = s3.get_object(Bucket=STATEMENTS_BUCKET_NAME, Key=f'{problemName}.html') 
@@ -242,14 +240,12 @@ def getProblemStatementHTML(problemName, privatePDF):
         s3.head_object(Bucket=STATEMENTS_BUCKET_NAME, Key=name)
         if (len(statement) > 0):
             statement += '<br>'
-        if not privatePDF:  
-            statement += '<iframe src=\"' + STATEMENTS_DOMAIN_NAME + name + '\" width=\"100%\" height=\"700px\"></iframe>'
-        else:
-            url = s3.generate_presigned_url(
-                ClientMethod='get_object',
-                Params={'Bucket': STATEMENTS_BUCKET_NAME, 'Key': name},
-                ExpiresIn=60)
-            statement += '<iframe src=\"' + url + '\" width=\"100%\" height=\"700px\"></iframe>'
+        url = s3.generate_presigned_url(
+            ClientMethod='get_object',
+            Params={'Bucket': STATEMENTS_BUCKET_NAME, 'Key': name},
+            ExpiresIn=60)
+
+        statement += '<iframe src=\"' + url + '\" width=\"100%\" height=\"700px\"></iframe>'
     except ClientError as e:
         pass
     if (len(statement) == 0):
@@ -258,7 +254,7 @@ def getProblemStatementHTML(problemName, privatePDF):
         return {'status': 200, 'response':statement}
 
 def uploadStatement(statement, s3Name):
-    s3.upload_fileobj(statement, STATEMENTS_BUCKET_NAME, s3Name, ExtraArgs={"ACL": 'public-read', "ContentType":statement.content_type})
+    s3.upload_fileobj(statement, STATEMENTS_BUCKET_NAME, s3Name)
 
 def uploadChecker(checker, s3Name):
     s3.upload_fileobj(checker, CHECKERS_BUCKET_NAME, s3Name)
@@ -1214,5 +1210,11 @@ if __name__ == '__main__':
     # PLEASE KEEP THIS AT THE BOTTOM
     # THIS IS FOR DEBUGGING AND WILL ONLY BE ACTIVATED IF YOU DIRECTLY RUN THIS FILE
     # IT DOES NOT OUTPUT ANYTHING ONTO TMUX
-    print("TESTING")
-    print(getContestInfo('rinovsel2022')['users'].keys())
+    # print("TESTING")
+    # print(getProblemStatementHTML('potatocb'))
+    # print(getProblemStatementHTML('helloworld'))
+    problems = [i['problemName'] for i in getAllProblemNames()]
+    for problem in problems:
+        makeStatementPrivate(problem)
+        print(problem)
+    print(problems)
