@@ -69,16 +69,8 @@ def submission(subId):
         flash('This submission was made before the problem type was converted to communication', 'warning')
     
     if not awstools.isAllowedAccess(problem_info,userInfo):
-        return "Sorry, this submission is hidden or this problem doesn't exist"
-    """
-    if not problem_info['analysisVisible']:
-        # REDIRECT
-        if (userInfo['role'] != 'admin' and userInfo['role'] != 'superadmin'):
-            return "Sorry, this submission is hidden or this problem doesn't exist"
-    
-    if userInfo['role'] != 'superadmin' and problem_info['superhidden']:
-        return "Sorry, this submission is hidden or this problem doesn't exist"
-    """
+        flash("Sorry, you are not authorized to view this resource!", 'warning')
+        return redirect("/")
 
     subtaskMaxScores = problem_info['subtaskScores']
     subtaskNumber = len(subtaskMaxScores)

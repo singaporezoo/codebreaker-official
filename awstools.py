@@ -550,10 +550,12 @@ def createProblemWithId(problem_id):
     info['attachments'] = False
     info['contestLink'] = ""
     info['superhidden'] =  False
+    info['contestUsers'] = []
     info['createdTime'] = (datetime.now() + timedelta(hours=8)).strftime("%Y-%m-%d %X")
     info['editorials'] = []
     info['editorialVisible'] = False
     info['EE'] = False
+    info['']
     updateProblemInfo(problem_id, info)
     subtasks = {}
     subtasks['subtaskScores'] = []
@@ -658,7 +660,6 @@ def endParticipation(contestId, username):
 def validateProblem(problemId):
     lambda_input = {'problemName':problemId}
     res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-problem-verification', InvocationType='RequestResponse', Payload = json.dumps(lambda_input))
-
 
 def uploadCompiledChecker(sourceName, uploadTarget):
     s3.upload_file(sourceName, CHECKERS_BUCKET_NAME, uploadTarget)
@@ -1023,17 +1024,58 @@ def generateNewScoreboard(contestId):
     return 'Failure'
 
 def isAllowedAccess(problem_info, userInfo):
-    if not problem_info['analysisVisible']:
-        if userInfo == None:
-            return False
-        elif (userInfo['role'] != 'admin' and userInfo['role'] != 'superadmin'):
+    if problem_info['analysisVisible']:
+        return True
+
+    if userInfo == None:
+        return False
+
+    if userInfo['role'] == 'superadmin':
+        return True
+
+    if userInfo['role'] in ['member', 'admin']:
+        if 'contestUsers' in problem_info and userInfo['username'] in problem_info['contestUsers']:
+            return True
+
+    # Only admin users beyond this point
+    if userInfo['role'] == 'admin':
+        if 'allowAccess' in problem_info and userInfo['username'] in problem_info['allowAccess']:
+            # Admin that is explicitly allowed access
+            return True
+
+        if 'superhidden' in problem_info and problem_info['superhidden']:
+            # Super hidden blocks all remaining admins except those with special access
             return False
 
-        if (userInfo != None and userInfo['role'] != 'superadmin') and ('superhidden' in problem_info and problem_info['superhidden']):
-            if userInfo['role'] != 'admin' or 'allowAccess' not in problem_info or userInfo['username'] not in problem_info['allowAccess']:
-                return False
+        return True
 
-    return True
+    return False
+
+def isAllowedAdminAccess (problem_info, userInfo):
+    if userInfo == None:
+        return False
+
+    if userInfo['role'] == 'superadmin':
+        return True
+
+    if userInfo['role'] == 'admin':
+        if 'allowAccess' in problem_info and userInfo['username'] in problem_info['allowAccess']:
+            # Admin that is explicitly allowed access
+            return True
+
+        if 'superhidden' in problem_info and problem_info['superhidden']:
+            # Super hidden blocks all remaining admins except those with special access
+            return False
+
+        return True
+    return False
+
+def grantContestUserAccess (problemName, username):
+    problems_table.update_item(
+        Key={'problemName': problemName},
+        UpdateExpression = f'set contestUsers = list_append(contestUsers, :a)',
+        ExpressionAttributeValues = {':a': username}
+    )
 
 def updateCommunicationFileNames(problemName, info):
     problems_table.update_item(
@@ -1174,7 +1216,6 @@ def getSubsPerDay():
 
     return subsPerDay
 
-
 if __name__ == '__main__':
     # PLEASE KEEP THIS AT THE BOTTOM
     # THIS IS FOR DEBUGGING AND WILL ONLY BE ACTIVATED IF YOU DIRECTLY RUN THIS FILE
@@ -1184,6 +1225,10 @@ if __name__ == '__main__':
     # print(getProblemStatementHTML('helloworld'))
     problems = [i['problemName'] for i in getAllProblemNames()]
     for problem in problems:
-        makeStatementPrivate(problem)
+        problems_table.update_item(
+            Key = {'problemName': problem},
+            UpdateExpression = f'set contestUsers=:s',
+            ExpressionAttributeValues={':s': []}
+        )
         print(problem)
     print(problems)

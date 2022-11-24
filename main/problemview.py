@@ -83,7 +83,8 @@ def problem(PROBLEM_NAME):
             problem_info['nameB'] = 'placeholderA'
     
     if not awstools.isAllowedAccess(problem_info,userInfo):
-        return "Sorry, this problem does not exist"
+        flash("Sorry, you are not authorized to view this resource!", 'warning')
+        return redirect("/")
 
     if not validated:
         if (userInfo == None or (userInfo['role'] != 'admin' and userInfo['role'] != 'superadmin')):
