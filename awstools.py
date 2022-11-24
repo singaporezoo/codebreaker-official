@@ -1074,7 +1074,7 @@ def grantContestUserAccess (problemName, username):
     problems_table.update_item(
         Key={'problemName': problemName},
         UpdateExpression = f'set contestUsers = list_append(contestUsers, :a)',
-        ExpressionAttributeValues = {':a': username}
+        ExpressionAttributeValues = {':a': [username]}
     )
 
 def updateCommunicationFileNames(problemName, info):
