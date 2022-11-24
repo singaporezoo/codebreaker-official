@@ -207,8 +207,8 @@ def updateProblemInfo(problemName, info):
     setSuperhidden(problemName, info['superhidden'])
     problems_table.update_item(
         Key = {'problemName' : problemName},
-        UpdateExpression = f'set title=:a, #kys=:b, author=:c, problem_type=:d, timeLimit=:e, memoryLimit=:f, fullFeedback=:g, analysisVisible=:h, customChecker=:i,attachments=:j,contestLink=:k,superhidden=:l,createdTime=:m, editorials=:n, editorialVisible=:o, EE=:p, publicStatement=:q',
-        ExpressionAttributeValues={':a':info['title'], ':b':info['source'], ':c':info['author'], ':d':info['problem_type'], ':e':info['timeLimit'], ':f':info['memoryLimit'], ':g':info['fullFeedback'], ':h':info['analysisVisible'], ':i':info['customChecker'], ':j':info['attachments'], ':k':info['contestLink'], ':l':info['superhidden'], ':m':info['createdTime'], ':n':info['editorials'], ':o':info['editorialVisible'],':p':info['EE'], ':q':info['publicStatement']},
+        UpdateExpression = f'set title=:a, #kys=:b, author=:c, problem_type=:d, timeLimit=:e, memoryLimit=:f, fullFeedback=:g, analysisVisible=:h, customChecker=:i,attachments=:j,contestLink=:k,superhidden=:l,createdTime=:m, editorials=:n, editorialVisible=:o, EE=:p',
+        ExpressionAttributeValues={':a':info['title'], ':b':info['source'], ':c':info['author'], ':d':info['problem_type'], ':e':info['timeLimit'], ':f':info['memoryLimit'], ':g':info['fullFeedback'], ':h':info['analysisVisible'], ':i':info['customChecker'], ':j':info['attachments'], ':k':info['contestLink'], ':l':info['superhidden'], ':m':info['createdTime'], ':n':info['editorials'], ':o':info['editorialVisible'],':p':info['EE']},
         ExpressionAttributeNames={'#kys':'source'}
     )
 
@@ -553,7 +553,6 @@ def createProblemWithId(problem_id):
     info['createdTime'] = (datetime.now() + timedelta(hours=8)).strftime("%Y-%m-%d %X")
     info['editorials'] = []
     info['editorialVisible'] = False
-    info['publicStatement'] = True
     info['EE'] = False
     updateProblemInfo(problem_id, info)
     subtasks = {}
