@@ -119,6 +119,7 @@ def editproblem(problem_id):
             info['memoryLimit'] = result['memory_limit']
             info['createdTime'] = problem_info['createdTime']
             info['editorials'] = problem_info['editorials']
+            info['contestUsers'] = problem_info['contestUsers']
             if result['contest_link'] != "":
                 contest = awstools.getContestInfo(result['contest_link'])
                 if contest == None:
@@ -147,14 +148,10 @@ def editproblem(problem_id):
             if ext_file == 'pdf':
                 awstools.uploadStatement(files['statement'], f'{problem_id}.pdf')
                 flash('Uploaded!', 'success')
-                if not problem_info['publicStatement']:
-                    awstools.makeStatementPrivate(problem_id)
                 awstools.validateProblem(f'{problem_id}')
                 return redirect(f'/admin/editproblem/{problem_id}')
             elif ext_file == 'html':
                 awstools.uploadStatement(files['statement'], f'{problem_id}.html')
-                if not problem_info['publicStatement']:
-                    awstools.makeStatementPrivate(problem_id)
                 flash('Uploaded!', 'success')
                 awstools.validateProblem(f'{problem_id}')
                 return redirect(f'/admin/editproblem/{problem_id}')
