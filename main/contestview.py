@@ -69,6 +69,8 @@ def contest(contestId):
         else:
             startContest = False
 
+    problemInfo = [dict((key,value) for key, value in P.items() if key in ['problemName','analysisVisible','title', 'source', 'author','problem_type','noACs','contestLink','EE']) for P in problems] #impt info goes into the list (key in [list])
+
     if startContest:
         form = beginContestForm()
         startTime = start
@@ -81,7 +83,6 @@ def contest(contestId):
         for problem in problemInfo:
             if problem['analysisVisible'] == False and userInfo != None:
                 awstools.grantContestUserAccess(problem["problemName"], userInfo['username'])
-     
 
         if form.is_submitted():
             if now < start:
@@ -104,7 +105,6 @@ def contest(contestId):
         problemScores = userInfo['problemScores']
     else:
         problemScores = {}
-    problemInfo = [dict((key,value) for key, value in P.items() if key in ['problemName','analysisVisible','title', 'source', 'author','problem_type','noACs','contestLink','EE']) for P in problems] #impt info goes into the list (key in [list])
     
     totalScore = 0
     maxScore = len(problemInfo) * 100
