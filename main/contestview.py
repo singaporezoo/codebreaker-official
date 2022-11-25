@@ -76,6 +76,13 @@ def contest(contestId):
             startTime -= timedelta(hours = 100)
         startTime = startTime.strftime("%b %-d, %Y, %X")
 
+        # CHANGE THIS TO GIVE USER MEMBER ACCESS TO PROBLEM
+
+        for problem in problemInfo:
+            if problem['analysisVisible'] == False and userInfo != None:
+                awstools.grantContestUserAccess(problem["problemName"], userInfo['username'])
+     
+
         if form.is_submitted():
             if now < start:
                 flash("Sorry, this contest hasn't started yet", "warning")
@@ -99,11 +106,6 @@ def contest(contestId):
         problemScores = {}
     problemInfo = [dict((key,value) for key, value in P.items() if key in ['problemName','analysisVisible','title', 'source', 'author','problem_type','noACs','contestLink','EE']) for P in problems] #impt info goes into the list (key in [list])
     
-    # CHANGE THIS TO GIVE USER MEMBER ACCESS TO PROBLEM
-    for problem in problemInfo:
-        if problem['analysisVisible'] == False and userInfo != None:
-            awstools.grantContestUserAccess(problem["problemName"], userInfo['username'])
-     
     totalScore = 0
     maxScore = len(problemInfo) * 100
     for i in range(len(problemInfo)):

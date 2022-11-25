@@ -116,14 +116,12 @@ def scan(table, ProjectionExpression=None, ExpressionAttributeNames = None, Expr
     return results
 
 def getAllProblems():
-    value = scan(problems_table)
-    return value
+    results = scan(problems_table)
+    return results 
 # return problems_table.scan()['Items']
 
 def getAllProblemNames():
-    problemNames = problems_table.scan(
-        ProjectionExpression = 'problemName'
-    )['Items']
+    problemNames = scan(problems_table, ProjectionExpression = 'problemName')
     return problemNames
 
 def getAllContestIds():
