@@ -254,7 +254,7 @@ def getProblemStatementHTML(problemName):
         return {'status': 200, 'response':statement}
 
 def uploadStatement(statement, s3Name):
-    s3.upload_fileobj(statement, STATEMENTS_BUCKET_NAME, s3Name)
+    s3.upload_fileobj(statement, STATEMENTS_BUCKET_NAME, s3Name, ExtraArgs={"ContentType":statement.content_type})
 
 def uploadChecker(checker, s3Name):
     s3.upload_fileobj(checker, CHECKERS_BUCKET_NAME, s3Name)
