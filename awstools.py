@@ -627,8 +627,6 @@ def addParticipation(contestId, username):
         endTime = datetime.strptime(endTimeStr, "%Y-%m-%d %X") - timedelta(hours = 8)#based on official end Time
         duration = contest_info['duration']
         if duration != 0:
-            #print(endTime)
-            #print(datetime.now() + timedelta(minutes = int(duration)))
             if endTime > datetime.now() + timedelta(minutes = int(duration)):
                 endTime = datetime.now() + timedelta(minutes = int(duration+1))
                 stopIndividual = True
@@ -642,7 +640,6 @@ def addParticipation(contestId, username):
         #cmd = f"echo \"python3 -c 'import awstools; awstools.endParticipation(\\\"{contestId}\\\", \\\"{username}\\\") ' \" | at {endTimeStrAt}"
     else:
         pass
-    #print(f"{username} stopping at contest end time")
 
 def scheduleEndParticipation(contestId, username, time):
     if time < datetime.now():
@@ -651,7 +648,6 @@ def scheduleEndParticipation(contestId, username, time):
     app.addEndParticipation(contestId, username, time)
 
 def endParticipation(contestId, username):
-    #print(f"ending {contestId}, {username}")
     lambda_input = {"contestId":contestId, "username":username}
     res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:stopcontestwindow', InvocationType='Event', Payload = json.dumps(lambda_input))
 
@@ -862,8 +858,6 @@ def homepageInfo(recalc = False):
         recalc = True
 
     if recalc or parseDate + timedelta(days=1) < datetime.now():
-        print("recalculate homepage data")
-        print(datetime.now())
         problems = findLength(problems_table,'problemName')
         users = findLength(users_table,'username')
         subs = getSubmissionId()

@@ -10,5 +10,5 @@ languages_inverse = {}
 for i in languages:
     languages_inverse[languages[i]] = i
 
-def get_languages(): return languages
+def get_languages(): return {'C++ 17': 'cpp'}
 def get_languages_inverse(): return languages_inverse

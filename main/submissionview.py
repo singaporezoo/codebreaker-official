@@ -95,6 +95,10 @@ def submission(subId):
             flash('Sorry this submission cannot be viewed', 'warning')
             return redirect(f'/contest/{contestmode.contestId()}')
 
+    if contest and userInfo == None: 
+        flash("Sorry, you are not authorized to view this resource!", 'warning')
+        return redirect("/")
+
     if contest and not contestmode.fullfeedback() and userInfo['role'] != 'superadmin' and userInfo['username'] not in contestmode.allowedusers():
         fullFeedback = False
 
