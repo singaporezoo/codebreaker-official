@@ -82,7 +82,7 @@ def compileCommunication(codeA, codeB, problem_info):
             awstools.getGraderFile(f'{PROBLEM_NAME}/{nameB}.h', headerBName)
 
             #compile the code
-            cmd=f"timeout 30s g++ -O2 -o {compiledName} {graderName} {sourceAName} {sourceBName} -m64 -static -std=gnu++17 -lm -s -w -Wall" 
+            cmd=f"timeout 30s g++ -O2 -o {compiledName} {graderName} {sourceAName} {sourceBName} -DEVAL -m64 -static -std=gnu++17 -lm -s -w -Wall" 
 
             process = subprocess.run(cmd, shell=True, capture_output=True)
             process.check_returncode()
@@ -183,7 +183,7 @@ def compilesub(code, problem_info, language):
 
         try:
             #compile the code
-            cmd=f"timeout 50s g++ -O2 -o {compiledName} {sourceName} -m64 -static -std=gnu++17 -lm -s -w -Wall -Wshadow -fmax-errors=512" 
+            cmd=f"timeout 50s g++ -O2 -o {compiledName} {sourceName} -DEVAL -m64 -static -std=gnu++17 -lm -s -w -Wall -Wshadow -fmax-errors=512" 
 
             process = subprocess.run(cmd, shell=True, capture_output=True)
             process.check_returncode()
@@ -245,7 +245,7 @@ def compilesub(code, problem_info, language):
             awstools.getGraderFile(f'{PROBLEM_NAME}/{PROBLEM_NAME}.h', headerName)
 
             #compile the code
-            cmd=f"timeout 30s g++ -O2 -o {compiledName} {graderName} {sourceName} -m64 -static -std=gnu++17 -lm -s -w -Wall" 
+            cmd=f"timeout 30s g++ -O2 -o {compiledName} {graderName} {sourceName} -DEVAL -m64 -static -std=gnu++17 -lm -s -w -Wall"
 
             process = subprocess.run(cmd, shell=True, capture_output=True)
             process.check_returncode()
@@ -350,7 +350,7 @@ def regradeCommunication(subId, regrade_type=0):
             awstools.getGraderFile(f'{PROBLEM_NAME}/{nameB}.h', headerBName)
 
             #compile the code
-            cmd=f"timeout 30s g++ -O2 -o {compiledName} {graderName} {sourceAName} {sourceBName} -m64 -static -std=gnu++17 -lm -s -w -Wall" 
+            cmd=f"timeout 30s g++ -O2 -o {compiledName} {graderName} {sourceAName} {sourceBName} -DEVAL -m64 -static -std=gnu++17 -lm -s -w -Wall" 
 
             process = subprocess.run(cmd, shell=True, capture_output=True)
             process.check_returncode()
@@ -463,7 +463,7 @@ def regradeSub(subId, regrade_type = 0, language = 'cpp'):
 
         try:
             #compile the code
-            cmd=f"timeout 30s g++ -O2 -o {compiledName} {sourceName} -m64 -static -std=gnu++17 -lm -s -w -Wall -Wshadow -fmax-errors=512" 
+            cmd=f"timeout 30s g++ -O2 -o {compiledName} {sourceName} -DEVAL -m64 -static -std=gnu++17 -lm -s -w -Wall -Wshadow -fmax-errors=512" 
 
             process = subprocess.run(cmd, shell=True, capture_output=True)
             process.check_returncode()
@@ -517,7 +517,7 @@ def regradeSub(subId, regrade_type = 0, language = 'cpp'):
             awstools.getGraderFile(f'{PROBLEM_NAME}/{PROBLEM_NAME}.h', headerName)
 
             #compile the code
-            cmd=f"timeout 30s g++ -O2 -o {compiledName} {graderName} {sourceName} -m64 -static -std=gnu++17 -lm -s -w -Wall" 
+            cmd=f"timeout 30s g++ -O2 -o {compiledName} {graderName} {sourceName} -DEVAL -m64 -static -std=gnu++17 -lm -s -w -Wall" 
 
             process = subprocess.run(cmd, shell=True, capture_output=True)
             process.check_returncode()
