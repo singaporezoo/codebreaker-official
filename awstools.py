@@ -43,7 +43,7 @@ clarifications_table = dynamodb.Table('codebreaker-clarifications')
 end_contest_table = dynamodb.Table('codebreaker-end-contest')
 misc_table = dynamodb.Table('codebreaker-misc')
 
-themes = ['light', 'dark', 'pink', 'brown', 'orange', 'custom', 'custom-dark']
+themes = ['light', 'dark', 'pink', 'brown', 'orange', 'alien', 'custom', 'custom-dark']
 
 #this is a dummy change
 subPerPage = 25
