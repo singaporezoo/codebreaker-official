@@ -2645,31 +2645,38 @@ NORETURN void InStream::quit(TResult result, const char *msg) {
     switch (result) {
         case _ok:
             errorName = "ok ";
+            std::fprintf(stdout, "1\n");
             quitscrS(LightGreen, errorName);
             break;
         case _wa:
             errorName = "wrong answer ";
+            std::fprintf(stdout, "0\n");
             quitscrS(LightRed, errorName);
             break;
         case _pe:
             errorName = "wrong output format ";
+            std::fprintf(stdout, "0\n");
             quitscrS(LightRed, errorName);
             break;
         case _fail:
             errorName = "FAIL ";
+            //checker error print nothing
             quitscrS(LightRed, errorName);
             break;
         case _dirt:
             errorName = "wrong output format ";
+            std::fprintf(stdout, "0\n");
             quitscrS(LightCyan, errorName);
             result = _pe;
             break;
         case _points:
             errorName = "points ";
+            std::fprintf(stdout, "%s", msg);
             quitscrS(LightYellow, errorName);
             break;
         case _unexpected_eof:
             errorName = "unexpected eof ";
+            std::fprintf(stdout, "0\n");
             quitscrS(LightCyan, errorName);
             break;
         default:
@@ -2712,7 +2719,7 @@ NORETURN void InStream::quit(TResult result, const char *msg) {
             quit(_fail, "Can not write to the result file");
         }
     }
-
+	
     quitscr(LightGray, __testlib_toPrintableMessage(message).c_str());
     std::fprintf(stderr, "\n");
 
@@ -2784,41 +2791,11 @@ void InStream::quitscrS(WORD color, std::string msg) {
 }
 
 void InStream::quitscr(WORD color, const char *msg) {
-	/*
     if (resultName == "") {
         textColor(color);
         std::fprintf(stderr, "%s", msg);
         textColor(LightGray);
     }
-    */
-    
-    //4 cases: 
-    //ok
-    //wrong answer
-    //wrong output format
-    //partially correct (n)
-    
-    std::string _msg(msg);
-    
-    //debugging shit. ignore.
-    //std::fprintf(stdout, msg);
-    //std::fprintf(stdout, "bb\n");
-    
-    if (_msg=="ok "){
-		std::fprintf(stdout, "1");
-	}
-	else if (_msg=="wrong answer "){
-		std::fprintf(stdout, "0");
-	}
-	else if (_msg=="wrong output format "){
-		std::fprintf(stdout, "0");
-	}
-	else if ((int)_msg.size()>=19 && _msg.substr(0,19)=="partially correct ("){
-		int val;
-		sscanf (msg,"partially correct (%d) ",&val);
-		//std::fprintf(stdout, "testing: %d\n", val);
-		std::fprintf(stdout, "%.2f", val/100.0);
-	}
 }
 
 void InStream::reset(std::FILE *file) {
@@ -5038,6 +5015,3 @@ std::string opt(const std::string key) {
 }
 #endif
 #endif
-
-
-
