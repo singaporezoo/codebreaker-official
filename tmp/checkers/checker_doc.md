@@ -5,8 +5,8 @@
 If you are not using `testlib.h`, checker is called with $3$ arguments in this order:
 
 - input file (`argv[1]`)
-- output file (`argv[2]`)
-- answer file (`argv[3]`)
+- participant output file (`argv[2]`)
+- jury output file (`argv[3]`)
 
 The checker should output a real number between $0$ and $1$. The score will be multiplied by the subtask score.
 
