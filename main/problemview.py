@@ -232,8 +232,6 @@ def problem(PROBLEM_NAME):
                 if status == "warning":
                     return redirect("/")
 
-            result = compileCommunication(codeA, codeB, problem_info)
-
             # Assign new submission index
             subId = awstools.getNextSubmissionId()
 

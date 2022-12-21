@@ -55,6 +55,7 @@ def submission(subId):
     maxMemory = round( max(max(subDetails['memories']), float(subDetails['maxMemory'])), 2);
     submissionTime = subDetails['submissionTime']
     gradingTime = subDetails['gradingTime']
+    
     code = None
     codeA = None
     codeB = None
@@ -182,6 +183,7 @@ def submission(subId):
             return redirect(f'/submission/{subId}')
         
         result = request.form
+        ''' REGRADE '''
         if 'form_name' in result and result['form_name'] == 'regrade':
             if userInfo == None or (userInfo['role'] != 'admin' and userInfo['role'] != 'superadmin'):
                 flash('You do not have permission to regrade!','warning')
@@ -198,7 +200,8 @@ def submission(subId):
             elif result['status'] == 'redirect':
                 return redirect(result['message'])
             return redirect(f"/submission/{subId}")
-
+        
+        ''' RESUBMIT '''
         else:
             if userInfo == None or (userInfo['role'] not in ['member','admin','superadmin']):
                 flash('You do not have permission to submit!','warning')
@@ -309,19 +312,32 @@ def submission(subId):
                     if status == "warning":
                         return redirect("/")
             
-            if code != None:
-                result = compilesub(code, problem_info, subDetails['language'])
+            # Assign new submission index
+            subId = awstools.getNextSubmissionId()
+
+            if probleminfo['problem_type'] == 'Communication':
+                # Upload code file to S3
+                s3pathA = f'source/{subId}A.{language}'
+                s3pathB = f'source/{subId}B.{language}'
+                awstools.uploadSubmission(code = codeA, s3path = s3pathA)
+                awstools.uploadSubmission(code = codeB, s3path = s3pathB)
             else:
-                result = compileCommunication(codeA, codeB, problem_info)
+                # Upload code file to S3
+                s3path = f'source/{subId}.{language}'
+                awstools.uploadSubmission(code = code, s3path = s3path)
 
-            #print(result)
+            awstools.gradeSubmission2(
+                problemName = PROBLEM_NAME,
+                submissionId = subId,
+                username = userInfo['username'], 
+                submissionTime = None,
+                regradeall=False,
+                language = language,
+                problemType = problem_info['problem_type']
+            )
 
-            if result["status"] == "compileError":
-                #print("CE")
-                session["compileError"] = result["message"]
-                return setcookie(redirect(f"/problem/{problemName}"))
-            elif result["status"] != "success":
-                return setcookie(redirect(result["message"]))
+            time.sleep(3)
+            return redirect(f"/problem/{problemName}")
 
     '''END RESUBMISSION'''
 
