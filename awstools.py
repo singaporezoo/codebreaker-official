@@ -170,8 +170,8 @@ def getTestcase(path):
     body = tcfile['Body'].read().decode("utf-8")
     return body
 
-def uploadAttachments(attachments, s3Name):
-    s3.upload_fileobj(attachments, ATTACHMENTS_BUCKET_NAME, s3Name, ExtraArgs={"ACL": 'public-read', "ContentType":attachments.content_type})
+def uploadAttachments(attachments, s3path):
+    s3.upload_fileobj(attachments, ATTACHMENTS_BUCKET_NAME, s3path, ExtraArgs={"ACL": 'public-read', "ContentType":attachments.content_type})
 
 def getSuperhiddenProblems():
     response = misc_table.query(
@@ -1207,6 +1207,39 @@ def getSubsPerDay():
     subsPerDay = [int(value) for key, value in subsPerDay.items()][::-1]
 
     return subsPerDay
+
+def uploadSubmission(code, s3path):
+    s3_resource.Object(CODE_BUCKET_NAME, s3path).put(Body=code)
+
+def gradeSubmission2(problemName,submissionId,username,submissionTime=None,regradeall=False,language='cpp',problemType='Batch'):
+    regrade=True
+
+    # Submissions being regraded
+    if submissionTime == None:
+        regrade=False
+        submissionTime = (datetime.now()+timedelta(hours=8)).strftime("%Y-%m-%d %X")
+    
+    # Grader required if problem is not batch
+    grader = (problemType != 'Batch')
+
+    # Stitching takes place for all submissions made in contest mode that are not sent to analysis mirror
+    stitch = contestmode.contest() and contestmode.stitch() and contestmode.contestId() != 'analysismirror'
+
+    SF_input = {
+            "problemName": problemName,
+            "submissionId":submissionId,
+            "username":username,
+            "submissionTime":submissionTime,
+            "stitch":stitch,
+            "regrade":regrade,
+            "regradeall":regradeall,
+            "language":language, 
+            "grader": grader,
+            "problemType": problemType
+    }
+
+    stepFunctionARN = "arn:aws:states:ap-southeast-1:354145626860:stateMachine:Codebreaker-grading-v3"
+    res = SFclient.start_execution(stateMachineArn = stepFunctionARN, input = json.dumps(SF_input))
 
 if __name__ == '__main__':
     # PLEASE KEEP THIS AT THE BOTTOM

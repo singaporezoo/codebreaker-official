@@ -151,6 +151,7 @@ def problem(PROBLEM_NAME):
             mem.seek(0)
             return send_file(mem,as_attachment=True,attachment_filename=filename)
 
+        # Checking for language
         language = 'C++ 17'
         if 'language' in result:
             language = result['language']
@@ -159,16 +160,18 @@ def problem(PROBLEM_NAME):
             return redirect(f'/problem/{PROBLEM_NAME}')
         language = languages[language]
 
+        ''' BLOCK DISABLED OR NON-USERS FROM SUBMITTING '''
         if userInfo == None or (userInfo['role'] not in ['member','admin','superadmin']):
             flash('You do not have permission to submit!','warning')
             return redirect(f'/problem/{PROBLEM_NAME}')
 
+        ''' CHECKING SUBMISSION LIMIT '''
         if contestmode.contest() and sublimit != -1 and numsubs + 1 > sublimit:
             flash('You have reached the submission limit for this problem', 'warning')
             return redirect(f'/problem/{PROBLEM_NAME}')
         
+        ''' CHECKING FOR SUBMISSIONS TOO CLOSE TO EACH OTHER ''' 
         now = time.time() 
-        #print(result)
         if "testCookie" not in request.cookies:
             flash("Please turn on cookies to submit", "danger")
             return redirect(f"/problem/{PROBLEM_NAME}")
@@ -184,33 +187,24 @@ def problem(PROBLEM_NAME):
             if now - lastSub < delay and userInfo['role'] != 'superadmin':
                 wait = round(delay - (now - lastSub), 2)
                 times.append((wait, i))
-                #flash(f"Please wait {wait} seconds before submitting again", "warning")
-                #print((userInfo["username"] + " LOL GOT BLOCKED\n"))
-                #return redirect(f"/problem/{PROBLEM_NAME}")
         
         times.sort(reverse = True)
-        #print(times)
 
         if not contestmode.contest():
             if len(times) > 1 or (len(times) == 1 and times[0][0] < delay/2):
-                #print(times)
                 res = redirect(f"/problem/{PROBLEM_NAME}")
     
                 flash(f"Please wait {delay+1} seconds before submitting again", "warning")
-                #print((userInfo["username"] + " got blocked\n"))
                 return res
         else:
             if (len(times) >= 1 and times[len(times)-1][0] > 0):
-                #print(times)
                 res = redirect(f"/problem/{PROBLEM_NAME}")
     
                 flash(f"Please wait {times[len(times)-1][0]} seconds before submitting again", "warning")
-                #print((userInfo["username"] + " got blocked\n"))
                 return res
 
-
+        # COMPILE AND GRADE COMMUNICATION PROBLEM
         if problem_info['problem_type'] == 'Communication':
-            #print(result)        
             codeA = result['codeA']
             codeB = result['codeB']
 
@@ -239,9 +233,18 @@ def problem(PROBLEM_NAME):
                     return redirect("/")
 
             result = compileCommunication(codeA, codeB, problem_info)
-            print(result)
+
+            # Assign new submission index
+            subId = awstools.getNextSubmissionId()
+
+            # Upload code file to S3
+            s3pathA = f'source/{subId}A.{language}'
+            s3pathB = f'source/{subId}B.{language}'
+            awstools.uploadSubmission(code = codeA, s3path = s3pathA)
+            awstools.uploadSubmission(code = codeB, s3path = s3pathB)
 
         else:
+        # COMPILE AND GRADE BATCH OR INTERACTIVE PROBLEM 
             code = result['code']
             checkResult = check(code, problem_info, userInfo)
 
@@ -256,15 +259,26 @@ def problem(PROBLEM_NAME):
                 if status == "warning":
                     return redirect("/")
 
-            result = compilesub(code, problem_info, language)
-        
-        if result["status"] == "compileError":
-            #print("CE")
-            session["compileError"] = result["message"]
-            return setcookie(redirect(f"/problem/{PROBLEM_NAME}"))
+            # Assign new submission index
+            subId = awstools.getNextSubmissionId()
 
-        elif result["status"] != "success":
-            return setcookie(redirect(result["message"]))
+            # Upload code file to S3
+            s3path = f'source/{subId}.{language}'
+            awstools.uploadSubmission(code = code, s3path = s3path)
+
+        # Grade submission
+        awstools.gradeSubmission2(
+            problemName = PROBLEM_NAME,
+            submissionId = subId,
+            username = userInfo['username'], 
+            submissionTime = None,
+            regradeall=False,
+            language = language,
+            problemType = problem_info['problem_type']
+        )
+
+        time.sleep(3)
+        return redirect(f"/submission/{subId}")
 
     return render_template('problem.html', form=form, probleminfo=problem_info, userinfo = awstools.getCurrentUserInfo(), statementHTML = statementHTML, compileError=compileError, contest=contestmode.contest(), editorials = editorials, users=contestmode.allowedusers(), remsubs = remsubs, cppref=contestmode.cppref(), socket=contestmode.socket())
     
