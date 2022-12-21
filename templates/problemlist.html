@@ -35,7 +35,7 @@
 	<p> Select a set of tags to display all problems with at least 1 of those tags </p>
 	
 	<div class="row">
-		{% set a,b,c=(tags|length/3)|int,(2*tags|length/3)|int,tags|length %}
+		{% set a,b,c=((tags|length+2)/3)|int,((2*tags|length + 2)/3)|int,tags|length %}
 		<div class="col-4 container">
 		{%for i in range(a) %}
 		{% set tag = tags[i] %}

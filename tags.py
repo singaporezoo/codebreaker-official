@@ -11,7 +11,7 @@ def tags():
         'Explicitly Excluded (from IOI)',
         'Graph Theory',
         'Greedy',
-        'Implementation Cancer',
+#        'Implementation Cancer',
         'Information Theory',
         'Joke',
         'Line Sweep/Sliding Window',

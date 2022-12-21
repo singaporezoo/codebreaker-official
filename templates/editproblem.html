@@ -154,7 +154,7 @@
 	<div>
 	<h2> Tags </h2>
 	<div class="row">
-		{% set a,b,c=(tags|length/3)|int,(2*tags|length/3)|int,tags|length %}
+		{% set a,b,c=((2+tags|length)/3)|int,((2+2*tags|length)/3)|int,tags|length %}
 		<div class="col-4 container">
 		{%for i in range(a) %}
 		{% set tag = tags[i] %}
@@ -489,7 +489,8 @@
 				alert(response.error)
 			}
 		})
-		window.location.reload(true)
+		alert("tags updated")
+		//window.location.reload(true)
 	}
 </script>
 {% endblock %}
