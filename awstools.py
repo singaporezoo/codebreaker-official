@@ -15,8 +15,6 @@ import contestmode
 import os
 import cloudflare
 
-#os.environ['AWS_DEFAULT_REGION']='ap-southeast-1'
-
 s3 = boto3.client('s3','ap-southeast-1')
 s3_resource = boto3.resource('s3')
 dynamodb = boto3.resource('dynamodb')
@@ -45,10 +43,9 @@ misc_table = dynamodb.Table('codebreaker-misc')
 
 themes = ['light', 'dark', 'pink', 'brown', 'orange', 'alien', 'custom', 'custom-dark']
 
-#this is a dummy change
 subPerPage = 25
 
-# Scanning dynamoDB
+# Scanning dynamoDB for all elements, and continues until table end using exclusive start key
 def scan(table, ProjectionExpression=None, ExpressionAttributeNames = None, ExpressionAttributeValues = None):
     results = []
     if ProjectionExpression == None:
@@ -118,7 +115,6 @@ def scan(table, ProjectionExpression=None, ExpressionAttributeNames = None, Expr
 def getAllProblems():
     results = scan(problems_table)
     return results 
-# return problems_table.scan()['Items']
 
 def getAllProblemNames():
     problemNames = scan(problems_table, ProjectionExpression = 'problemName')
@@ -305,17 +301,6 @@ def updateCountLambda(problemName):
 
 def uploadCode(sourceName, uploadTarget):
     s3.upload_file(sourceName, CODE_BUCKET_NAME, uploadTarget)
-
-def gradeSubmission(problemName,submissionId,username,submissionTime=None,regradeall=False,language='cpp'):
-    regrade=False
-    if submissionTime is None:
-        regrade=True
-        submissionTime = (datetime.now()+timedelta(hours=8)).strftime("%Y-%m-%d %X")
-    stitch = contestmode.contest() and contestmode.stitch() and contestmode.contestId() != 'analysismirror'
-    lambda_input = {"problemName": problemName, "submissionId":submissionId,"username":username,"submissionTime":submissionTime,"stitch":stitch,"regrade":regrade,"regradeall":regradeall,"language":language}
-    stepFunctionARN = "arn:aws:states:ap-southeast-1:354145626860:stateMachine:CodebreakerGradingv2"
-    res = SFclient.start_execution(stateMachineArn = stepFunctionARN, input = json.dumps(lambda_input))
-
 
 def updateScores(problemName):
     stitch = contestmode.contest() and contestmode.stitch()
@@ -1150,7 +1135,11 @@ def updateTags(problemName, tags):
         ExpressionAttributeValues = {':a':tags}
     )
 
-def findLastSubOfDay(date):
+# CALCULATES NUMBER OF SUBMISSIONS PER DAY FOR 1 WEEK (FOR HOMEPAGE)
+def getSubsPerDay():
+
+    # HELPER FUNCTION THAT BINARY SEARCHES FOR LAST SUBMISSION OF DAY
+    def findLastSubOfDay(date):
     low = 0 
     high = 200000
     while high > low:
@@ -1162,7 +1151,7 @@ def findLastSubOfDay(date):
             high = mid - 1
     return low
 
-def getSubsPerDay():
+
     lastSubOfDay = misc_table.query(
         KeyConditionExpression = Key('category').eq('lastSubOfDay')
     )['Items'][0]['lastSubOfDay']
@@ -1208,13 +1197,16 @@ def getSubsPerDay():
 
     return subsPerDay
 
+# UPLOAD CODE OF SUBMISSION TO S3 
+# Used in problem page for submissions and submissions page for regrading
 def uploadSubmission(code, s3path):
     s3_resource.Object(CODE_BUCKET_NAME, s3path).put(Body=code)
 
+# Sends submission to be regraded by Step Function
 def gradeSubmission2(problemName,submissionId,username,submissionTime=None,regradeall=False,language='cpp',problemType='Batch'):
     regrade=True
 
-    # Submissions being regraded
+    # If no submission time already recorded, this is a new submission
     if submissionTime == None:
         regrade=False
         submissionTime = (datetime.now()+timedelta(hours=8)).strftime("%Y-%m-%d %X")
@@ -1226,16 +1218,16 @@ def gradeSubmission2(problemName,submissionId,username,submissionTime=None,regra
     stitch = contestmode.contest() and contestmode.stitch() and contestmode.contestId() != 'analysismirror'
 
     SF_input = {
-            "problemName": problemName,
-            "submissionId":submissionId,
-            "username":username,
-            "submissionTime":submissionTime,
-            "stitch":stitch,
-            "regrade":regrade,
-            "regradeall":regradeall,
-            "language":language, 
-            "grader": grader,
-            "problemType": problemType
+        "problemName": problemName,
+        "submissionId":submissionId,
+        "username":username,
+        "submissionTime":submissionTime,
+        "stitch":stitch,
+        "regrade":regrade,
+        "regradeall":regradeall,
+        "language":language, 
+        "grader": grader,
+        "problemType": problemType
     }
 
     stepFunctionARN = "arn:aws:states:ap-southeast-1:354145626860:stateMachine:Codebreaker-grading-v3"
@@ -1245,15 +1237,3 @@ if __name__ == '__main__':
     # PLEASE KEEP THIS AT THE BOTTOM
     # THIS IS FOR DEBUGGING AND WILL ONLY BE ACTIVATED IF YOU DIRECTLY RUN THIS FILE
     # IT DOES NOT OUTPUT ANYTHING ONTO TMUX
-    # print("TESTING")
-    # print(getProblemStatementHTML('potatocb'))
-    # print(getProblemStatementHTML('helloworld'))
-    problems = [i['problemName'] for i in getAllProblemNames()]
-    for problem in problems:
-        problems_table.update_item(
-            Key = {'problemName': problem},
-            UpdateExpression = f'set contestUsers=:s',
-            ExpressionAttributeValues={':s': []}
-        )
-        print(problem)
-    print(problems)
