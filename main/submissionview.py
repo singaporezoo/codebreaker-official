@@ -187,7 +187,7 @@ def submission(subId):
         if 'form_name' in result and result['form_name'] == 'regrade':
             if userInfo == None or (userInfo['role'] != 'admin' and userInfo['role'] != 'superadmin'):
                 flash('You do not have permission to regrade!','warning')
-                return redirect(f'/problem/{PROBLEM_NAME}')
+                return redirect(f'/problem/{problemName}')
             if contest and (userInfo['role'] != 'superadmin' and userInfo['username'] not in contestmode.allowedusers()):
                 flash('You cannot regrade in contest mode!', 'warning')
                 return redirect(f'/submission/{subId}')
@@ -201,15 +201,13 @@ def submission(subId):
                 return redirect(result['message'])
             return redirect(f"/submission/{subId}")
         
-        ''' RESUBMIT '''
         else:
+            ''' RESUBMIT '''
             if userInfo == None or (userInfo['role'] not in ['member','admin','superadmin']):
                 flash('You do not have permission to submit!','warning')
-                return redirect(f'/problem/{PROBLEM_NAME}')
-            #print(f"begin: {datetime.datetime.now()}")
+                return redirect(f'/problem/{problemName}')
             
             now = time.time() 
-            #print(result)
             
             delay = 9
             if contestmode.contest():
@@ -230,7 +228,6 @@ def submission(subId):
             times = []
             for i in range(outlets):
                 lastSub = request.cookies.get(f'lastSub{i}')
-                #print(f"{i}: {lastSub} lastSub")
                 
                 if lastSub == None:
                     continue
@@ -240,27 +237,20 @@ def submission(subId):
                 if now - lastSub < delay and userInfo['role'] != 'superadmin' and userInfo['username'] not in contestmode.allowedusers():
                     wait = round(delay - (now - lastSub), 2)
                     times.append((wait, i))
-                    #flash(f"Please wait {wait} seconds before submitting again", "warning")
-                    #print((userInfo["username"] + " LOL GOT BLOCKED\n"))
-                    #return redirect(f"/problem/{PROBLEM_NAME}")
             
             times.sort(reverse = True)
 
             if not contestmode.contest():
                 if len(times) > 1 or (len(times) == 1 and times[0][0] < delay/2):
-                    #print(times)
                     res = redirect(f"/submission/{subId}")
         
                     flash(f"Please wait {delay+1} seconds before submitting again", "warning")
-                    #print((userInfo["username"] + " got blocked\n"))
                     return res
             else:
                 if (len(times) >= 1 and times[len(times)-1][0] > 0):
-                    #print(times)
                     res = redirect(f"/submission/{subId}")
         
                     flash(f"Please wait {times[len(times)-1][0]} seconds before submitting again", "warning")
-                    #print((userInfo["username"] + " got blocked\n"))
                     return res
 
             result = request.form 
@@ -315,7 +305,7 @@ def submission(subId):
             # Assign new submission index
             subId = awstools.getNextSubmissionId()
 
-            if probleminfo['problem_type'] == 'Communication':
+            if problem_info['problem_type'] == 'Communication':
                 # Upload code file to S3
                 s3pathA = f'source/{subId}A.{language}'
                 s3pathB = f'source/{subId}B.{language}'
@@ -327,7 +317,7 @@ def submission(subId):
                 awstools.uploadSubmission(code = code, s3path = s3path)
 
             awstools.gradeSubmission2(
-                problemName = PROBLEM_NAME,
+                problemName = problemName,
                 submissionId = subId,
                 username = userInfo['username'], 
                 submissionTime = None,
@@ -337,12 +327,11 @@ def submission(subId):
             )
 
             time.sleep(3)
-            return redirect(f"/problem/{problemName}")
+            return redirect(f"/submission/{subId}")
 
     '''END RESUBMISSION'''
 
-    return render_template('submission.html', message="", problemName=problemName, probleminfo = problem_info, user=username, submissionTime=submissionTime, totalScore=totalScore, maxTime=maxTime, maxMemory=maxMemory, subtaskDetails=subtaskDetails, code=code, toRefresh=toRefresh, subId = subId, changed=changed, userinfo=userInfo, contest=contest,form=form, codeA=codeA, codeB=codeB, users=contestmode.allowedusers(), hidetime=contestmode.hidetime(), cppref=contestmode.cppref(), socket=contestmode.socket())
-    #return output
+    return render_template('submission.html', message="",subDetails=subDetails,probleminfo=problem_info, userinfo=userInfo,toRefresh=toRefresh,contest=contest,form=form,code=code,codeA=codeA,codeB=codeB,users=contestmode.allowedusers(), hidetime=contestmode.hidetime(), cppref=contestmode.cppref(), socket=contestmode.socket(), subtaskDetails=subtaskDetails)
 
 #END: SUBMISSION -----------------------------------------------------------------------------------------------------------------------------------------------------
 

@@ -23,34 +23,34 @@
 						<tbody>
 							<tr>
 								<th scope="row">Problem</th>
-								<td> <b> <a href="{{url_for('problem', PROBLEM_NAME=problemName)}}"> {{problemName}} </a> </b> </td>
+								<td> <b> <a href="{{url_for('problem', PROBLEM_NAME=probleminfo.problemName)}}"> {{probleminfo.problemName}} </a> </b> </td>
 							</tr>
 							
 							<tr>
 								<th scope="row">User</th>
-								<td> <a href="/profile/{{user}}"> {{user}} </a> </td>
+								<td> <a href="/profile/{{subDetails.username}}"> {{subDetails.username}} </a> </td>
 							</tr>
 
 							<tr>
                                                                 <th scope="row">Submission Time</th>
-                                                                <td> {{submissionTime}} </td>
+                                                                <td> {{subDetails.submissionTime}} </td>
                                                         </tr>
 							
 							<tr>
 								<th scope="row">Score</th>
-								<td> {{totalScore}} </td>
+								<td> {{subDetails.totalScore}} </td>
 							</tr>
 
 							{% if (probleminfo.fullFeedback and not (contest and hidetime)) or userinfo.role == 'superadmin' or userinfo.username in users %}
 							
 							<tr>
 								<th scope="row">Max Time</th>
-								<td>{{maxTime}} seconds</td>
+								<td>{{subDetails.maxTime}} seconds</td>
 							</tr>
 							
 							<tr>
 								<th scope="row">Max Memory</th>
-								<td>{{maxMemory}} MB</td>
+								<td>{{subDetails.maxMemory}} MB</td>
 							</tr>
 							{% endif %}
 						</tbody>
