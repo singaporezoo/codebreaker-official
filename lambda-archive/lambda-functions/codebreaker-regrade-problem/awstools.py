@@ -1,5 +1,6 @@
 import boto3
 import json
+import time
 from decimal import *
 from boto3.dynamodb.conditions import Key
 
@@ -63,7 +64,7 @@ def gradeSubmission(problemName,submissionId,username,submissionTime=None,regrad
         "problemType": problemType
     }
     
-    print(json.dumps(SF_input))
+    time.sleep(3)
     stepFunctionARN = "arn:aws:states:ap-southeast-1:354145626860:stateMachine:Codebreaker-grading-v3"
     res = SFclient.start_execution(stateMachineArn = stepFunctionARN, input=json.dumps(SF_input))
     

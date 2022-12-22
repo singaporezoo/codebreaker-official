@@ -1,191 +1,160 @@
-import os
-import sys
 import json
 import boto3
-import resource
-import subprocess
-from random import randrange
-
-import wrapper
-from weird import Funny
-from decimal import *
-from time import time
-from uuid import uuid4
+import datetime
+import awstools
+from time import sleep
 from math import ceil
-from cmscmp import white_diff_step
-s3 = boto3.resource('s3')
+from boto3.dynamodb.conditions import Key, Attr
+import time
+dynamodb = boto3.resource('dynamodb')
+problems_table = dynamodb.Table('codebreaker-problems')
+submissions_table = dynamodb.Table('codebreaker-submissions')
+users_table = dynamodb.Table('codebreaker-users')
 
-def limit_memory(maxsize): 
-    soft, hard = resource.getrlimit(resource.RLIMIT_AS) 
-    resource.setrlimit(resource.RLIMIT_AS, (maxsize, maxsize)) 
-    
-def getMem():
-    X = resource.getrusage(resource.RUSAGE_CHILDREN)
-    res =  X.ru_maxrss
-    return res/1024
-    
 def lambda_handler(event, context):
     
-    problemName = event["problemName"]
-    subId = event["submissionId"]
-    subHash = str(uuid4())
-    testcaseNumber = event["testcaseNumber"]
-    language = event["language"]
-    customChecker = event["customChecker"]
-    TLE = float(event["timeLimit"])
-    MLE = float(event["memoryLimit"])
-
-    os.chdir('/tmp')
-    INPUT_FILE = f"{subHash}.in"
-    OUTPUT_FILE = f"{subHash}.out"
-    if language == 'cpp':
-        CODE_FILE = "code"
-
-        binaryPath = f"compiled/{subId}"
-        s3.Bucket("codebreaker-submissions").download_file(binaryPath,CODE_FILE)
-    elif language == 'py':
-        CODE_FILE = "code.py"
-        codePath = f"source/{subId}.py"
-        s3.Bucket("codebreaker-submissions").download_file(codePath,CODE_FILE)
+    problemName = event['problemName']
+    submissionId = event['submissionId']
+    username = event['username']
+    compileError = event['compileError']
+    compileErrorMessage = event['compileErrorMessage']
     
-    inputPath = problemName + '/' + str(testcaseNumber) + '.in'
-    s3.Bucket("codebreaker-testdata").download_file(inputPath,INPUT_FILE)
-    subprocess.run(f"chmod +x {CODE_FILE}", shell=True)
-
-    info = resource.getrusage(resource.RUSAGE_CHILDREN)
-    originalTime = info.ru_utime
-    allocatedTime = ceil(TLE+0.5)
-    allocatedMemory = MLE
-    cmd = "cd"
+    # When there is a compile error, we do not need to update any scores.
+    # Just update the compile error message in Dynamo
+    if compileError:
+        awstools.updateCE(submissionId=submissionId, compileErrorMessage=compileErrorMessage)
+        return {'status':200}
+        
+    response= problems_table.query(
+        KeyConditionExpression = Key('problemName').eq(problemName)
+    )
     
-    try:
-        process = subprocess.run(cmd,preexec_fn=(lambda: wrapper.grade(allocatedTime, allocatedMemory, INPUT_FILE, CODE_FILE, language)),capture_output=True)
-    except Exception as e:
-        result = {
-            "verdict": "RTE(9)",
-            "score": 0,
-            "runtime": TLE, # runtime/s
-            "memory": MLE, #memory limit/mb
-            "returnCode": 69, #change this in the future
-            # "stdout": "",
-            # "stderr": str(typeof(e))
+    problem_info=response['Items']
+    if (len(problem_info) != 1):
+        return {
+            "statusCode": "300",
+            "errorMessage": "No problem found"
         }
-        
-        result = Funny(result,problemName,TLE)
-        
-        subprocess.run("rm -rf /tmp/*",shell=True)
-        
-        return result
+    problem_info = problem_info[0]
+    timeLimit = problem_info['timeLimit']
+    memoryLimit = problem_info['memoryLimit']
+    if memoryLimit=="":memoryLimit="256"
+    if timeLimit=="":timeLimit="1"
+    subtaskDependency = problem_info['subtaskDependency']
+    subtaskMaxScores = problem_info['subtaskScores']
+    subtaskNumber = len(subtaskDependency)
+    testcaseNumber = int(problem_info['testcaseCount'])
+    customChecker = problem_info['customChecker']
     
-    # print(process.stdout)
-    dum = process.stdout.split()
-    returnCode = int(dum[0])
-    userTime = float(dum[1])
-    userMem = float(dum[2])
-    
-    if returnCode >= 128:
-        returnCode -= 128
-        
-    result = {
-        "verdict": "AC",
-        "score":0,
-        "runtime": userTime , # runtime/s
-        "memory": userMem, #memory limit/mb
-        "returnCode":returnCode,
-    }
+    times = [0 for i in range(testcaseNumber+1)]
+    memories = [0 for i in range(testcaseNumber+1)]
+    scores = [0 for i in range(testcaseNumber+1)]
+    verdicts = [":(" for i in range(testcaseNumber+1)]
+    subtaskScores = [0 for i in range(subtaskNumber)]
+    returnCodes = [0 for i in range(testcaseNumber+1)]
+    status = [1 for i in range(testcaseNumber+1)]
 
-    if userTime > TLE:
-        result["verdict"] = "TLE"
-    elif returnCode != 0:
-        result["verdict"] = f"RTE({returnCode})"
-    elif userMem > MLE:
-        result['verdict'] = 'MLE'
+    response = submissions_table.query(
+        KeyConditionExpression = Key('subId').eq(submissionId)
+    )
+    
+    submission_info = response['Items'][0]
+    times = submission_info['times']
+    memories = submission_info['memories']
+    scores = submission_info['score']
+    verdicts = submission_info['verdicts']
+    status = submission_info['status']
+    
+    bads = []
+    for i in range(1,len(scores)):
+        if(status[i] != 2):
+            bads.append(i)
+    
+    for i in bads:
+        print(f"Fail {i} time {times[i]}, score {scores[i]}, verdict {verdicts[i]}, status {status[i]}")
+    subtaskScores = [100 for i in range(subtaskNumber)]
+
+    maxTime = max(times)
+    maxMemory = max(memories)
+    
+    ''' Evaluating subtasks '''
+    for i in range(subtaskNumber):
+        dep = subtaskDependency[i].split(',')
+        for t in dep:
+            x = t.split('-')
+            if(len(x) == 1):
+                ind = int(x[0])
+                subtaskScores[i] = min(subtaskScores[i], scores[ind])
+            elif len(x) == 2:
+                st = int(x[0])
+                en = int(x[1])
+                for j in range(st,en+1):
+                    subtaskScores[i] = min(subtaskScores[i], scores[j])
+                    
+    
+    userinfo = awstools.getUserInfoFromUsername(username)
+    problemScores = userinfo['problemScores']
+    email = userinfo['email']
+     
+    totalScore = 0
+    for i in range(len(subtaskScores)):
+        totalScore += subtaskScores[i] * subtaskMaxScores[i]
+
+    totalScore /= 100
+    totalScore = round(totalScore, 2)
+    prevScore = 0
+
+    if problemName in problemScores:
+        prevScore = problemScores[problemName]
+
+    maxScore = max(totalScore, prevScore)
+    
+    if int(maxScore) == maxScore:
+        maxScore = int(maxScore)
     else:
-        outputPath = problemName + '/' + str(testcaseNumber) + '.out'
-        s3.Bucket("codebreaker-testdata").download_file(outputPath,OUTPUT_FILE)
-
-        if customChecker == 0:
-            res = white_diff_step("comparison_file",OUTPUT_FILE)
-            result['score']=res
-            if result['score'] == 100:
-                result['verdict'] = 'AC'
-            elif result['score'] == 0:
-                result['verdict'] = 'WA'
-            else:
-                result['verdict'] = 'PS'
-        else:
-            s3.Bucket("codebreaker-checkers").download_file(f"compiled/{problemName}","checker")
-            subprocess.run("chmod +x checker", shell=True)
-            cmd = cmd= f"ulimit -s unlimited; ./checker {INPUT_FILE} comparison_file {OUTPUT_FILE}" # run cpp file 
-            try:
-                def setLimit():
-                    resource.setrlimit(resource.RLIMIT_CPU, (allocatedTime, allocatedTime))
-                    resource.setrlimit(resource.RLIMIT_CORE, (allocatedMemory,allocatedMemory))
-                    # resource.setrlimit(resource.RLIMIT_NPROC, (20,20))
-                    resource.setrlimit(resource.RLIMIT_FSIZE, (128000000,128000000))
-                process = subprocess.run(cmd,shell=True,preexec_fn=setLimit, capture_output=True)
-                out = process.stdout.decode('utf-8')
-                err = process.stderr.decode('utf-8')
-                s = ""
-                for i in out:
-                    if i in [str(t) for t in range(10)]:
-                        s += i
-                    elif i == '\n':
-                        break
-                    elif i == '.':
-                        s += '.'
-                
-                # Strips away all characters
-                
-                if s == "" and err == "":
-                    result = {
-                        "verdict": "Checker Fault",
-                        "score": 0,
-                        "runtime": 0 , # runtime/s
-                        "memory": 0, #memory limit/mb
-                        "returnCode": 67, #change this in the future
-                    }
-                elif s == "" and err != "":
-                    result = {
-                        "verdict": "WA",
-                        "score": 0,
-                        "runtime": 0 , # runtime/s
-                        "memory": 0, #memory limit/mb
-                        "returnCode": 67, #change this in the future
-                    }
-                    if len(err) >= 2 and err[0] == 'o' and err[1] == 'k':
-                        result['verdict'] = 'AC'
-                        result["score"] = 100
-                elif float(s) > 1:
-                    result = {
-                        "verdict": "Checker Fault",
-                        "score": 0,
-                        "runtime": 0 , # runtime/s
-                        "memory": 0, #memory limit/mb
-                        "returnCode": 67, #change this in the future
-                    }
-                else:
-                    result['score'] = Decimal(s)*100
-                    result['score'] = round(result['score'], 2)
-                    if result['score'] == 100:
-                        result['verdict'] = 'AC'
-                    elif result['score'] == 0:
-                        result['verdict'] = 'WA'
-                    else:
-                        result['verdict'] = 'PS'
-            except Exception as e:
-                result = {
-                    "verdict": "Grader Fault",
-                    "score": 0,
-                    "runtime": 0 , # runtime/s
-                    "memory": MLE, #memory limit/mb
-                    "returnCode": 67, #change this in the future
-                }
-            
-    result['runtime'] = round(result['runtime'],3)
-    result['memory'] = round(result['memory'],1)
-    subprocess.run("rm -rf /tmp/*",shell=True)
+        maxScore = round(maxScore, 2)
     
-    result = Funny(result,problemName,TLE)
+    # Update total maximum score
+    users_table.update_item(
+        Key = {'email' : email},
+        UpdateExpression = f'set problemScores. #a =:s',
+        ExpressionAttributeValues={':s' : maxScore},
+        ExpressionAttributeNames={'#a':problemName}
+    )
 
-    return result
+    # Checking if this is a firstAC, if so update the #AC of problem table
+    if prevScore != 100 and maxScore == 100:
+        problems_table.update_item(
+            Key = {'problemName' : problemName},
+            UpdateExpression = f'set noACs = noACs + :one',
+            ExpressionAttributeValues={':one' : 1}
+        )
+        print("updating score")
+                    
+    submissions_table.update_item(
+        Key={'subId':submissionId},
+        UpdateExpression = f'set maxTime = :maxTime, maxMemory=:maxMemory,subtaskScores=:subtaskScores,totalScore=:totalScore',
+        ExpressionAttributeValues={':maxTime':maxTime,':maxMemory':maxMemory,':subtaskScores':subtaskScores,':totalScore':totalScore}
+    )
+    
+    ''' UPDATING SCORES IN USER DATABASE '''
+    
+    regradeall = event['regradeall'] # When regrading all, we don't need to update the scores because we can aggregate the update across all submissions
+    stitch = event['stitch'] # Whether the subtasks should be stitched across all submissions
+    regrade = event['regrade'] # Whether the submission is being regraded (cannot use majorise scoring because score may decrease)
+    
+    if not regradeall:
+        if stitch:
+            awstools.updateStitchedScores(problemName, username)
+        elif regrade:
+            awstools.updateScores(problemName, username)
+    
+    print("RETURNING")
+    print(maxTime)
+    print(maxMemory)
+    print(subtaskScores)
+    print(totalScore)
+    
+    return {
+        "statusCode":200
+    }
