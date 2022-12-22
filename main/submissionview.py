@@ -66,8 +66,13 @@ def submission(subId):
         codeA = subDetails['codeA']
         codeB = subDetails['codeB']
 
-    if 'compileErrorMessage' not in subDetails.keys():
+    if 'compileErrorMessage' in subDetails.keys():
+        subDetails['maxTime'] = 'N/A'
+        subDetails['maxMemory'] = 'N/A'
+    else:
         subDetails['compileErrorMessage'] = ''
+        subDetails['maxTime'] = f'{subDetails["maxTime"]} seconds'
+        subDetails['maxMemory'] = f'{subDetails["maxMemory"]} MB'
 
     if problem_info['problem_type'] == 'Communication' and code != None:
         flash('This submission was made before the problem type was converted to communication', 'warning')
@@ -112,9 +117,7 @@ def submission(subId):
     changed = False
     changedSubtask = (len(subtaskMaxScores) != len(subtaskScores))
     
-    #print(subtaskNumber)
     for i in range(subtaskNumber):
-
         maxScore = subtaskMaxScores[i]
         yourScore = 0
         if i < len(subtaskScores):
@@ -169,7 +172,7 @@ def submission(subId):
 
         subtaskDetails.append(detail)
     
-    if diffInTime > 60:
+    if diffInTime > 60 or subDetails['compileErrorMessage'] != '':
         toRefresh = False
     if changed:
         flash("If you see the 'UG' verdict, it means that testcases were added after this submission was graded", "warning")

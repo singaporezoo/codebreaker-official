@@ -32,6 +32,7 @@ def submissionlist():
     submissionList = []
     maxSub = 0
     
+    ''' CALCULATE SUBMISSION INDECES TO QUERY ''' 
     if username == None and problem == None:
         submissionList = awstools.getSubmissionsList(pageNo, None, None)
         maxSub = int(awstools.getNumberOfSubmissions())
@@ -43,6 +44,13 @@ def submissionlist():
     submissionList.sort(key = lambda x:x['subId'], reverse=True)
     if username != None or problem != None:
         submissionList = submissionList[(pageNo-1)*subPerPage : min(len(submissionList), pageNo*subPerPage)]
+
+    # If submission is compile error, then max time and memory should be N/A 
+    for submission in submissionList:
+        if 'compileErrorMessage' in submission.keys():
+            submission['maxTime'] = 'N/A'
+            submission['maxMemory'] = 'N/A'
+
     maxPage = ceil(maxSub / subPerPage)
     pages = range(max(1, pageNo-1), min(maxPage+1, pageNo+3)) 
    
