@@ -9,4 +9,4 @@ Refer to the following links:
 - [Current WIP](https://docs.google.com/document/d/1NN-bjnTUQeKOiVLaZO7ytHM4ChqOTPbR7cxBSR6tTyo/edit)
 - [Documentation](https://docs.google.com/document/d/11_kzvH0YCCwvcKx3kSb16qmEVznQcYf9dj8B5gsicts/edit)
 - [Analytics Github](https://github.com/dvdg6566/codebreaker-analytics)
-- [Compiler Github] (https://github.com/singaporezoo/codebreaker-compiler/)
+- [Compiler Github](https://github.com/singaporezoo/codebreaker-compiler/)
