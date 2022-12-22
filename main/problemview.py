@@ -5,7 +5,7 @@ import flask
 import awstools
 import contestmode
 from forms import SubmitForm
-from compilesub import check,compilesub,compileCommunication
+from compilesub import check
 from flask import Flask, render_template, request, url_for, redirect, flash, session, get_flashed_messages, make_response, send_file
 from datetime import datetime, timedelta
 from language import get_languages

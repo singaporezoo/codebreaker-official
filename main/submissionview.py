@@ -5,7 +5,7 @@ import random
 
 import awstools
 import contestmode
-from compilesub import check, compilesub, regradeSub, compileCommunication
+from compilesub import check
 from forms import ResubmitForm
 
 #BEGIN: SUBMISSION -----------------------------------------------------------------------------------------------------------------------------------------------------
