@@ -152,13 +152,7 @@ def getProblemInfo(problemName):
     response= problems_table.query(
         KeyConditionExpression = Key('problemName').eq(problemName)
     )
-    problem_info=response['Items']
-    if len(problem_info) == 0:
-        return "This problem doesn't exist"
-    if len(problem_info) != 1:
-        return "This problem doesn't exist22"
-
-    problem_info = problem_info[0]
+    problem_info=response['Items'][0]
     return problem_info
 
 def getTestcase(path):
@@ -308,38 +302,35 @@ def updateScores(problemName):
     res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-regrade-all', InvocationType='Event', Payload = json.dumps(lambda_input))
 
 def getSubmission(subId, full=True):
-    try:
-        if full:
-            response= submissions_table.get_item( Key={ "subId": subId } )
-        else:
-            response = submissions_table.get_item( 
-                Key={"subId": subId },
-                ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, gradingTime, totalScore, username, #l',
-                ExpressionAttributeNames = {'#l': 'language'}
-            )
-        subDetails = response['Item']
+    if full:
+        response= submissions_table.get_item( Key={ "subId": subId } )
+    else:
+        response = submissions_table.get_item( 
+            Key={"subId": subId },
+            ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, gradingTime, totalScore, username, #l',
+            ExpressionAttributeNames = {'#l': 'language'}
+        )
+    subDetails = response['Item']
 
-        if subDetails['language'] == 'py':
-            pyfile = s3.get_object(Bucket=CODE_BUCKET_NAME, Key=f'source/{subId}.py')
-            code = pyfile['Body'].read().decode("utf-8")
+    if subDetails['language'] == 'py':
+        pyfile = s3.get_object(Bucket=CODE_BUCKET_NAME, Key=f'source/{subId}.py')
+        code = pyfile['Body'].read().decode("utf-8")
+        subDetails['code'] = code
+    else:
+        try:
+            cppfile = s3.get_object(Bucket=CODE_BUCKET_NAME, Key=f'source/{subId}.cpp')
+            code = cppfile['Body'].read().decode("utf-8")
             subDetails['code'] = code
-        else:
-            try:
-                cppfile = s3.get_object(Bucket=CODE_BUCKET_NAME, Key=f'source/{subId}.cpp')
-                code = cppfile['Body'].read().decode("utf-8")
-                subDetails['code'] = code
-            except:
-                cppfile = s3.get_object(Bucket=CODE_BUCKET_NAME, Key=f'source/{subId}A.cpp')
-                codeA = cppfile['Body'].read().decode("utf-8")
-                subDetails['codeA'] = codeA
-                cppfile = s3.get_object(Bucket=CODE_BUCKET_NAME, Key=f'source/{subId}B.cpp')
-                codeB = cppfile['Body'].read().decode("utf-8")
-                subDetails['codeB'] = codeB
+        except:
+            cppfile = s3.get_object(Bucket=CODE_BUCKET_NAME, Key=f'source/{subId}A.cpp')
+            codeA = cppfile['Body'].read().decode("utf-8")
+            subDetails['codeA'] = codeA
+            cppfile = s3.get_object(Bucket=CODE_BUCKET_NAME, Key=f'source/{subId}B.cpp')
+            codeB = cppfile['Body'].read().decode("utf-8")
+            subDetails['codeB'] = codeB
 
-        return subDetails
-    except KeyError:
-        return None
-
+    return subDetails
+    
 def batchGetSubmissions(start, end):
     submissions = []
     for i in range(start, end+1):
