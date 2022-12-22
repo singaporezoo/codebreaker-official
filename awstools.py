@@ -1196,7 +1196,7 @@ def uploadSubmission(code, s3path):
     s3_resource.Object(CODE_BUCKET_NAME, s3path).put(Body=code)
 
 # Sends submission to be regraded by Step Function
-def gradeSubmission2(problemName,submissionId,username,submissionTime=None,regradeall=False,language='cpp',problemType='Batch'):
+def gradeSubmission(problemName,submissionId,username,submissionTime=None,regradeall=False,language='cpp',problemType='Batch'):
     regrade=True
 
     # If no submission time already recorded, this is a new submission
@@ -1225,6 +1225,21 @@ def gradeSubmission2(problemName,submissionId,username,submissionTime=None,regra
 
     stepFunctionARN = "arn:aws:states:ap-southeast-1:354145626860:stateMachine:Codebreaker-grading-v3"
     res = SFclient.start_execution(stateMachineArn = stepFunctionARN, input = json.dumps(SF_input))
+
+# REGRADE PROBLEM AS INVOKED IN ADMIN PAGE
+# Regrade type can be NORMAL, AC, NONZERO
+def regradeProblem(problemName, regradeType = 'NORMAL'): 
+
+    # Stitching takes place for all submissions made in contest mode that are not sent to analysis mirror
+    stitch = contestmode.contest() and contestmode.stitch() and contestmode.contestId() != 'analysismirror'
+
+    lambda_input = {
+        'problemName': problemName,
+        'regradeType': regradeType,
+        'stitch': stitch
+    }
+
+    res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-regrade-problem', InvocationType='Event', Payload = json.dumps(lambda_input))    
 
 if __name__ == '__main__':
     # PLEASE KEEP THIS AT THE BOTTOM

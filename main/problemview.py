@@ -265,7 +265,7 @@ def problem(PROBLEM_NAME):
             awstools.uploadSubmission(code = code, s3path = s3path)
 
         # Grade submission
-        awstools.gradeSubmission2(
+        awstools.gradeSubmission(
             problemName = PROBLEM_NAME,
             submissionId = subId,
             username = userInfo['username'], 

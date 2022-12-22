@@ -430,28 +430,20 @@ def editproblem(problem_id):
                 flash('Invalid file format', 'warning')
                 return redirect(f'/admin/editproblem/{problem_id}')
 
-        elif result['form_name'] == 'regrade_problem':
+        elif result['form_name'] in ['regrade_problem', 'regrade_nonzero', 'regrade_acs']:
+            # REGRADE PROBLEM
+
+            # Regrade type can be NORMAL, AC, NONZERO
+            regrade_type = 'NORMAL'
+            if result['form_name'] == 'regrade_nonzero': regrade_type = 'NONZERO'
+            if result['form_name'] == 'regrade_acs': regrade_type = 'AC'
+
             if userInfo['role'] in ['admin','superadmin']:
-                compilesub.regradeProblem(problem_id)
-                flash('Submissions regraded!', 'success')
-            else:
-                flash('You need admin access to do this', 'warning')
-            return redirect(f'/admin/editproblem/{problem_id}')
-        
-        elif result['form_name'] == 'regrade_nonzero':
-            if userInfo['role'] in ['admin', 'superadmin']:
-                compilesub.regradeProblem(problem_id, 1)
-                flash('Submissions regraded!', 'success')
-            else:
+                awstools.regradeProblem(problemName=probleem_id, regrade_type=regrade_type)
+                flash('Regrade request sent to server!', 'success')
+            else: 
                 flash('You need admin access to do this', 'warning')
             return redirect(f'/admin/editproblem/{problem_id}')
 
-        elif result['form_name'] == 'regrade_acs':
-            if userInfo['role'] in ['admin', 'superadmin']:
-                compilesub.regradeProblem(problem_id, 2)
-                flash('Submissions regraded!', 'success')
-            else:
-                flash('You need admin access to do this', 'warning')
-            return redirect(f'/admin/editproblem/{problem_id}')
 
     return render_template('editproblem.html', form=form, info=problem_info, userinfo=userInfo, subsURL=subsURL, socket=contestmode.socket(), tags=tagList)

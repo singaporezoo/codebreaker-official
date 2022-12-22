@@ -195,7 +195,7 @@ def submission(subId):
                 return redirect(f'/submission/{subId}')
 
             # For regrade, the code is already there so we just call grade 
-            awstools.gradeSubmission2(
+            awstools.gradeSubmission(
                 problemName = problemName,
                 submissionId = subId,
                 username = subDetails['username'], 
@@ -324,7 +324,7 @@ def submission(subId):
                 s3path = f'source/{newSubId}.{language}'
                 awstools.uploadSubmission(code = code, s3path = s3path)
 
-            awstools.gradeSubmission2(
+            awstools.gradeSubmission(
                 problemName = problemName,
                 submissionId = newSubId,
                 username = subDetails['username'], 
