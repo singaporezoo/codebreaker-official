@@ -36,8 +36,8 @@ def submission(subId):
 
     subDetails = awstools.getSubmission(int(subId))
     if subDetails == None:
-        return "Sorry, the submission you're looking for doesn't exist. Refresh the page if you just made a submission."
-    #print(subDetails)
+        return "Sorry, the submission you're looking for doesn't exist. Refresh the page if you just made a submission." 
+
     subtaskScores = [fixFloat(i) for i in subDetails['subtaskScores']]
     scores = [fixFloat(i) for i in subDetails["score"]]
     language = subDetails['language']
@@ -65,6 +65,9 @@ def submission(subId):
     else:
         codeA = subDetails['codeA']
         codeB = subDetails['codeB']
+
+    if 'compileErrorMessage' not in subDetails.keys():
+        subDetails['compileErrorMessage'] = ''
 
     if problem_info['problem_type'] == 'Communication' and code != None:
         flash('This submission was made before the problem type was converted to communication', 'warning')

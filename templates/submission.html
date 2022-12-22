@@ -98,6 +98,8 @@
 			</div>
 			
 			<div class="col-md-6">
+				<!-- IF THERE IS A COMPILE ERROR, DO NOT SHOW SUBTASKS --!>
+				{% if subDetails.compileErrorMessage == "" %}
 				<div class = "container" id="submission-subtasks-container">	
 					{% for subtask in subtaskDetails %}
 					<div class="card text-white" style="margin-bottom: 12px; margin-right: 12px;">
@@ -142,6 +144,12 @@
 						
 					</div>
 					{% endfor %}
+
+					{%else%}
+					<!-- FOR COMPILE ERRORS --!>
+					<h3> Compile Error </h3>
+					<p> {{subDetails.compileErrorMessage|safe}} </p>
+					{%endif%}
 
 					<!-- If this is your own submission, then allow regrading--!>
 					{% if userinfo != None and subDetails.username  == userinfo['username'] %}

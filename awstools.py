@@ -152,8 +152,10 @@ def getProblemInfo(problemName):
     response= problems_table.query(
         KeyConditionExpression = Key('problemName').eq(problemName)
     )
-    problem_info=response['Items'][0]
-    return problem_info
+    problem_info=response['Items']
+    if len(problem_info) != 1:
+        return {'status':404}
+    return problem_info[0]
 
 def getTestcase(path):
     tcfile = s3.get_object(Bucket=TESTDATA_BUCKET_NAME, Key=path)
