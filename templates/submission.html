@@ -55,7 +55,7 @@
 							{% endif %}
 						</tbody>
 					</table>
-					{% if userinfo != None and user == userinfo['username'] %}
+					{% if userinfo != None and subDetails.username == userinfo.username %}
 						<!-- own submission -->
 						{% if probleminfo['problem_type'] != 'Communication' %}
 							<form autocomplete="off" id = "submitCodeForm" action = "" method = "post" class="form-group">
@@ -164,7 +164,7 @@
 	</div>
 		
 	{% if toRefresh %}
-	<meta http-equiv="refresh" content="2; URL=/submission/{{subId}}">
+	<meta http-equiv="refresh" content="2; URL=/submission/{{subDetails.subId}}">
 	{% endif %}
 	<script>
 		$(document).ready(function(){

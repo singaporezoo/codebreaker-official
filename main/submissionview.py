@@ -191,14 +191,19 @@ def submission(subId):
             if contest and (userInfo['role'] != 'superadmin' and userInfo['username'] not in contestmode.allowedusers()):
                 flash('You cannot regrade in contest mode!', 'warning')
                 return redirect(f'/submission/{subId}')
-            result = regradeSub(int(subId), language=language)
-            if result['status'] == 'warning':
-                flash(result['message'],"warning")
-            elif result['status'] == 'compileError':
-                session['compileError'] = result['message']
-                return redirect(f"/problem/{problemName}")
-            elif result['status'] == 'redirect':
-                return redirect(result['message'])
+
+            # For regrade, the code is already there so we just call grade 
+            awstools.gradeSubmission2(
+                problemName = problemName,
+                submissionId = subId,
+                username = subDetails['username'], 
+                submissionTime = subDetails['submissionTime'],
+                regradeall=False,
+                language = language,
+                problemType = problem_info['problem_type']
+            )
+
+            time.sleep(3)
             return redirect(f"/submission/{subId}")
         
         else:
@@ -319,7 +324,7 @@ def submission(subId):
             awstools.gradeSubmission2(
                 problemName = problemName,
                 submissionId = subId,
-                username = userInfo['username'], 
+                username = subDetails['username'], 
                 submissionTime = None,
                 regradeall=False,
                 language = language,

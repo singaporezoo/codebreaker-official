@@ -1140,16 +1140,16 @@ def getSubsPerDay():
 
     # HELPER FUNCTION THAT BINARY SEARCHES FOR LAST SUBMISSION OF DAY
     def findLastSubOfDay(date):
-    low = 0 
-    high = 200000
-    while high > low:
-        mid = int((low+high + 1)/2)
-        submission = getSubmission(mid, False)
-        if submission != None and date >= submission["submissionTime"].split(' ')[0]:
-            low = mid
-        else:
-            high = mid - 1
-    return low
+        low = 0 
+        high = 200000
+        while high > low:
+            mid = int((low+high + 1)/2)
+            submission = getSubmission(mid, False)
+            if submission != None and date >= submission["submissionTime"].split(' ')[0]:
+                low = mid
+            else:
+                high = mid - 1
+        return low
 
 
     lastSubOfDay = misc_table.query(
@@ -1219,7 +1219,7 @@ def gradeSubmission2(problemName,submissionId,username,submissionTime=None,regra
 
     SF_input = {
         "problemName": problemName,
-        "submissionId":submissionId,
+        "submissionId":int(submissionId),
         "username":username,
         "submissionTime":submissionTime,
         "stitch":stitch,
@@ -1237,3 +1237,4 @@ if __name__ == '__main__':
     # PLEASE KEEP THIS AT THE BOTTOM
     # THIS IS FOR DEBUGGING AND WILL ONLY BE ACTIVATED IF YOU DIRECTLY RUN THIS FILE
     # IT DOES NOT OUTPUT ANYTHING ONTO TMUX
+    pass
