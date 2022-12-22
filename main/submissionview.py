@@ -178,10 +178,6 @@ def submission(subId):
 
     if form.is_submitted():
 
-        if problem_info['problem_type'] == 'Communication' and code != None:
-            flash('You are unable to regrade or resubmit this submission!', 'danger')
-            return redirect(f'/submission/{subId}')
-        
         result = request.form
         ''' REGRADE '''
         if 'form_name' in result and result['form_name'] == 'regrade':
@@ -213,7 +209,7 @@ def submission(subId):
                 return redirect(f'/problem/{problemName}')
             
             now = time.time() 
-            
+            ''' DETERMINE IF SUBMISSION IS VALID: CHECK IF IT VIOLATES SUBMISSION DELAY OR SUBMISSION LIMIT ''' 
             delay = 9
             if contestmode.contest():
                 delay = int(awstools.getContestInfo(contestmode.contestId())['subDelay']) - 1
@@ -257,6 +253,7 @@ def submission(subId):
         
                     flash(f"Please wait {times[len(times)-1][0]} seconds before submitting again", "warning")
                     return res
+            ''' END SUBMISSION VERIFICATION '''
 
             result = request.form 
 
@@ -308,22 +305,22 @@ def submission(subId):
                         return redirect("/")
             
             # Assign new submission index
-            subId = awstools.getNextSubmissionId()
+            newSubId = awstools.getNextSubmissionId()
 
             if problem_info['problem_type'] == 'Communication':
                 # Upload code file to S3
-                s3pathA = f'source/{subId}A.{language}'
-                s3pathB = f'source/{subId}B.{language}'
+                s3pathA = f'source/{newSubId}A.{language}'
+                s3pathB = f'source/{newSubId}B.{language}'
                 awstools.uploadSubmission(code = codeA, s3path = s3pathA)
                 awstools.uploadSubmission(code = codeB, s3path = s3pathB)
             else:
                 # Upload code file to S3
-                s3path = f'source/{subId}.{language}'
+                s3path = f'source/{newSubId}.{language}'
                 awstools.uploadSubmission(code = code, s3path = s3path)
 
             awstools.gradeSubmission2(
                 problemName = problemName,
-                submissionId = subId,
+                submissionId = newSubId,
                 username = subDetails['username'], 
                 submissionTime = None,
                 regradeall=False,
@@ -332,7 +329,7 @@ def submission(subId):
             )
 
             time.sleep(3)
-            return redirect(f"/submission/{subId}")
+            return redirect(f"/submission/{newSubId}")
 
     '''END RESUBMISSION'''
 

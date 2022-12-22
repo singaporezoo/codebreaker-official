@@ -76,7 +76,7 @@
 							<p id="codestorageB" hidden>{{codeB}}</p>
 							<p>{{message}}</p>
 						{% endif %}
-					{% elif userinfo.role == "admin" or userinfo.role == "superadmin" or (userinfo != None and userinfo['problemScores'][problemName] == 100)%}
+					{% elif userinfo.role == "admin" or userinfo.role == "superadmin" or (userinfo != None and userinfo['problemScores'][probleminfo.problemName] == 100)%}
 						<!-- admin or superadmin or person ac -->
 						{% if code != None %}
 							<textarea id='codebox'>{{code}}</textarea> 
@@ -143,7 +143,8 @@
 					</div>
 					{% endfor %}
 
-					{% if userinfo != None and user == userinfo['username'] %}
+					<!-- If this is your own submission, then allow regrading--!>
+					{% if userinfo != None and subDetails.username  == userinfo['username'] %}
 						{% if probleminfo['problem_type'] != 'Communication' %}
 						<p id="submitButtonParagraph2">{{form.submit(class="btn btn-secondary", onclick="onSubmit()", form="submitCodeForm")}}</p>
 						{% else %}
@@ -151,7 +152,7 @@
 						{% endif %}
 
 					{% endif %}
-					{% if (userinfo.role == "superadmin") or (not contest and userinfo.role == "admin") or (contest and userinfo.username in users) %}
+					{% if (userinfo.role == "superadmin") or (not contest and userinfo.role == "admin") %}
 						<form action="" method="post" class="form-group">
 							<input type="hidden" name="form_name" value="regrade">
 							<input type="submit" value="Regrade" class="btn btn-secondary navbar">
