@@ -1,2 +1,0 @@
-import numpy
-print("Hello")

@@ -16,7 +16,15 @@ def lambda_handler(event, context):
     problemName = event['problemName']
     submissionId = event['submissionId']
     username = event['username']
+    compileError = event['compileError']
+    compileErrorMessage = event['compileErrorMessage']
     
+    # When there is a compile error, we do not need to update any scores.
+    # Just update the compile error message in Dynamo
+    if compileError:
+        awstools.updateCE(submissionId=submissionId, compileErrorMessage=compileErrorMessage)
+        return {'status':200}
+        
     response= problems_table.query(
         KeyConditionExpression = Key('problemName').eq(problemName)
     )
@@ -122,7 +130,6 @@ def lambda_handler(event, context):
             ExpressionAttributeValues={':one' : 1}
         )
         print("updating score")
-                    
                     
     submissions_table.update_item(
         Key={'subId':submissionId},

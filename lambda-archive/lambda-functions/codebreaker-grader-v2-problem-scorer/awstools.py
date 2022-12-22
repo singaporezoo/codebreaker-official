@@ -61,6 +61,13 @@ def gradeSubmission(lambda_input):
         InvocationType='RequestResponse',
         Payload = json.dumps(lambda_input)
     )
+
+def updateCE(submissionId, compileErrorMessage):
+    submissions_table.update_item(
+        Key={'subId':submissionId},
+        UpdateExpression = f'set compileErrorMessage = :compileErrorMessage',
+        ExpressionAttributeValues={':compileErrorMessage':compileErrorMessage}
+    )
     
 def updateScores(problem, username):
     submissions = submissions_table.query(

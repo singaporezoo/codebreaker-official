@@ -21,6 +21,11 @@ for function in functionNames:
 	''' GET FILE '''
 	process = subprocess.run(f'aws lambda get-function --function-name {function}', shell=True, capture_output=True)
 	out = json.loads(process.stdout)
+
+	config = out['Configuration']
+	if config['PackageType'] == 'Image':
+		continue
+
 	location = out['Code']['Location']
 	subprocess.run(f'wget "{location}" --user-agent="Mozilla"',shell=True)
 

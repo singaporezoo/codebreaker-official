@@ -26,8 +26,9 @@ def lambda_handler(event,context):
 		endTime = datetime.datetime(year=3000,month=1,day=18)
 	else:
 		endTime = StringToDate(contestInfo['endTime'])
+	
 	startTime = StringToDate(contestInfo['startTime'])
-
+	
 	problems = contestInfo['problems']
 	users = list(contestInfo['users'].keys())
 	usersDict = {}
@@ -74,7 +75,6 @@ def lambda_handler(event,context):
 		results[user] = newEmptyUser
 
 	for problem in problems:
-		print(f"Completed Problem: {problem}")
 		problemInfo = allProblemsInfo[problem]
 		submissions = awstools.getSubmissionsListProblem(problem)
 		submissions.sort(key = lambda x:x['submissionTime'])
@@ -110,7 +110,7 @@ def lambda_handler(event,context):
 		if lastScoreChange[user] == TIMEZERO:
 			lastScoreChange[user] = 'N/A'
 		elif lastScoreChange[user] < startTime:
-			lastScoreChange[user] = 0
+			lastScoreChange[user] = 'N/A'
 		else:
 			lastScoreChange[user] -= startTime
 			lastScoreChange[user] = str(lastScoreChange[user])

@@ -146,6 +146,7 @@ def lambda_handler(event, context):
                     }
                 elif s == "" and err != "":
                     result = {
+                        "err": err,
                         "verdict": "WA",
                         "score": 0,
                         "runtime": 0 , # runtime/s
