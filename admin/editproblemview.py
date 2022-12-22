@@ -434,12 +434,12 @@ def editproblem(problem_id):
             # REGRADE PROBLEM
 
             # Regrade type can be NORMAL, AC, NONZERO
-            regrade_type = 'NORMAL'
-            if result['form_name'] == 'regrade_nonzero': regrade_type = 'NONZERO'
-            if result['form_name'] == 'regrade_acs': regrade_type = 'AC'
+            regradeType = 'NORMAL'
+            if result['form_name'] == 'regrade_nonzero': regradeType = 'NONZERO'
+            if result['form_name'] == 'regrade_acs': regradeType = 'AC'
 
             if userInfo['role'] in ['admin','superadmin']:
-                awstools.regradeProblem(problemName=probleem_id, regrade_type=regrade_type)
+                awstools.regradeProblem(problemName=problem_id, regradeType=regradeType)
                 flash('Regrade request sent to server!', 'success')
             else: 
                 flash('You need admin access to do this', 'warning')
