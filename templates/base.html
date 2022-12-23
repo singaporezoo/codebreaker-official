@@ -26,16 +26,11 @@
 
 		{%if userinfo.theme|length != 0 and userinfo.theme != 'light'%}
 		<link href="/static/css/themes/{{userinfo.theme}}.css" rel="stylesheet">
+		{%else%}
+		<link href="/static/css/themes/alien.css" rel="stylesheet">
 		{%endif%}
 		{%if 'custom' in userinfo.theme %}
 			<script>document.querySelector(':root').style.setProperty('--hue',{{userinfo.hue}})</script>
-		{%endif%}
-		{%if userinfo.theme == 'dark' and userinfo.username in ['Potato3218', 'shenxy13']%}
-		<style>
-		html, body {
-			font-family:"Comic Sans MS", "Comic Sans", cursive, sans-serif;
-		}
-		</style>
 		{%endif%}
 		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 		{% if socket %}

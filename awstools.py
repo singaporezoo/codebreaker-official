@@ -471,10 +471,10 @@ def getSubmissionsList(pageNo, problem, username): #this is for all submissions 
         return submissions
     elif username != None and problem == None:
         response = submissions_table.query(
-            IndexName = 'usernameIndex3',
+            IndexName = 'usernameIndex',
             KeyConditionExpression=Key('username').eq(username),
             Limit = (pageNo+1)*subPerPage + 2,
-            ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, totalScore, username, #a',
+            ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, totalScore, username, #a, compileErrorMessage',
             ExpressionAttributeNames = {'#a': 'language'},
             ScanIndexForward = False
         )
@@ -483,7 +483,7 @@ def getSubmissionsList(pageNo, problem, username): #this is for all submissions 
         response = submissions_table.query(
             IndexName = 'problemIndex',
             KeyConditionExpression=Key('problemName').eq(problem),
-            ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, totalScore, username, #a',
+            ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, totalScore, username, #a, compileErrorMessage',
             ExpressionAttributeNames = {'#a': 'language'},
             Limit = (pageNo+1)*subPerPage + 2,
             ScanIndexForward = False
@@ -493,7 +493,7 @@ def getSubmissionsList(pageNo, problem, username): #this is for all submissions 
         response = submissions_table.query(
             IndexName = 'problemIndex',
             KeyConditionExpression=Key('problemName').eq(problem),
-            ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, totalScore, username, #a',
+            ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, totalScore, username, #a, compileErrorMessage',
             ExpressionAttributeNames = {'#a': 'language'},
             FilterExpression = Attr('username').eq(username),
             ScanIndexForward = False
