@@ -309,9 +309,11 @@ def getSubmission(subId, full=True):
     else:
         response = submissions_table.get_item( 
             Key={"subId": subId },
-            ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, gradingTime, totalScore, username, #l',
+            ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, gradingTime, totalScore, username, #l, compileErrorMessage',
             ExpressionAttributeNames = {'#l': 'language'}
         )
+    
+    if 'Item' not in response.keys(): return None
     subDetails = response['Item']
 
     if subDetails['language'] == 'py':
@@ -1245,4 +1247,5 @@ if __name__ == '__main__':
     # PLEASE KEEP THIS AT THE BOTTOM
     # THIS IS FOR DEBUGGING AND WILL ONLY BE ACTIVATED IF YOU DIRECTLY RUN THIS FILE
     # IT DOES NOT OUTPUT ANYTHING ONTO TMUX
+    print(getSubsPerDay())
     pass

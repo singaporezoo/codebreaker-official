@@ -20,7 +20,6 @@ def setcookie(template):
     curtime = time.time()
     res.set_cookie(f"lastSub{outlet}",value=f"{curtime}",secure=True,expires=curtime+delay+5)
     return res
-    
 
 def problem(PROBLEM_NAME):
 
@@ -73,14 +72,13 @@ def problem(PROBLEM_NAME):
     analysisVisible = problem_info['analysisVisible']
     problemType = problem_info['problem_type']
     validated = problem_info['validated']
-
     editorials = [i for i in problem_info['editorials'] if i != ""]
 
     if problem_info['problem_type'] == 'Communication':
         if 'nameA' not in problem_info.keys():
             problem_info['nameA'] = 'placeholderA'
         if 'nameB' not in problem_info.keys():
-            problem_info['nameB'] = 'placeholderA'
+            problem_info['nameB'] = 'placeholderB'
     
     if not awstools.isAllowedAccess(problem_info,userInfo):
         flash("Sorry, you are not authorized to view this resource!", 'warning')
