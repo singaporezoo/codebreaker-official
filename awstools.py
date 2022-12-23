@@ -481,7 +481,7 @@ def getSubmissionsList(pageNo, problem, username): #this is for all submissions 
         return response['Items']
     elif username == None and problem != None:
         response = submissions_table.query(
-            IndexName = 'problemIndex5',
+            IndexName = 'problemIndex',
             KeyConditionExpression=Key('problemName').eq(problem),
             ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, totalScore, username, #a',
             ExpressionAttributeNames = {'#a': 'language'},
@@ -491,7 +491,7 @@ def getSubmissionsList(pageNo, problem, username): #this is for all submissions 
         return response['Items']
     else:
         response = submissions_table.query(
-            IndexName = 'problemIndex5',
+            IndexName = 'problemIndex',
             KeyConditionExpression=Key('problemName').eq(problem),
             ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, totalScore, username, #a',
             ExpressionAttributeNames = {'#a': 'language'},
@@ -502,7 +502,7 @@ def getSubmissionsList(pageNo, problem, username): #this is for all submissions 
 
 def getSubmissionsToProblem(problemName):
     response = submissions_table.query(
-        IndexName = 'problemIndex5',
+        IndexName = 'problemIndex',
         KeyConditionExpression = Key('problemName').eq(problemName),
         ProjectionExpression = 'subId',
         ScanIndexForward = False

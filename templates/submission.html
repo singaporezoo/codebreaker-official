@@ -4,11 +4,11 @@
 
 {% block content %}
 	<script type="text/javascript" src="{{url_for('static',filename='js/newuser_tour.js')}}"></script>
-        <script>
-                window.onload=function(){
-                        tour.start();
-                }
-        </script>
+		<script>
+				window.onload=function(){
+						tour.start();
+				}
+		</script>
 	<div class="container-fluid">
 		
 		{%if blockpage %}
@@ -32,9 +32,9 @@
 							</tr>
 
 							<tr>
-                                                                <th scope="row">Submission Time</th>
-                                                                <td> {{subDetails.submissionTime}} </td>
-                                                        </tr>
+									<th scope="row">Submission Time</th>
+									<td> {{subDetails.submissionTime}} </td>
+							</tr>
 							
 							<tr>
 								<th scope="row">Score</th>
@@ -98,9 +98,9 @@
 			</div>
 			
 			<div class="col-md-6">
-				<!-- IF THERE IS A COMPILE ERROR, DO NOT SHOW SUBTASKS --!>
+				<!-- IF THERE IS A COMPILE ERROR, DO NOT SHOW SUBTASKS -->
 				{% if subDetails.compileErrorMessage == "" %}
-				<div class = "container" id="submission-subtasks-container">	
+				<div class = "container" id="submission-subtasks-container">  
 					{% for subtask in subtaskDetails %}
 					<div class="card text-white" style="margin-bottom: 12px; margin-right: 12px;">
 						<div class="card-header bg-{{'secondary' if subtask.done == False else ('success' if subtask.verdict=='AC' else ('warning' if subtask.verdict=='PS' else'danger'))}}" data-toggle="collapse" data-target="#subtask{{subtask.number}}" >
@@ -139,19 +139,19 @@
 									</tr>
 								{% endfor %}
 								</tbody>
-							</table>				
-						</div>	
+							</table>        
+						</div>  
 						
 					</div>
 					{% endfor %}
 
 					{%else%}
-					<!-- FOR COMPILE ERRORS --!>
+					<!-- FOR COMPILE ERRORS -->
 					<h3> Compile Error </h3>
 					<p> {{subDetails.compileErrorMessage|safe}} </p>
 					{%endif%}
 
-					<!-- If this is your own submission, then allow regrading--!>
+					<!-- If this is your own submission, then allow regrading-->
 					{% if userinfo != None and subDetails.username  == userinfo['username'] %}
 						{% if probleminfo['problem_type'] != 'Communication' %}
 						<p id="submitButtonParagraph2">{{form.submit(class="btn btn-secondary", onclick="onSubmit()", form="submitCodeForm")}}</p>
@@ -194,89 +194,88 @@
 
 		var codeboxelement = document.getElementById("codebox");
 		if(codeboxelement != null){
-                	var codebox = CodeMirror.fromTextArea(codeboxelement, {
-                        	tabSize: 4,
+			var codebox = CodeMirror.fromTextArea(codeboxelement, {
+				tabSize: 4,
 				lineNumbers: true,
 				indentWithTabs: true,
 				indentUnit: 4,
-                        	mode: 'text/x-c++src',
-                        	theme: 'monokai',
+				mode: 'text/x-c++src',
+				theme: 'monokai',
 				readOnly: true
-                	});
-                	codebox.setSize("100%", 750);
+			});
+			codebox.setSize("100%", 750);
 		}
 		
 		var editorelement = document.getElementById("editor");
 		if(editorelement != null){
-                	var editor = CodeMirror.fromTextArea(editorelement, {
-                        	tabSize: 4,
+			var editor = CodeMirror.fromTextArea(editorelement, {
+				tabSize: 4,
 				lineNumbers: true,
 				indentWithTabs: true,
 				indentUnit: 4,
-                        	mode: 'text/x-c++src',
-                        	theme: 'monokai',
-                	});
-                	editor.setSize("100%", 750);
+				mode: 'text/x-c++src',
+				theme: 'monokai',
+			});
+			editor.setSize("100%", 750);
 			editor.getDoc().setValue(convert(document.getElementById("codestorage").innerHTML));
 			editor.refresh();
 		}
 		var codeboxelementA = document.getElementById("codeboxA");
 		if(codeboxelementA != null){
-                	var codeboxA = CodeMirror.fromTextArea(codeboxelementA, {
-                        	tabSize: 4,
+			var codeboxA = CodeMirror.fromTextArea(codeboxelementA, {
+				tabSize: 4,
 				lineNumbers: true,
 				indentWithTabs: true,
 				indentUnit: 4,
-                        	mode: 'text/x-c++src',
-                        	theme: 'monokai',
+				mode: 'text/x-c++src',
+				theme: 'monokai',
 				readOnly: true
-                	});
-                	codeboxA.setSize("100%", 750);
+			});
+			codeboxA.setSize("100%", 750);
 		}
 		
 		var editorelementA = document.getElementById("editorA");
 		if(editorelementA != null){
-                	var editorA = CodeMirror.fromTextArea(editorelementA, {
-                        	tabSize: 4,
+			var editorA = CodeMirror.fromTextArea(editorelementA, {
+				tabSize: 4,
 				lineNumbers: true,
 				indentWithTabs: true,
 				indentUnit: 4,
-                        	mode: 'text/x-c++src',
-                        	theme: 'monokai',
-                	});
-                	editorA.setSize("100%", 750);
+				mode: 'text/x-c++src',
+				theme: 'monokai',
+			});
+			editorA.setSize("100%", 750);
 			editorA.getDoc().setValue(convert(document.getElementById("codestorageA").innerHTML));
 			editorA.refresh();
 		}
 		var codeboxelementB = document.getElementById("codeboxB");
 		if(codeboxelementB != null){
-                	var codeboxB = CodeMirror.fromTextArea(codeboxelementB, {
-                        	tabSize: 4,
+			var codeboxB = CodeMirror.fromTextArea(codeboxelementB, {
+				tabSize: 4,
 				lineNumbers: true,
 				indentWithTabs: true,
 				indentUnit: 4,
-                        	mode: 'text/x-c++src',
-                        	theme: 'monokai',
+				mode: 'text/x-c++src',
+				theme: 'monokai',
 				readOnly: true
-                	});
-                	codeboxB.setSize("100%", 750);
+			});
+			codeboxB.setSize("100%", 750);
 		}
 		
 		var editorelementB = document.getElementById("editorB");
 		if(editorelementB != null){
-                	var editorB = CodeMirror.fromTextArea(editorelementB, {
-                        	tabSize: 4,
+			var editorB = CodeMirror.fromTextArea(editorelementB, {
+				tabSize: 4,
 				lineNumbers: true,
 				indentWithTabs: true,
 				indentUnit: 4,
-                        	mode: 'text/x-c++src',
-                        	theme: 'monokai',
-                	});
-                	editorB.setSize("100%", 750);
+				mode: 'text/x-c++src',
+				theme: 'monokai',
+			});
+			editorB.setSize("100%", 750);
 			editorB.getDoc().setValue(convert(document.getElementById("codestorageB").innerHTML));
 			editorB.refresh();
 		}
-
 
 		var codestorage = document.getElementById("codestorage")
 		if(codestorage != null){
@@ -292,12 +291,12 @@
 		}
 		
 		function checkCookie(){
-	    		var cookieEnabled = navigator.cookieEnabled;
+				var cookieEnabled = navigator.cookieEnabled;
 			if (!cookieEnabled){ 
-		            document.cookie = "testCookie";
-		            cookieEnabled = document.cooe.indexOf("testcookie")!=-1;
-		        }
-    			return cookieEnabled;
+					document.cookie = "testCookie";
+					cookieEnabled = document.cooe.indexOf("testcookie")!=-1;
+				}
+				return cookieEnabled;
 		}
 		function onSubmit(){
 			document.cookie = "testCookie";
@@ -311,7 +310,7 @@
 		//document.getElementById("submitlink").onclick = refresh;
 
 		
-        </script>
+		</script>
 	
 {% endblock %}
 

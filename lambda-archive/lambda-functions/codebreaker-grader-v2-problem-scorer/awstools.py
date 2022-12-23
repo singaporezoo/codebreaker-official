@@ -71,7 +71,7 @@ def updateCE(submissionId, compileErrorMessage):
     
 def updateScores(problem, username):
     submissions = submissions_table.query(
-        IndexName = 'problemIndex4',
+        IndexName = 'problemIndex',
         KeyConditionExpression = Key('problemName').eq(problem),
         ProjectionExpression = 'totalScore',
         FilterExpression = Attr('username').eq(username),
@@ -115,7 +115,7 @@ def updateScores(problem, username):
 
 def updateStitchedScores(problem, username):
     submissions = submissions_table.query(
-        IndexName = 'problemIndex3',
+        IndexName = 'problemIndex',
         KeyConditionExpression = Key('problemName').eq(problem),
         ProjectionExpression = 'subtaskScores',
         FilterExpression = Attr('username').eq(username),
@@ -175,7 +175,7 @@ def uploadSubmission(submission_upload):
     
 def updateScores(problem, username):
     submissions = submissions_table.query(
-        IndexName = 'problemIndex4',
+        IndexName = 'problemIndex',
         KeyConditionExpression = Key('problemName').eq(problem),
         ProjectionExpression = 'totalScore',
         FilterExpression = Attr('username').eq(username),
@@ -219,7 +219,7 @@ def updateScores(problem, username):
 
 def updateStitchedScores(problem, username):
     submissions = submissions_table.query(
-        IndexName = 'problemIndex3',
+        IndexName = 'problemIndex',
         KeyConditionExpression = Key('problemName').eq(problem),
         ProjectionExpression = 'subtaskScores',
         FilterExpression = Attr('username').eq(username),

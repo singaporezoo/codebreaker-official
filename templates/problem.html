@@ -4,21 +4,21 @@
 
 {% with messages = get_flashed_messages() %}
   {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
+	<ul class=flashes>
+	{% for message in messages %}
+	  <li>{{ message }}</li>
+	{% endfor %}
+	</ul>
   {% endif %}
 {% endwith %}
 
 {% block content %}
 	<script type="text/javascript" src="{{url_for('static',filename='js/newuser_tour.js')}}"></script>
-        <script>
-                window.onload=function(){
-                        tour.start();
-                }
-        </script>	
+		<script>
+				window.onload=function(){
+						tour.start();
+				}
+		</script>	
 
 	<br>
 	<div class="container-fluid pr-md-5">
@@ -92,7 +92,7 @@
 									<p id="submitButtonParagraph">  {{form.submit(class="btn btn-primary", onclick="onSubmit()")}} </p>
 									{% endif %}
 								</form>
-	                                                        {% endif %}
+															{% endif %}
 							</div>
 
 							<div id="submitInteractive" class="container tab-pane fade"><br>
@@ -106,7 +106,7 @@
 									<p> {{form.code(class = 'form-control', id = 'editorI', maxLength = '50')}} </p>
 									<p id="submitButtonParagraph">  {{form.submit(class="btn btn-primary", onclick="onSubmit()")}} </p>
 								</form>
-	                                                        {% endif %}
+															{% endif %}
 							</div>
 
 							<div id='submitCommunication' class="container tab-pane fade"><br>
@@ -123,7 +123,7 @@
 									<p> {{form.codeB(class = 'form-control', id = 'editorB', maxLength = '50')}} </p>
 									<p id="submitFilesForm">  {{form.submit(class="btn btn-primary", onclick="onSubmit()")}} </p>
 								</form>
-	                                                        {% endif %}
+															{% endif %}
 							</div>
 								
 							<div id="compileError" class="container tab-pane {{"fade" if compileError == "" else "active"}}">
@@ -151,13 +151,13 @@
 							{% endif %}
 							<b> Your best score: </b>
 
-                                                        {% if probleminfo.problemName in userinfo.problemScores %}
-                                                                {{userinfo.problemScores[probleminfo.problemName]}}
-                                                        {% else %}
-                                                                0
-                                                        {% endif %}
+														{% if probleminfo.problemName in userinfo.problemScores %}
+																{{userinfo.problemScores[probleminfo.problemName]}}
+														{% else %}
+																0
+														{% endif %}
 
-                                                        <br>
+														<br>
 							<b> Source: </b>
 							{% if probleminfo.author != [""]%}
 								{% if probleminfo.contestLink != "" %}
@@ -210,12 +210,11 @@
 					<p>
 					<button type="submit" onclick="window.open('https://codebreaker-attachments.s3-ap-southeast-1.amazonaws.com/{{probleminfo.problemName}}.zip')" class="btn btn-secondary">Download Attachments</button>
 					</p>
-					<!--p> <a href="https://codebreaker-attachments.s3-ap-southeast-1.amazonaws.com/{{probleminfo.problemName}}.zip">Download Attachments</a> </p-->
 					{%endif%}
 
 					{% if (userinfo.role == "superadmin") or (not contest and userinfo.role == "admin") or (contest and userinfo.username in users)%}
 
-        				<form action="" method="post" class="form-group">
+						<form action="" method="post" class="form-group">
 					<div class="input-group mb-2">
 					<select type="select" name="tcin" placeholder="User ID" class="form-control mr-1">
 					{% for i in range(1,1+probleminfo['testcaseCount']) %}
@@ -224,12 +223,12 @@
 					</div>
 					<div class="input-group mb-2">
 					</select>
-                				<input type="hidden" name="form_name" value="download_input">
-                				<input type="submit" value="Download Input" class="btn btn-secondary">
+								<input type="hidden" name="form_name" value="download_input">
+								<input type="submit" value="Download Input" class="btn btn-secondary">
 					</div>
 
 					</form>
-        				<form action="" method="post" class="form-group">
+						<form action="" method="post" class="form-group">
 					<div class="input-group">
 					<select type="select" name="tcout" placeholder="User ID" class="form-control mr-1">
 					{% for i in range(1,1+probleminfo['testcaseCount']) %}
@@ -238,8 +237,8 @@
 					</div>
 					<div class="input-group">
 					</select>
-                				<input type="hidden" name="form_name" value="download_output">
-                				<input type="submit" value="Download Output" class="btn btn-secondary">
+								<input type="hidden" name="form_name" value="download_output">
+								<input type="submit" value="Download Output" class="btn btn-secondary">
 					</div>
 					</form>
 					{%endif%}
@@ -278,17 +277,16 @@
 			});
 			editor.setSize("100%", 550);
 			editor.refresh();
-
 			editors.push(editor)
 		}
 		
 		function checkCookie(){
-	    		var cookieEnabled = navigator.cookieEnabled;
+			var cookieEnabled = navigator.cookieEnabled;
 			if (!cookieEnabled){ 
-		            document.cookie = "testCookie";
-		            cookieEnabled = document.cooe.indexOf("testcookie")!=-1;
-		        }
-    			return cookieEnabled;
+				document.cookie = "testCookie";
+				cookieEnabled = document.cooe.indexOf("testcookie")!=-1;
+			}
+			return cookieEnabled;
 		}
 		function onSubmit(){
 			document.cookie = "testCookie";

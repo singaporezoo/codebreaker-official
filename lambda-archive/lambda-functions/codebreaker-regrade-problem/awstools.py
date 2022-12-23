@@ -29,7 +29,7 @@ def getProblemInfo(problemName):
     
 def getSubmissionsToProblem(problemName):
     response = submissions_table.query(
-        IndexName = 'problemIndex5',
+        IndexName = 'problemIndex',
         KeyConditionExpression = Key('problemName').eq(problemName),
         ProjectionExpression = 'subId',
         ScanIndexForward = False
@@ -101,7 +101,7 @@ def getUserInfoFromUsername(username):
     
 def updateAllScores(problem):
     submissions = submissions_table.query(
-        IndexName = 'problemIndex4',
+        IndexName = 'problemIndex',
         KeyConditionExpression = Key('problemName').eq(problem),
         ProjectionExpression = 'username, totalScore',
         ScanIndexForward = False
@@ -139,7 +139,7 @@ def updateAllScores(problem):
 
 def updateAllStitchedScores(problem):
     submissions = submissions_table.query(
-        IndexName = 'problemIndex3',
+        IndexName = 'problemIndex',
         KeyConditionExpression = Key('problemName').eq(problem),
         ProjectionExpression = 'username, subtaskScores',
         ScanIndexForward = False

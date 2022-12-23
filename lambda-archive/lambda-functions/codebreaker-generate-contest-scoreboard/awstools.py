@@ -33,7 +33,7 @@ def getProblemInfo(problemName):
 
 def getSubmissionsListProblem(problem): # Problem
     response = submissions_table.query(
-        IndexName = 'problemIndex2',
+        IndexName = 'problemIndex',
         KeyConditionExpression=Key('problemName').eq(problem),
         ProjectionExpression = 'score, submissionTime, totalScore, username'
     )
