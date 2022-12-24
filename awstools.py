@@ -1136,7 +1136,7 @@ def getSubsPerDay():
     # HELPER FUNCTION THAT BINARY SEARCHES FOR LAST SUBMISSION OF DAY
     def findLastSubOfDay(date):
         low = 0 
-        high = 300000
+        high = 3000000
         while high > low:
             mid = int((low+high + 1)/2)
             submission = getSubmission(mid, False)
