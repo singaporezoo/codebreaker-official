@@ -166,8 +166,8 @@ def getTestcase(path):
 # GET ATTACHMENT IN PROBLEM VIEW PAGE
 def getAttachment(path):
     attachment = s3.get_object(Bucket=ATTACHMENTS_BUCKET_NAME, Key=path)
-    body = attachment['Body'].read().decode("utf-8")
-    return body
+    # No need to decode object because attachments are zip files
+    return attachment['Body']
 
 def uploadAttachments(attachments, s3path):
     s3.upload_fileobj(attachments, ATTACHMENTS_BUCKET_NAME, s3path, ExtraArgs={"ACL": 'public-read', "ContentType":attachments.content_type})
