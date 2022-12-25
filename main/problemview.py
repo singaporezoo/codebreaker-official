@@ -149,6 +149,11 @@ def problem(PROBLEM_NAME):
             mem.seek(0)
             return send_file(mem,as_attachment=True,attachment_filename=filename)
 
+        elif 'form_name' in result and result['form_name'] == 'download_attachment':
+            filename=f'{PROBLEM_NAME}.zip';
+            zipfile=awstools.getAttachment(filename)
+            return send_file(zipfile, as_attachment=True, attachment_filename=filename)
+
         # Checking for language
         language = 'C++ 17'
         if 'language' in result:

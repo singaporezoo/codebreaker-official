@@ -157,9 +157,16 @@ def getProblemInfo(problemName):
         return {'status':404}
     return problem_info[0]
 
+# ADMINS CAN DOWNLOAD TESTDATA IN PROBLEM VIEW PAGE
 def getTestcase(path):
     tcfile = s3.get_object(Bucket=TESTDATA_BUCKET_NAME, Key=path)
     body = tcfile['Body'].read().decode("utf-8")
+    return body
+
+# GET ATTACHMENT IN PROBLEM VIEW PAGE
+def getAttachment(path):
+    attachment = s3.get_object(Bucket=ATTACHMENTS_BUCKET_NAME, Key=path)
+    body = attachment['Body'].read().decode("utf-8")
     return body
 
 def uploadAttachments(attachments, s3path):
