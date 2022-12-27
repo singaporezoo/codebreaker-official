@@ -383,8 +383,9 @@ def getUserInfo(email):
             'email' : email,
             'role' : 'disabled',
             'username' : '',
-            'theme' : 'light',
+            'theme' : 'alien',
             'problemScores' : {},
+            'nation':''
         }
         users_table.put_item(Item = newUserInfo)
         return getUserInfo(email)
@@ -392,27 +393,18 @@ def getUserInfo(email):
     return user_info[0]
 
 def getUserInfoFromUsername(username):
-    scan_kwargs = {
-        'FilterExpression':Key('username').eq(username)
-    }
-    done = False
-    start_key = None
-    while not done:
-        if start_key:
-            scan_kwargs['ExclusiveStartKey']= start_key
-        response = users_table.scan(**scan_kwargs)
-        res = response.get('Items',[])
-        if len(res) > 0:
-            return res[0]
-        start_key = response.get('LastEvaluatedKey',None)
-        done = start_key is None
-
+    response = users_table.query(
+        IndexName = 'usernameIndex',
+        KeyConditionExpression=Key('username').eq(username),
+    )
+    items = response['Items']
+    if len(items) != 0: return items[0]
     placeHolder = {
         'email' : '',
         'school':'',
         'role':'',
         'nation': '',
-        'username':'',
+        'username':username,
         'problemScores':{},
     }
     return placeHolder
