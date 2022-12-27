@@ -95,3 +95,15 @@ label {
   pointer-events: none !important;
 }
 
+.scoreboard-ac {
+	color: #155724;
+	background-color: #d4edda;
+}
+.scoreboard-partial {
+	color: #856404;
+	background-color: #fff3cd;
+}
+.scoreboard-wa {
+	color: #721c24;
+	background-color: #f8d7da;
+}

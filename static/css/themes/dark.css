@@ -160,6 +160,19 @@ pre {
 	border-color: rgb(104, 18, 27);
 }
 
+.scoreboard-ac {
+	color: rgb(153, 230, 171);
+	background-color: rgb(26, 62, 41);
+}
+.scoreboard-partial {
+	color: rgb(251, 215, 112);
+	background-color: rgb(81, 62, 0);
+}
+.scoreboard-wa {
+	color: rgb(225, 134, 143);
+	background-color: rgb(67, 12, 17);
+}
+
 .btn-secondary {
 	background-color: #1d212f;
 	border-color: #212b33;

@@ -51,7 +51,16 @@
 				
 	
 				{% for problem in problemNames %}
-				<td scope="col"> {{scores[user.username+"+"+problem]}} </td>
+				<td
+				    {% set score = scores[user.username+"+"+problem]|int(-1) %}
+				    {% if score == 100 %}
+				    	class="scoreboard-ac"
+				    {% elif score > 0 %}
+				    	class="scoreboard-partial"
+				    {% elif score == 0 %}
+				    	class="scoreboard-wa"
+				    {% endif %}
+				    scope="col"> {{scores[user.username+"+"+problem]}} </td>
 				{% endfor %}
 				<td> {{user.totalScore}} </td>
 				<td> {{user.status}} </td>

@@ -78,12 +78,6 @@ def contest(contestId):
             startTime -= timedelta(hours = 100)
         startTime = startTime.strftime("%b %-d, %Y, %X")
 
-        # CHANGE THIS TO GIVE USER MEMBER ACCESS TO PROBLEM
-
-        for problem in problemInfo:
-            if problem['analysisVisible'] == False and userInfo != None:
-                awstools.grantContestUserAccess(problem["problemName"], userInfo['username'])
-
         if form.is_submitted():
             if now < start:
                 flash("Sorry, this contest hasn't started yet", "warning")
@@ -92,6 +86,11 @@ def contest(contestId):
                 flash("Your account is unfortunately disabled. If you just registered, please wait for an admin to enable your account.", "warning")
                 return redirect(f"/announcements")
                 
+            # CHANGE THIS TO GIVE USER MEMBER ACCESS TO PROBLEM
+            for problem in problemInfo:
+                if problem['analysisVisible'] == False and userInfo != None:
+                    awstools.grantContestUserAccess(problem["problemName"], userInfo['username'])
+
             awstools.addParticipation(contestId, username)
             return redirect(f"/contest/{contestId}")
 
