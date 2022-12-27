@@ -1,31 +1,27 @@
+import os
 import json
 import boto3
 from botocore.exceptions import ClientError
 from boto3.dynamodb.conditions import Key, Attr
+
+judgeName = os.environ['judgeName']
+stsclient = boto3.client('sts')
+accountId = stsclient.get_caller_identity()['Account'] # Gets account Id programatically
+
 s3=boto3.resource('s3')
 dynamodb = boto3.resource('dynamodb')
-problems_table = dynamodb.Table('codebreaker-problems')
-STATEMENTS = 'codebreaker-statements'
-CHECKERS = 'codebreaker-checkers'
-ATTACHMENTS = 'codebreaker-attachments'
-GRADERS = 'codebreaker-graders'
-testdata_bucket = s3.Bucket('codebreaker-testdata')
+problems_table = dynamodb.Table(f'{judgeName}-problems')
+
+STATEMENTS = f'{judgeName}-statements'
+CHECKERS = f'{judgeName}-checkers'
+ATTACHMENTS = f'{judgeName}-attachments'
+GRADERS = f'{judgeName}-graders'
+testdata_bucket = s3.Bucket(f'{judgeName}-testdata')
 lambda_client = boto3.client('lambda')
-
-'''
-Benchmark runtimes on problem 'magick' - time (memory)
-8969 (128)
-4197 (1780)
-4659 (1000)
-5004 (512)
-6337 (256)
-
-run on 512MB memory
-'''
 
 def updateCountLambda(problemName):
     lambda_input = {"problemName": problemName}
-    res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-update-testcaseCount', InvocationType='RequestResponse', Payload = json.dumps(lambda_input))
+    res = lambda_client.invoke(FunctionName = f'arn:aws:lambda:ap-southeast-1:{accountId}:function:{judgeName}-update-testcaseCount', InvocationType='RequestResponse', Payload = json.dumps(lambda_input))
 
 def verifyDependency(dependency,memo):
     ranges = dependency.split(',')
@@ -44,6 +40,7 @@ def verifyDependency(dependency,memo):
     return ans
 
 def lambda_handler(event, context):
+
     problemName = event['problemName']
     updateCountLambda(problemName)
     

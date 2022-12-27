@@ -1,9 +1,13 @@
-import boto3
+import os
 import json
+import boto3
 from boto3.dynamodb.conditions import Key, Attr
+
+judgeName = os.environ['judgeName']
+
 dynamodb = boto3.resource('dynamodb','ap-southeast-1')
-users_table=dynamodb.Table('codebreaker-users')
-problems_table = dynamodb.Table('codebreaker-problems')
+users_table=dynamodb.Table(f'{judgeName}-users')
+problems_table = dynamodb.Table(f'{judgeName}-problems')
 
 def getUsersTable():
 

@@ -4,8 +4,8 @@
 # Reconmend the problems based on that
 
 import json
-from lib import pearsonr
 import awstools
+from lib import pearsonr
 from pprint import pprint
 
 T = [0, 0, 0.4, 0.7, 0.75, 0.8, 1, 30]

@@ -1,15 +1,42 @@
 import json
-import boto3 
-s3 = boto3.client('s3')
-BUCKET_NAME = 'codebreaker-clarification-number'
-        
+import boto3
+import uuid
+
+from decimal import *
+dynamodb = boto3.resource('dynamodb')
+lambda_client = boto3.client('lambda')
+submissions_table = dynamodb.Table('codebreaker-submissions')
+
 def lambda_handler(event, context):
-    id = s3.get_object(Bucket=BUCKET_NAME,Key=f'clarificationNumber.txt')['Body'].read().decode('utf-8')
-    id = int(id)
-    with open("/tmp/clarificationNumber.txt",'w') as f:
-        f.write(str(id+1))
-    s3.upload_file('/tmp/clarificationNumber.txt',BUCKET_NAME,'clarificationNumber.txt')
-    return {
-        'statusCode': 200,
-        'clarificationId': id
-    }
+    submissionHash = uuid.uuid4()
+    subId = event["submissionId"]
+    testcaseNumber = event["testcaseNumber"]
+    MLE = float(event["memoryLimit"])
+    language = event["language"]
+    
+    response = None
+    if MLE <= 1024:
+        response = lambda_client.invoke(
+            FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-testcase-grader-2',
+            InvocationType='RequestResponse',
+            Payload = json.dumps(event)
+        )
+    else:
+        response = lambda_client.invoke(
+            FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-testcase-grader-2048',
+            InvocationType='RequestResponse',
+            Payload = json.dumps(event)
+        )
+        
+    result = json.loads(response['Payload'].read())
+    print(result)
+
+    result['score'] = Decimal(str(result['score']))
+    response = submissions_table.update_item(
+        Key = {'subId' : subId},
+        UpdateExpression = f'set verdicts[{testcaseNumber}] = :verdict, times[{testcaseNumber}] = :time, memories[{testcaseNumber}]=:memory,score[{testcaseNumber}]=:score,returnCodes[{testcaseNumber}]=:returnCode,#st [{testcaseNumber}]=:status',
+        ExpressionAttributeValues = {':verdict':result['verdict'],':time':Decimal(str(result['runtime'])), ':memory':Decimal(str(result['memory'])), ':score':result['score'], ':returnCode':result['returnCode'],':status':2},
+        ExpressionAttributeNames = {'#st':'status'}
+    )
+    
+    return result

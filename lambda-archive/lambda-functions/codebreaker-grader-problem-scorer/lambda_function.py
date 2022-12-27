@@ -149,12 +149,6 @@ def lambda_handler(event, context):
         elif regrade:
             awstools.updateScores(problemName, username)
     
-    print("RETURNING")
-    print(maxTime)
-    print(maxMemory)
-    print(subtaskScores)
-    print(totalScore)
-    
     return {
         "statusCode":200
     }
