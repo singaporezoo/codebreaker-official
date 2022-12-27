@@ -208,39 +208,36 @@
 					
 					{% if probleminfo['attachments'] == 1 %}
 					<form action="" method="post" class="form-group">
-					<div class="input-group mb-2">
-					<input type="hidden" name="form_name" value="download_attachment">
-					<input type="submit" value="Download Attachment" class="btn btn-secondary">
+						<div class="input-group mb-2">
+						<input type="hidden" name="form_name" value="download_attachment">
+						<input type="submit" value="Download Attachment" class="btn btn-secondary">
+					</form>
 					{%endif%}
 
 					{% if (userinfo.role == "superadmin") or (not contest and userinfo.role == "admin") or (contest and userinfo.username in users)%}
 
 					<form action="" method="post" class="form-group">
-					<div class="input-group mb-2">
-					<select type="select" name="tcin" placeholder="User ID" class="form-control mr-1">
-					{% for i in range(1,1+probleminfo['testcaseCount']) %}
-					<option value={{i}}>{{i}}</option>
-					{%endfor%}
-					</div>
-					<div class="input-group mb-2">
-					</select>
-						<input type="hidden" name="form_name" value="download_input">
-						<input type="submit" value="Download Input" class="btn btn-secondary">
-					</div>
+						<div class="input-group mb-2">
+							<select type="select" name="tcin" placeholder="User ID" class="form-control mr-1">
+								{% for i in range(1,1+probleminfo['testcaseCount']) %}
+								<option value={{i}}>{{i}}</option>
+								{%endfor%}
+							</select>
+							<input type="hidden" name="form_name" value="download_input">
+							<input type="submit" value="Download Input" class="btn btn-secondary">
+						</div>
 
 					</form>
-						<form action="" method="post" class="form-group">
-					<div class="input-group">
-					<select type="select" name="tcout" placeholder="User ID" class="form-control mr-1">
-					{% for i in range(1,1+probleminfo['testcaseCount']) %}
-					<option value={{i}}>{{i}}</option>
-					{%endfor%}
-					</div>
-					<div class="input-group">
-					</select>
-								<input type="hidden" name="form_name" value="download_output">
-								<input type="submit" value="Download Output" class="btn btn-secondary">
-					</div>
+					<form action="" method="post" class="form-group">
+						<div class="input-group mb-2">
+							<select type="select" name="tcout" placeholder="User ID" class="form-control mr-1">
+								{% for i in range(1,1+probleminfo['testcaseCount']) %}
+								<option value={{i}}>{{i}}</option>
+								{%endfor%}
+							</select>
+							<input type="hidden" name="form_name" value="download_output">
+							<input type="submit" value="Download Output" class="btn btn-secondary">
+						</div>
 					</form>
 					{%endif%}
 				</div>
