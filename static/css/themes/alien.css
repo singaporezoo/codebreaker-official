@@ -12,7 +12,7 @@ html, body {
 }
 
 .table .thead-dark th {
-    background-color: #2596be !important;
+    background-color: #1d7899 !important;
 }
 
 .table .thead-dark th:hover, .table .thead-dark th:focus {
@@ -151,11 +151,11 @@ a:hover {
 
 .scoreboard-ac {
 	color: #155724;
-	background-color: #d4edda;
+	background-color: #d1e6d6;
 }
 .scoreboard-partial {
 	color: #856404;
-	background-color: #fff3cd;
+	background-color: #fff5d9;
 }
 .scoreboard-wa {
 	color: #721c24;
