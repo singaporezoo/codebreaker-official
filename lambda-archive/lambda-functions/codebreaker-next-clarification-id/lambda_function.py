@@ -1,7 +1,10 @@
+import os
 import json
 import boto3 
 s3 = boto3.client('s3')
-BUCKET_NAME = 'codebreaker-clarification-number'
+
+judgeName = os.environ['judgeName']
+BUCKET_NAME = f'{judgeName}-clarification-number'
         
 def lambda_handler(event, context):
     id = s3.get_object(Bucket=BUCKET_NAME,Key=f'clarificationNumber.txt')['Body'].read().decode('utf-8')

@@ -98,11 +98,12 @@ def lambda_handler(event,context):
 				if results[submissionUsername][problem][subtask] == 100:
 					continue # Full score of subtask already
 				subtaskRanges = problemInfo['subtaskDependency'][subtask]
+				subtaskScoreValue = problemInfo['subtaskScores'][subtask]
 				subtaskScore = 100
 				for r in subtaskRanges:
 					for tc in range(r[0],r[1]+1):
 						subtaskScore = min(subtaskScore,scores[tc])
-				if results[submissionUsername][problem][subtask] < subtaskScore:
+				if results[submissionUsername][problem][subtask] < subtaskScore and subtaskScoreValue != 0:
 					results[submissionUsername][problem][subtask] = subtaskScore
 					lastScoreChange[submissionUsername] = max(lastScoreChange[submissionUsername],submissionTime)
 

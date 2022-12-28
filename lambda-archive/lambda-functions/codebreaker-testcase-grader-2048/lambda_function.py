@@ -1,19 +1,18 @@
 import os
-import sys
-import json
 import boto3
 import resource
 import subprocess
-from random import randrange
-
 import wrapper
-from weird import Funny
 from decimal import *
-from time import time
 from uuid import uuid4
 from math import ceil
 from cmscmp import white_diff_step
+
+judgeName = os.environ['judgeName']
 s3 = boto3.resource('s3')
+submissions_bucket = s3.Bucket("codebreaker-submissions")
+testdata_bucket = s3.Bucket("codebreaker-testdata")
+checkers_bucket = s3.Bucket("codebreaker-checkers")
 
 def limit_memory(maxsize): 
     soft, hard = resource.getrlimit(resource.RLIMIT_AS) 
@@ -42,14 +41,14 @@ def lambda_handler(event, context):
         CODE_FILE = "code"
 
         binaryPath = f"compiled/{subId}"
-        s3.Bucket("codebreaker-submissions").download_file(binaryPath,CODE_FILE)
+        submissions_bucket.download_file(binaryPath,CODE_FILE)
     elif language == 'py':
         CODE_FILE = "code.py"
         codePath = f"source/{subId}.py"
-        s3.Bucket("codebreaker-submissions").download_file(codePath,CODE_FILE)
+        submissions_bucket.download_file(codePath,CODE_FILE)
     
     inputPath = problemName + '/' + str(testcaseNumber) + '.in'
-    s3.Bucket("codebreaker-testdata").download_file(inputPath,INPUT_FILE)
+    testdata_bucket.download_file(inputPath,INPUT_FILE)
     subprocess.run(f"chmod +x {CODE_FILE}", shell=True)
 
     info = resource.getrusage(resource.RUSAGE_CHILDREN)
@@ -76,7 +75,7 @@ def lambda_handler(event, context):
         subprocess.run("rm -rf /tmp/*",shell=True)
         
         return result
-        
+    
     dum = process.stdout.split()
     returnCode = int(dum[0])
     userTime = float(dum[1])
@@ -113,7 +112,7 @@ def lambda_handler(event, context):
             else:
                 result['verdict'] = 'PS'
         else:
-            s3.Bucket("codebreaker-checkers").download_file(f"compiled/{problemName}","checker")
+            checkers_bucket.download_file(f"compiled/{problemName}","checker")
             subprocess.run("chmod +x checker", shell=True)
             cmd = cmd= f"ulimit -s unlimited; ./checker {INPUT_FILE} comparison_file {OUTPUT_FILE}" # run cpp file 
             try:
@@ -146,7 +145,6 @@ def lambda_handler(event, context):
                     }
                 elif s == "" and err != "":
                     result = {
-                        "err": err,
                         "verdict": "WA",
                         "score": 0,
                         "runtime": 0 , # runtime/s
@@ -185,7 +183,5 @@ def lambda_handler(event, context):
     result['runtime'] = round(result['runtime'],3)
     result['memory'] = round(result['memory'],1)
     subprocess.run("rm -rf /tmp/*",shell=True)
-    
-    result = Funny(result,problemName,TLE)
 
     return result

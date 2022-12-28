@@ -39,3 +39,5 @@ def grade(allocatedTime, allocatedMemory, INPUT_FILE, CODE_FILE, language):
     print(returnCode)
     print(userTime)
     print(getMem())
+    # print(stdout)
+    # print(stderr)

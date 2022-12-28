@@ -1,20 +1,15 @@
+import os
 import boto3
-import json
-import subprocess
-import time
-import random
 from pprint import pprint
-from datetime import datetime, timedelta
-from botocore.exceptions import ClientError
-from botocore.client import Config
 from boto3.dynamodb.conditions import Key, Attr
 
+judgeName = os.environ['judgeName']
 s3 = boto3.resource('s3')
 dynamodb = boto3.resource('dynamodb')
-submissions_table = dynamodb.Table('codebreaker-submissions')
-contests_table = dynamodb.Table('codebreaker-contests')
-problems_table = dynamodb.Table('codebreaker-problems')
-SCOREBOARDS_BUCKET_NAME = 'codebreaker-contest-static-scoreboards'
+submissions_table = dynamodb.Table(f'{judgeName}-submissions')
+contests_table = dynamodb.Table(f'{judgeName}-contests')
+problems_table = dynamodb.Table(f'{judgeName}-problems')
+SCOREBOARDS_BUCKET_NAME = f'{judgeName}-contest-static-scoreboards'
 
 def getProblemInfo(problemName):
     response= problems_table.query(
@@ -38,25 +33,6 @@ def getSubmissionsListProblem(problem): # Problem
         ProjectionExpression = 'score, submissionTime, totalScore, username'
     )
     return response['Items']
-
-def getSubmission(subId, full=True):
-    try:
-        if full:
-            response= submissions_table.get_item( Key={ "subId": subId } )
-        else:
-            response = submissions_table.get_item( 
-                Key={"subId": subId },
-                ProjectionExpression = 'subId, maxMemory, maxTime, problemName, submissionTime, totalScore, username'
-            )
-        subDetails = response['Item']
-    
-        cppfile = s3.get_object(Bucket=CODE_BUCKET_NAME, Key=f'source/{subId}.cpp')
-        code = cppfile['Body'].read().decode("utf-8")
-        subDetails['code'] = code
-
-        return subDetails
-    except KeyError:
-        return None
 
 def getContestInfo(contestId):
     response= contests_table.query(

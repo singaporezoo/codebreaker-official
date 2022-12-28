@@ -1,9 +1,12 @@
+import os
 import json
 import boto3 # Amazon S3 client library
+
+judgeName = os.environ['judgeName']
 s3 = boto3.resource('s3')
 dynamodb = boto3.resource('dynamodb')
-problems_table = dynamodb.Table('codebreaker-problems')
-bucket = s3.Bucket('codebreaker-testdata')
+problems_table = dynamodb.Table(f'{judgeName}-problems')
+bucket = s3.Bucket(f'{judgeName}-testdata')
 
 def lambda_handler(event, context):
     problemName = event['problemName']

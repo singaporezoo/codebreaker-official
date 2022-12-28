@@ -449,7 +449,7 @@ def editUserRole(info,newrole,changedby):
 
 def getNextSubmissionId():
     res = lambda_client.invoke(
-        FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-submission-queue-response',
+        FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-next-submission-id',
         InvocationType = 'RequestResponse'
     )
     submission_index = json.load(res["Payload"])

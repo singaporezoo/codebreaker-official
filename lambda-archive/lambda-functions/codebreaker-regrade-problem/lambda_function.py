@@ -1,42 +1,52 @@
+import time
 import json
-import boto3
-import uuid
+import awstools
 
-from decimal import *
-dynamodb = boto3.resource('dynamodb')
-lambda_client = boto3.client('lambda')
-submissions_table = dynamodb.Table('codebreaker-submissions')
-
-def lambda_handler(event, context):
-    submissionHash = uuid.uuid4()
-    subId = event["submissionId"]
-    testcaseNumber = event["testcaseNumber"]
-    MLE = float(event["memoryLimit"])
-    language = event["language"]
+def regradeProblem(problemName, regradeType = 'NORMAL',stitch=False):
+    # Regrade type can be NORMAL, AC, NONZERO
+    submissions = awstools.getSubmissionsToProblem(problemName)
+    problemInfo = awstools.getProblemInfo(problemName)
     
-    response = None
-    if MLE <= 1024:
-        response = lambda_client.invoke(
-            FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-testcase-grader-2',
-            InvocationType='RequestResponse',
-            Payload = json.dumps(event)
-        )
-    else:
-        response = lambda_client.invoke(
-            FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-testcase-grader-2048',
-            InvocationType='RequestResponse',
-            Payload = json.dumps(event)
+    for i in submissions:
+        subId = int(i['subId'])
+        submissionInfo = awstools.getSubmission(subId)
+        if regradeType == 'AC' and submissionInfo['totalScore'] != 100:
+            continue
+        if regradeType == 'NONZERO' and submissionInfo['totalScore'] == 0:
+            continue
+        print(f"REGRADE {subId}")
+        
+        awstools.gradeSubmission(
+            problemName=problemName,
+            submissionId=submissionInfo['subId'],
+            username=submissionInfo['username'],
+            submissionTime=submissionInfo['submissionTime'],
+            regradeall=True,
+            language=submissionInfo['language'],
+            problemType=problemInfo['problem_type'],
+            stitch=stitch
         )
         
-    result = json.loads(response['Payload'].read())
-    print(result)
-
-    result['score'] = Decimal(str(result['score']))
-    response = submissions_table.update_item(
-        Key = {'subId' : subId},
-        UpdateExpression = f'set verdicts[{testcaseNumber}] = :verdict, times[{testcaseNumber}] = :time, memories[{testcaseNumber}]=:memory,score[{testcaseNumber}]=:score,returnCodes[{testcaseNumber}]=:returnCode,#st [{testcaseNumber}]=:status',
-        ExpressionAttributeValues = {':verdict':result['verdict'],':time':Decimal(str(result['runtime'])), ':memory':Decimal(str(result['memory'])), ':score':result['score'], ':returnCode':result['returnCode'],':status':2},
-        ExpressionAttributeNames = {'#st':'status'}
-    )
     
-    return result
+def lambda_handler(event, context):
+    problemName = event['problemName']
+    regradeType = event['regradeType']
+    
+    stitch = event['stitch']
+    regradeProblem(problemName=problemName,regradeType=regradeType,stitch=stitch)
+    # GIVE TIME FOR ALL PROBLEMS TO GRADE
+    time.sleep(30)
+    
+    
+    if stitch:
+        awstools.updateAllStitchedScores(problemName)
+    else:
+        awstools.updateAllScores(problemName)
+''' 
+TEST EVENT
+{
+  "problemName": "wheelofmisfortune",
+  "type": "NORMAL",
+  "stitch": false
+}
+'''
