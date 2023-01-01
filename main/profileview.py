@@ -6,7 +6,7 @@ def profile(username):
     profileinfo = awstools.getUserInfoFromUsername(username)
     superhidden = awstools.getSuperhiddenProblems()
 
-    if profileinfo['username'] == "":
+    if profileinfo == None or profileinfo['username'] == "":
         return "Sorry this user doesn't exist"
 
     if 'nation' not in profileinfo.keys():

@@ -117,7 +117,7 @@ def authorize():
     session['profile'] = user_info
     session.permanent = True  # make the session permanant so it keeps existing after broweser gets closed
     
-    newUser = (awstools.getCurrentUserInfo()['username'] == '')
+    newUser = (awstools.getCurrentUserInfo()['username'] in ['', 'placeholder'])
     if newUser:
         return redirect('newuser')
     else:

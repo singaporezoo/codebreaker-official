@@ -382,7 +382,7 @@ def getUserInfo(email):
         newUserInfo = {
             'email' : email,
             'role' : 'disabled',
-            'username' : '',
+            'username' : 'placeholder',
             'theme' : 'alien',
             'problemScores' : {},
             'nation':''
@@ -399,15 +399,7 @@ def getUserInfoFromUsername(username):
     )
     items = response['Items']
     if len(items) != 0: return items[0]
-    placeHolder = {
-        'email' : '',
-        'school':'',
-        'role':'',
-        'nation': '',
-        'username':username,
-        'problemScores':{},
-    }
-    return placeHolder
+    return None
 
 def getCurrentUserInfo():
     try:
