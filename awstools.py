@@ -170,7 +170,7 @@ def getAttachment(path):
     return attachment['Body']
 
 def uploadAttachments(attachments, s3path):
-    s3.upload_fileobj(attachments, ATTACHMENTS_BUCKET_NAME, s3path, ExtraArgs={"ACL": 'public-read', "ContentType":attachments.content_type})
+    s3.upload_fileobj(attachments, ATTACHMENTS_BUCKET_NAME, s3path, ExtraArgs={"ContentType":attachments.content_type})
 
 def getSuperhiddenProblems():
     response = misc_table.query(
