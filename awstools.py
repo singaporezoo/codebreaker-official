@@ -40,6 +40,7 @@ announce_table = dynamodb.Table('codebreaker-announcements')
 clarifications_table = dynamodb.Table('codebreaker-clarifications')
 end_contest_table = dynamodb.Table('codebreaker-end-contest')
 misc_table = dynamodb.Table('codebreaker-misc')
+counters_table = dynamodb.Table(f'codebreaker-global-counters')
 
 themes = ['light', 'dark', 'pink', 'brown', 'orange', 'alien', 'custom', 'custom-dark']
 
@@ -154,7 +155,7 @@ def getProblemInfo(problemName):
     )
     problem_info=response['Items']
     if len(problem_info) != 1:
-        return {'status':404}
+        return None
     return problem_info[0]
 
 # ADMINS CAN DOWNLOAD TESTDATA IN PROBLEM VIEW PAGE
@@ -440,13 +441,26 @@ def editUserRole(info,newrole,changedby):
     sendemail.sendEmail(info,emailType,changedby,newrole)
 
 def getNextSubmissionId():
-    res = lambda_client.invoke(
-        FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-next-submission-id',
-        InvocationType = 'RequestResponse'
+    resp = counters_table.update_item(
+	Key = {'counterId': 'submissionId'},
+	UpdateExpression = 'ADD #a :x',
+	ExpressionAttributeNames = {'#a' : 'value'},
+	ExpressionAttributeValues = {':x' : 1},
+	ReturnValues = 'UPDATED_NEW'
     )
-    submission_index = json.load(res["Payload"])
-    return submission_index['submissionId']
+    subId = int(resp['Attributes']['value'])
+    return subId
 
+def getNextClarificationId():
+    resp = counters_table.update_item(
+	Key = {'counterId': 'clarificationId'},
+	UpdateExpression = 'ADD #a :x',
+	ExpressionAttributeNames = {'#a' : 'value'},
+	ExpressionAttributeValues = {':x' : 1},
+	ReturnValues = 'UPDATED_NEW'
+    )
+    clarificationId = int(resp['Attributes']['value'])
+    return clarificationId
 
 def getSubmissionsList(pageNo, problem, username): #this is for all submissions only
     if username == None and problem == None:
@@ -501,9 +515,12 @@ def getSubmissionsToProblem(problemName):
     return response['Items']
 
 def getNumberOfSubmissions():
-    subId = s3.get_object(Bucket=SUBMISSION_NUMBER_BUCKET_NAME,Key=f'submissionNumber.txt')['Body'].read().decode('utf-8')
-    subId = int(subId)
-    return subId-1
+    resp = counters_table.query(
+        KeyConditionExpression = Key('counterId').eq('submissionId')
+    )
+    item = resp['Items'][0]
+    subId = int(item['value'])
+    return subId
 
 def createProblemWithId(problem_id):
     info = {}
@@ -1046,13 +1063,6 @@ def updateCommunicationFileNames(problemName, info):
         UpdateExpression = f'set nameA=:a, nameB=:b',
         ExpressionAttributeValues = {':a':info['nameA'], ':b':info['nameB']}
     )
-
-def getNextClarificationId():
-    res = lambda_client.invoke(
-        FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-next-clarification-id',
-        InvocationType = 'RequestResponse'
-    )
-    return json.load(res['Payload'])['clarificationId']
 
 def updateClarificationInfo(clarificationId, info):
     clarifications_table.update_item(

@@ -30,7 +30,7 @@
 					<!-- Nav tabs -->
 					<ul class="nav nav-tabs" role="tablist" id="problem-all-tabs">
 						<li class="nav-item">
-							<a class="nav-link {{"active" if compileError == "" else ""}}" data-toggle="tab" href="#statement">Statement</a>
+							<a class="nav-link active" data-toggle="tab" href="#statement">Statement</a>
 						</li>
 						{%if probleminfo.problem_type == 'Communication'%}
 						<li class="nav-item">
@@ -55,12 +55,6 @@
 						</li>
 						{% endif %}
 						
-						{% if compileError != "" %}
-						<li class="nav-item">
-							<a class="nav-link active" data-toggle="tab" href="#compileError">Compile Errors</a>
-						</li>
-						{% endif %}
-
 						{% if userinfo.role == "admin" or userinfo.role == "superadmin" %}
 						<li class="nav-item">
 							<a class="nav-link" href="/admin/editproblem/{{probleminfo.problemName}}">Edit</a>
@@ -70,7 +64,7 @@
 					</ul>
 						<!-- Tab panes -->
 						<div class="tab-content" id="problem-tab-content">
-							<div id="statement" class="container tab-pane {{"active" if compileError == "" else "fade"}}"><br>
+							<div id="statement" class="container tab-pane active "><br>
 								<h3> <b> {{probleminfo.title}}</b> </h3>
 								{{statementHTML | safe}}
 							</div>
@@ -126,12 +120,6 @@
 															{% endif %}
 							</div>
 								
-							<div id="compileError" class="container tab-pane {{"fade" if compileError == "" else "active"}}">
-								<br>
-								<h3> <b> Compile Errors </b> </h3>
-								<pre>{{compileError | safe}}</pre>
-							</div>
-					
 						</div>
 					</div>
 			</div>

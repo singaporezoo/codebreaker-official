@@ -182,8 +182,8 @@ if __name__ == '__main__':
             serve(app, host='0.0.0.0', port=5000, url_scheme='https', threads = 16)
         else:
             print("Deploy with contest mode")
-            socketio.run(app, host='0.0.0.0')
-            #serve(app, host='0.0.0.0', port=5000, url_scheme='https', threads = 16)
+            #socketio.run(app, host='0.0.0.0', use_reloader=False)
+            serve(app, host='0.0.0.0', port=5000, url_scheme='https', threads = 100)
             socketio.run(app, host='0.0.0.0', port=5000, certfile='../codebreaker_xyz.crt', keyfile='../codebreaker_xyz.key')
     else:
         print("DEVELOP MODE")

@@ -205,7 +205,7 @@ def submission(subId):
                 problemType = problem_info['problem_type']
             )
 
-            time.sleep(3)
+            time.sleep(2)
             return redirect(f"/submission/{subId}")
         
         else:
@@ -334,7 +334,7 @@ def submission(subId):
                 problemType = problem_info['problem_type']
             )
 
-            time.sleep(3)
+            time.sleep(2)
             return redirect(f"/submission/{newSubId}")
 
     '''END RESUBMISSION'''

@@ -47,14 +47,13 @@ def problem(PROBLEM_NAME):
     t = 0
     t = time.time()
     form = SubmitForm()
-    compileError = ""
-    if "compileError" in session:
-        compileError = session["compileError"]
-        session.pop("compileError")
-
     form.language.choices = list(languages.keys())
         
     problem_info = awstools.getProblemInfo(PROBLEM_NAME)
+    if problem_info == None:
+        flash('Problem does not exist!', 'warning')
+        return redirect(f"/problems")
+    
     if (type(problem_info) is str):
         return 'Sorry, this problem does not exist'
     problem_info['testcaseCount'] = int(problem_info['testcaseCount'])
@@ -278,8 +277,8 @@ def problem(PROBLEM_NAME):
             problemType = problem_info['problem_type']
         )
 
-        time.sleep(3)
+        time.sleep(2)
         return redirect(f"/submission/{subId}")
 
-    return render_template('problem.html', form=form, probleminfo=problem_info, userinfo = awstools.getCurrentUserInfo(), statementHTML = statementHTML, compileError=compileError, contest=contestmode.contest(), editorials = editorials, users=contestmode.allowedusers(), remsubs = remsubs, cppref=contestmode.cppref(), socket=contestmode.socket())
+    return render_template('problem.html', form=form, probleminfo=problem_info, userinfo = awstools.getCurrentUserInfo(), statementHTML = statementHTML, contest=contestmode.contest(), editorials = editorials, users=contestmode.allowedusers(), remsubs = remsubs, cppref=contestmode.cppref(), socket=contestmode.socket())
     
