@@ -1,0 +1,97 @@
+{% extends "admin_base.html" %}
+{% block title %} Upload Testdata {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% block content %}
+
+<div id="app" class="container">
+  <h1> Upload testdata </h1>
+  <h4> Problem Name: {{probleminfo.problemName}} </h4>
+  <input type="file" name="name" multiple="multiple" id="uploadFiles"><br><br>
+  <br>
+  <input type="submit" value="Submit" onClick="upload(); return false">
+</div>
+
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1292.0.min.js"></script>
+<!-- <script src={{url_for('static',filename='js/upload_testdata.js')}}></script> -->
+
+<script>
+  var keys = JSON.parse({{ stsKeys | tojson }});
+  var testdataBucketName = "codebreaker-testdata";
+  var bucketRegion = "ap-southeast-1";
+  var accessKeyId = keys.accessKeyId;
+  var secretAccessKey = keys.secretAccessKey;
+  var sessionToken = keys.sessionToken;
+  var problemName = {{ probleminfo.problemName | tojson }};
+
+  AWS.config = new AWS.Config();
+  AWS.config.accessKeyId = accessKeyId;
+  AWS.config.secretAccessKey = secretAccessKey;
+  AWS.config.sessionToken = sessionToken;
+  AWS.config.region = bucketRegion;
+
+  console.log(accessKeyId)
+  console.log(secretAccessKey)
+  console.log(sessionToken)
+
+  window.onload = () => {
+    $('#myProgress').hide();
+  }
+
+  var s3 = new AWS.S3({
+    apiVersion: "2006-03-01",
+    config: AWS.config
+  });
+
+  upload = () => {
+
+    var files = document.getElementById("uploadFiles").files;
+
+    if (!files.length) {
+      return alert("Please choose a file to upload first.");
+    }
+
+    $('#myProgress').show();
+
+    for (var i = 0; i < files.length; i++){
+      var file = files[i];
+      var fileName = file.name;
+      var Key =  problemName + "/" + fileName
+
+      // Use S3 ManagedUpload class as it supports multipart uploads
+      var upload = new AWS.S3.ManagedUpload({
+        params: {
+          Bucket: testdataBucketName,
+          Key: Key,
+          Body: file
+        }
+      });
+
+      var promise = upload.promise();
+
+      promise.then(
+      function(data) {
+        console.log("Done with " + data)
+      },
+      function(err) {
+        console.log(err)
+      }
+    );
+  }
+}
+</script>
+
+<style> 
+#myProgress {
+  width: 100%;
+  background-color: grey;
+}
+
+#myBar {
+  width: 1%;
+  height: 30px;
+  background-color: green;
+}
+</style>
+
+{% endblock %}

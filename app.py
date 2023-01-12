@@ -55,6 +55,7 @@ app.add_url_rule('/admin/editproblem/<problem_id>', view_func = editproblemview.
 app.add_url_rule('/admin/editcontests',view_func=editcontestlistview.editcontestlist, methods=['GET', 'POST'])
 app.add_url_rule('/admin/editcontest/<contestId>', view_func = editcontestview.editcontest, methods = ['GET', 'POST'])
 app.add_url_rule('/rankings', view_func = rankingsview.rankings)
+app.add_url_rule('/admin/uploadtestdata/<problemId>', view_func = uploadtestdataview.uploadtestdata, methods = ['GET'])
 app.add_url_rule('/admin/editcontestproblems',view_func=editcontestview.editcontestproblems, methods = ['POST'])
 app.add_url_rule('/admin/editcontestgroupcontests',view_func=editcontestgroupview.editcontestgroupcontests, methods = ['POST'])
 app.add_url_rule('/admin/editcontestgroupgroups',view_func=editcontestgroupview.editcontestgroupgroups,methods=['POST'])
