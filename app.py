@@ -14,7 +14,7 @@ from password import FLASK_SECRET_KEY, GOOGLE_CLIENT_SECRET
 from pytz import utc
 
 from main import problemlistview, submissionview, newuserview, profileview, submissionlistview, contestview, contestlistview, scoreboardview, credits, rankingsview, contestgroupview, editprofileview, problemview, announcelistview, announceview, defaultview, clarificationsview, homeview
-from admin import adminview, editproblemlistview, editusersview, editproblemview, editcontestlistview, editcontestview, editannouncelistview, editannounceview, editcontestgroupview, editclarificationsview, viewsubmissions
+from admin import adminview, editproblemlistview, editusersview, editproblemview, editcontestlistview, editcontestview, editannouncelistview, editannounceview, editcontestgroupview, editclarificationsview, viewsubmissions, uploadtestdataview
 
 import awstools #awstools.py contains helper functions for AWS reading and writing to S3 and DB.
 import contestmode

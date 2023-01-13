@@ -758,8 +758,11 @@ def findLength(table, primaryKey):
     return ans
 
 def getSubmissionId():
-    subId = s3.get_object(Bucket='codebreaker-submission-number',Key=f'submissionNumber.txt')['Body'].read().decode('utf-8')
-    subId = int(subId)
+    resp = counters_table.query(
+        KeyConditionExpression = Key('counterId').eq('submissionId')
+    )
+    print(resp)
+    subId = int(resp['Items'][0]['value'])
     subId = 1000*round(subId/1000)
     return subId
 

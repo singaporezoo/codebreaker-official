@@ -14,7 +14,7 @@ def uploadtestdata(problemId):
 		flash ('You are not authorised to view this resource!', 'danger')
 		return redirect('/')
 
-	credentials = awstools.sts.getTokens(problemId)
+	credentials = sts.getTokens(problemId)
 	credentials = json.dumps(credentials)
 
 	return render_template('uploadtestdata.html', userinfo=userInfo, probleminfo=problemInfo, stsKeys=credentials, stx="fdcndsi")

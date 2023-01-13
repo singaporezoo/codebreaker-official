@@ -56,6 +56,7 @@ def createRole(problemName):
 		return arn
 
 	except ClientError as e:
+		print(e)
 		if e.response['Error']['Code'] == 'EntityAlreadyExists':
 			resp = iam_client.get_role(RoleName=roleName)
 			arn = resp['Role']['Arn']
