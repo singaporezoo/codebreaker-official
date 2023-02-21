@@ -1,4 +1,4 @@
-import awstools, sts
+import awstools
 import json
 from flask import Flask, render_template, request, url_for, redirect, flash, session, get_flashed_messages, make_response, send_file
 
@@ -14,7 +14,7 @@ def uploadtestdata(problemId):
 		flash ('You are not authorised to view this resource!', 'danger')
 		return redirect('/')
 
-	credentials = sts.getTokens(problemId)
+	credentials = awstools.getTokens(problemId)
 	credentials = json.dumps(credentials)
 
-	return render_template('uploadtestdata.html', userinfo=userInfo, probleminfo=problemInfo, stsKeys=credentials, stx="fdcndsi")
+	return render_template('uploadtestdata.html', userinfo=userInfo, probleminfo=problemInfo, stsKeys=credentials)

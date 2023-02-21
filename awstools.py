@@ -15,11 +15,14 @@ import contestmode
 import os
 import cloudflare
 
+judgeName = 'codebreaker'
 s3 = boto3.client('s3','ap-southeast-1')
 s3_resource = boto3.resource('s3')
 dynamodb = boto3.resource('dynamodb')
 lambda_client = boto3.client('lambda')
 event_client = boto3.client('events')
+iam_client = boto3.client('iam')
+sts_client = boto3.client('sts')
 SFclient = boto3.client('stepfunctions')
 
 CODE_BUCKET_NAME = 'codebreaker-submissions'
@@ -1245,7 +1248,80 @@ def regradeProblem(problemName, regradeType = 'NORMAL'):
         'stitch': stitch
     }
 
-    res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-regrade-problem', InvocationType='Event', Payload = json.dumps(lambda_input))    
+    res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-regrade-problem', InvocationType='Event', Payload = json.dumps(lambda_input))   
+
+def createRole(problemName):
+
+    roleName = f'{judgeName}-testdata-{problemName}-role'
+
+    policyDocument = {
+        'Version':'2012-10-17', 
+        'Statement': [{ 
+            'Sid': 'AllowAllS3ActionsInUserFolder', 
+            'Effect': 'Allow', 
+            'Action': ['s3:*'], 
+            'Resource': [f'arn:aws:s3:::{judgeName}-testdata/{problemName}/*'] 
+       }] 
+    }
+
+    assumeRolePolicyDocument = {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Principal": {
+                    "AWS": [
+                        "arn:aws:iam::{accountId}:role/ec2main",
+                        "arn:aws:iam::{accountId}:root"
+                    ] # Allow 
+                },
+                "Action": "sts:AssumeRole",
+                "Condition": {}
+            }
+        ]
+    }
+
+    try:
+        resp = iam_client.create_role(
+            RoleName = roleName,
+            AssumeRolePolicyDocument = json.dumps(assumeRolePolicyDocument),
+            Description = f"Role that grants admins permission to upload testdata to {problemName}",
+            MaxSessionDuration = 3600
+        )
+
+        sleep(5)
+
+        arn = resp['Role']['Arn']
+
+        iam_client.put_role_policy(
+            RoleName=roleName,
+            PolicyName='S3AccessPolicy',
+            PolicyDocument=json.dumps(policyDocument)
+        )
+
+        return arn
+
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'EntityAlreadyExists':
+            resp = iam_client.get_role(RoleName=roleName)
+            arn = resp['Role']['Arn']
+            return arn
+        else:
+            return ''
+
+def getTokens(problemName):
+    arn = createRole(problemName)
+    
+    resp = sts_client.assume_role(RoleArn=arn,RoleSessionName="Testing",DurationSeconds=1800)
+    accessKey = resp['Credentials']['AccessKeyId']
+    secretAccessKey = resp['Credentials']['SecretAccessKey']
+    sessionToken = resp['Credentials']['SessionToken']
+
+    return {
+        'accessKeyId': accessKey,
+        'secretAccessKey': secretAccessKey,
+        'sessionToken': sessionToken
+    }
 
 if __name__ == '__main__':
     # PLEASE KEEP THIS AT THE BOTTOM

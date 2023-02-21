@@ -289,16 +289,9 @@
 	<hr class="hr-text" data-content="">
 	<br>
 	<h2>Testcases and Subtasks</h2>
-	<button type="button" onclick="syncTestcases()" class="btn btn-secondary mb-2">Sync testcases</button>
-        <form id="syncTC" action="" method="post" class="form-group">
-                <input type="hidden" name="form_name" value="sync_testcases">
-        </form>
-	<form action="" method="post" class="form-group">
-                <input type="hidden" name="form_name" value="update_count">
-                <input type="submit" value="Update Count" class="btn btn-secondary mb-2">
-        </form>
-	<p>There are {{info['testcaseCount']}} test cases on the judge right now.</p>
+	<a class="btn btn-secondary" href = {{ "/admin/uploadtestdata/" + info['problemName'] }} target="_blank"> Upload Testdata </a>
 
+	<br>
 	<form action="" method="post" class="form-group">
 		<input type="hidden" name="form_name" value="add_subtask">
 		<input type="submit" value="Add Subtask" class="btn btn-secondary mb-2">
