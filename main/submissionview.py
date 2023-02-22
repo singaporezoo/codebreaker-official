@@ -40,6 +40,7 @@ def submission(subId):
 
     subtaskScores = [fixFloat(i) for i in subDetails['subtaskScores']]
     scores = [fixFloat(i) for i in subDetails["score"]]
+    returnCodes = [fixFloat(i) for i in subDetails["returnCodes"]]
     language = subDetails['language']
 
     problemName = subDetails['problemName']
@@ -150,8 +151,8 @@ def submission(subId):
                 elif not fullFeedback and nonAC:
                     detail['testcases'].append({'score' : '-', 'verdict' :'N/A', 'time': 'N/A', 'memory': 'N/A'})
                 else:
-                    if contest and "RTE" in verdicts[ind]:
-                        verdicts[ind] = "RTE"
+                    if "RTE" in verdicts[ind]:
+                        verdicts[ind] = f"RTE({returnCodes[ind]})"
                     if scores[ind] == 0:
                         nonAC = True # Still continue to show feedback for partial scoring
                     detail['testcases'].append({'score' : scores[ind], 'verdict' : verdicts[ind], 'time': times[ind], 'memory': memories[ind]})
