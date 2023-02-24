@@ -1250,6 +1250,7 @@ def regradeProblem(problemName, regradeType = 'NORMAL'):
 
     res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-regrade-problem', InvocationType='Event', Payload = json.dumps(lambda_input))   
 
+accountId = '354145626860'
 def createRole(problemName):
 
     roleName = f'{judgeName}-testdata-{problemName}-role'
@@ -1271,8 +1272,8 @@ def createRole(problemName):
                 "Effect": "Allow",
                 "Principal": {
                     "AWS": [
-                        "arn:aws:iam::{accountId}:role/ec2main",
-                        "arn:aws:iam::{accountId}:root"
+                        f"arn:aws:iam::{accountId}:role/ec2main",
+                        f"arn:aws:iam::{accountId}:root"
                     ] # Allow 
                 },
                 "Action": "sts:AssumeRole",
@@ -1289,7 +1290,7 @@ def createRole(problemName):
             MaxSessionDuration = 3600
         )
 
-        sleep(5)
+        sleep(10)
 
         arn = resp['Role']['Arn']
 
@@ -1302,6 +1303,7 @@ def createRole(problemName):
         return arn
 
     except ClientError as e:
+        print(e)
         if e.response['Error']['Code'] == 'EntityAlreadyExists':
             resp = iam_client.get_role(RoleName=roleName)
             arn = resp['Role']['Arn']

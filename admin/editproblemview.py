@@ -65,7 +65,7 @@ def editproblem(problem_id):
     if problem_info['problem_type'] == 'Interactive':
         form.problem_type.choices = ["Interactive", "Batch", "Communication"]
     elif problem_info['problem_type'] == 'Batch':
-        form.problem_type.choices = ["Batch", "Communcation", "Interactive"]
+        form.problem_type.choices = ["Batch", "Communication", "Interactive"]
     else:
         form.problem_type.choices = ["Communication", "Batch", "Interactive"]
 

@@ -151,7 +151,7 @@ def submission(subId):
                 elif not fullFeedback and nonAC:
                     detail['testcases'].append({'score' : '-', 'verdict' :'N/A', 'time': 'N/A', 'memory': 'N/A'})
                 else:
-                    if "RTE" in verdicts[ind]:
+                    if verdicts[ind] == "RTE":
                         verdicts[ind] = f"RTE({returnCodes[ind]})"
                     if scores[ind] == 0:
                         nonAC = True # Still continue to show feedback for partial scoring
