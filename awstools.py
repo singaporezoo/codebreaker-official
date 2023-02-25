@@ -644,7 +644,7 @@ def endParticipation(contestId, username):
 
 def validateProblem(problemId):
     lambda_input = {'problemName':problemId}
-    res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-problem-verification', InvocationType='RequestResponse', Payload = json.dumps(lambda_input))
+    res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-problem-validation', InvocationType='RequestResponse', Payload = json.dumps(lambda_input))
 
 def uploadCompiledChecker(sourceName, uploadTarget):
     s3.upload_file(sourceName, CHECKERS_BUCKET_NAME, uploadTarget)
