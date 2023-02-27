@@ -14,6 +14,7 @@ Here, we view the results of a submission.
 '''
 
 def fixFloat(x):
+    if type(x) == str: x = int(x)
     x = round(x,2)
     if x == round(x):
         x = round(x)
