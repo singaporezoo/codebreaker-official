@@ -35,7 +35,7 @@
 	<br>
 	<form action="" method="post" class="form-group" id="addproblemform">
 		<div class="input-group mb-3">
-			{{form.problem_id(type='text', placeholder='Problem ID', class='form-control', pattern="[a-zA-Z0-9_]+")}}
+			{{form.problem_id(type='text', placeholder='Problem ID', class='form-control', pattern="\w+")}}
 			{{form.submit(type='submit', class='btn btn-secondary')}}
 		</div>
 	</form>

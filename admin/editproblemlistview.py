@@ -1,4 +1,5 @@
 from flask import render_template, session, redirect, request, flash
+import re
 import awstools, contestmode
 from forms import addProblemForm
 
@@ -44,6 +45,9 @@ def editproblemlist():
             return redirect('/admin/editproblems')
         if result['problem_id'] in problemNames:
             flash('oopsies! problem id already taken :(', 'warning')
+            return redirect('/admin/editproblems')
+        if not re.match(r'^[\w]*$', result['problem_id']):
+            flash ('Invalid problem Id!', 'warning')
             return redirect('/admin/editproblems')
         awstools.createProblemWithId(result['problem_id'])
         problem_id = result['problem_id']

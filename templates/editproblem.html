@@ -31,7 +31,7 @@
                         {% endif %}
                	{% endwith %}
         </div>
-	<h6> Editing problem: <b> <a href={{'/problem/' + info['problemName']}}> {{info["problemName"]}} </a> </b> </h6>	
+	<h6> Editing problem: <b> <a href={{url_for('problem', PROBLEM_NAME = info['problemName'])}}> {{info["problemName"]}} </a> </b> </h6>	
 	<br>
 
 	<form id="updateproblemform" action="" method="post" class="form-group">
