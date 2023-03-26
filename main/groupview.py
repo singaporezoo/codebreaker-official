@@ -4,7 +4,7 @@ import contestmode
 from datetime import datetime, timedelta
 from forms import beginContestForm
 
-def contestgroup(groupId):
+def group(groupId):
     
     userInfo = awstools.getCurrentUserInfo()
     

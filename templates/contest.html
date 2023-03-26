@@ -48,7 +48,7 @@
 	<p hidden id="endtime"> {{endTime}} </p>
 
 	{% if showScoreboard and (not contest or userinfo.role == 'superadmin' or userinfo.username in users) %}
-	<b> <a href="/contest/{{contestinfo.contestId}}/scoreboard">Scoreboard</a> </b>
+	<b> <a href={{url_for('scoreboard', contestId = contestinfo.contestId)}}>Scoreboard</a> </b>
 	{% endif %}
 
 	{% if contestinfo.editorialVisible and contestinfo.editorial|length != 0 %}

@@ -34,7 +34,7 @@
         {% endwith %}
     </div>
 
- 	<h6> Editing contest group: <b> <a id='contestGroupRef' href={{'/group/' + info['groupId']}}> {{info["groupId"]}} </a> </b> </h6>
+ 	<h6> Editing contest group: <b> <a id='contestGroupRef' href={{url_for('group',groupId=info['groupId'])}}> {{info["groupId"]}} </a> </b> </h6>
     <br>
   	
   	<form id="updatecontestgroupform" action="" method="post" class="form-group">

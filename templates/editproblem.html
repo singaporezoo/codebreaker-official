@@ -117,14 +117,6 @@
 
 		<br>
 	
-		{% if userinfo['role'] == 'superadmin' %}
-		
-		{{form.superhidden(type="checkbox", checked=(info['superhidden'] == 1))}}
-		Super Hidden (Only open to superadmin)
-
-		<br>
-		{% endif %}
-
 		{{form.checker(type="checkbox", checked=(info['customChecker'] == 1))}}
 		Checker
 
@@ -289,7 +281,7 @@
 	<hr class="hr-text" data-content="">
 	<br>
 	<h2>Testcases and Subtasks</h2>
-	<a class="btn btn-secondary" href = {{ "/admin/uploadtestdata/" + info['problemName'] }} target="_blank"> Upload Testdata </a>
+	<a class="btn btn-secondary" href = {{ url_for("uploadtestdata", problemId=info['problemName']) }} target="_blank"> Upload Testdata </a>
 
 	<br>
 	<form action="" method="post" class="form-group">
@@ -304,8 +296,8 @@
 	<br>
 	<form action="" method="post" class="form-group">
 		{% for score in info['subtaskScores']:  %}
-		<input type="text" size="7" placeholder="Score" name={{'sc_' + loop.index0|string}} value={{score}}>
-		<input type="text" size="50" placeholder="Testcases" name={{'dp_' + loop.index0|string}} value={{info['subtaskDependency'][loop.index0]}}>
+		<input type="text" size="7" placeholder="Score" name="{{'sc_' + loop.index0|string}}" value="{{score}}">
+		<input type="text" size="50" placeholder="Testcases" name="{{'dp_' + loop.index0|string}}" value="{{info['subtaskDependency'][loop.index0]}}">
 		<br>
 		{% endfor %}
 		<input type="hidden" name="form_name" value="update_subtask">
@@ -315,31 +307,6 @@
 	<br>
 	<br>
 	
-	{% if info['superhidden'] %}
-		<form action="" method="post" class="form-group">
-			<input type="hidden" name="form_name" value="add_access">
-			<input type="submit" value="Add User" class="btn btn-secondary mb-2">
-		</form>
-		{% if info['allowAccess']|length != 0 %}
-			<form action="" method="post" class="form-group">
-				<input type="hidden" name="form_name" value="remove_access">
-				<input type="submit" value="Remove User" class="btn btn-secondary mb-2">
-			</form>
-			<br>
-			<form action="" method="post" class="form-group">
-			{% for user in info['allowAccess']: %}
-				<input type="text" size="63" placeholder="Username" name={{'u_' + loop.index0|string}} value={{user}}>
-				<br>
-			{% endfor %}
-			<input type="hidden" name="form_name" value="update_access">
-			<br>
-			<input type="submit" value="Update Users" class="btn btn-secondary">
-			</form>
-			<br>
-		{% endif %}
-		<br>
-	{% endif %}
-
 	<hr class="hr-text" data-content="">
 	<br>
 	<h2>Editorial</h2>
@@ -357,7 +324,7 @@
 		<br>
 		<form action="" method="post" class="form-group">
 		{% for editorial in info['editorials']:  %}
-			<input type="text" size="63" placeholder="Link" name={{'e_' + loop.index0|string}} value={{editorial}}>
+			<input type="text" size="63" placeholder="Link" name={{'e_' + loop.index0|string}} value="{{editorial}}">
 			<br>
 		{% endfor %}
 		<input type="hidden" name="form_name" value="update_editorials">

@@ -13,7 +13,7 @@ import json
 from password import FLASK_SECRET_KEY, GOOGLE_CLIENT_SECRET
 from pytz import utc
 
-from main import problemlistview, submissionview, newuserview, profileview, submissionlistview, contestview, contestlistview, scoreboardview, credits, rankingsview, contestgroupview, editprofileview, problemview, announcelistview, announceview, defaultview, clarificationsview, homeview
+from main import problemlistview, submissionview, newuserview, profileview, submissionlistview, contestview, contestlistview, scoreboardview, credits, rankingsview, groupview, editprofileview, problemview, announcelistview, announceview, defaultview, clarificationsview, homeview
 from admin import adminview, editproblemlistview, editusersview, editproblemview, editcontestlistview, editcontestview, editannouncelistview, editannounceview, editcontestgroupview, editclarificationsview, viewsubmissions, uploadtestdataview
 
 import awstools #awstools.py contains helper functions for AWS reading and writing to S3 and DB.
@@ -41,7 +41,7 @@ app.add_url_rule("/problem/<PROBLEM_NAME>", methods=["GET","POST"], view_func=pr
 app.add_url_rule('/submission/<subId>', view_func = submissionview.submission, methods = ['GET', 'POST'])
 app.add_url_rule('/contests', view_func = contestlistview.contestlist)
 app.add_url_rule('/contest/<contestId>', view_func = contestview.contest, methods = ['GET', 'POST'])
-app.add_url_rule('/contest/<contestId>/scoreboard', view_func = scoreboardview.scoreboard)
+app.add_url_rule('/contest/scoreboard/<contestId>', view_func = scoreboardview.scoreboard)
 app.add_url_rule('/submissions',view_func = submissionlistview.submissionlist, methods=['GET', 'POST'])
 app.add_url_rule('/newuser', view_func = newuserview.newuser, methods = ['GET', 'POST'])
 app.add_url_rule('/profile/<username>', view_func = profileview.profile)
@@ -59,7 +59,7 @@ app.add_url_rule('/admin/uploadtestdata/<problemId>', view_func = uploadtestdata
 app.add_url_rule('/admin/editcontestproblems',view_func=editcontestview.editcontestproblems, methods = ['POST'])
 app.add_url_rule('/admin/editcontestgroupcontests',view_func=editcontestgroupview.editcontestgroupcontests, methods = ['POST'])
 app.add_url_rule('/admin/editcontestgroupgroups',view_func=editcontestgroupview.editcontestgroupgroups,methods=['POST'])
-app.add_url_rule('/group/<groupId>', view_func=contestgroupview.contestgroup)
+app.add_url_rule('/group/<groupId>', view_func=groupview.group)
 app.add_url_rule('/editprofile', view_func=editprofileview.editprofile, methods=['GET','POST'])
 app.add_url_rule('/admin/editannouncements', view_func=editannouncelistview.editannouncelist, methods=['GET','POST'])
 app.add_url_rule('/admin/editannouncement/<announceId>', view_func=editannounceview.editannounce, methods=['GET','POST'])

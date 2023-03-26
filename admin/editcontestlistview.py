@@ -1,4 +1,5 @@
 from flask import render_template, session, flash, redirect, request
+import re
 import awstools, contestmode
 from datetime import datetime, timedelta
 from forms import addContestForm
@@ -80,6 +81,9 @@ def editcontestlist():
             if result['contest_id'] in contestNames:
                 flash('oopsies! contest id already taken :(', 'warning')
                 return redirect('/admin/editcontests')
+            if not re.match(r'^[\w]*$', result['contest_id']):
+                flash ('Invalid contest Id!', 'warning')
+                return redirect('/admin/editcontests')
             awstools.createContestWithId(result['contest_id'])
             contest_id = result['contest_id']
             return redirect(f'/admin/editcontest/{contest_id}')
@@ -89,6 +93,9 @@ def editcontestlist():
                 return redirect('/admin/editcontests')
             if result['group_id'] in groupNames:
                 flash('oopsies! group id already taken :(', 'warning')
+                return redirect('/admin/editcontests')
+            if not re.match(r'^[\w]*$', result['group_id']):
+                flash ('Invalid contest group Id!', 'warning')
                 return redirect('/admin/editcontests')
             awstools.createGroupWithId(result['group_id'])
             group_id = result['group_id']
