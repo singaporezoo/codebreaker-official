@@ -25,7 +25,7 @@
 		<thead class="sortable thead-dark">
 			<tr>
 				<th scope="col">Username</th>
-				<th scope="col">Full Name</th>
+				<th scope="col">fFull Name</th>
 				<th scope="col">Role</th>
 				<th scope="col">School</th>
 				<th scope="col">Country</th>
@@ -38,7 +38,7 @@
 				<tr>
 				<td scope="row"><a href="/profile/{{user.username}}">{{user.username}}</a></td>
 
-				<td>{{user.fullname}}</td>
+				<td>{{user.fullname[:45]}}</td>
 
 				{% if userinfo.role == 'superadmin' and user.role == 'admin' %}
 				<td>
@@ -81,8 +81,8 @@
 
 				{%endif%}
 				
-				<td>{{user.school}}</td>
-				<td> {{user.nation}} </td>
+				<td>{{user.school[:25]}}</td>
+				<td> {{user.nation[:20]}} </td>
 			{% endfor %}
 		</tbody>
 	</table>
