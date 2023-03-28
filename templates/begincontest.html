@@ -27,7 +27,7 @@
 	</form>
 	
 	{% if userinfo.role == 'admin' or userinfo.role == 'superadmin' %}
-		<b> <a href="/contest/{{contestinfo.contestId}}/scoreboard"> To Contest Scoreboard </a> </b> 
+		<b> <a href={{url_for("scoreboard", contestId = contestinfo.contestId)}}> To Contest Scoreboard </a> </b>
 		<b class="ml-2"> <a href="/admin/editcontest/{{contestinfo.contestId}}">Edit Contest</a> </b>
 		<br><br>
 	{% endif %}
