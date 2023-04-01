@@ -76,7 +76,7 @@
 		<tbody>
 			{% for group in groupsinfo %}
 				<tr>
-					<td><a href="{{url_for('contestgroup',groupId=group.groupId)}}">{{group.groupName}}</a></td>
+					<td><a href="{{url_for('group',groupId=group.groupId)}}">{{group.groupName}}</a></td>
 				</tr>
 			{% endfor %}
 		</tbody>
