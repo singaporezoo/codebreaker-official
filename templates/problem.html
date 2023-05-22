@@ -25,7 +25,7 @@
 		<!-- This is the part which is the main part (statements, submit code)-->
 		<div class="row">
 			<div class="col-md-8">
-				<div class="container">
+				<div class="container" id="problem-tab-content">
 		
 					<!-- Nav tabs -->
 					<ul class="nav nav-tabs" role="tablist" id="problem-all-tabs">
@@ -63,7 +63,7 @@
 
 					</ul>
 						<!-- Tab panes -->
-						<div class="tab-content" id="problem-tab-content">
+						<div class="tab-content">
 							<div id="statement" class="container tab-pane active "><br>
 								<h3> <b> {{probleminfo.title}} </b> </h3>
 								{{statementHTML | safe}}

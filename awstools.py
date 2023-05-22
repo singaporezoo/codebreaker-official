@@ -33,6 +33,7 @@ GRADERS_BUCKET_NAME = 'codebreaker-graders'
 ATTACHMENTS_BUCKET_NAME = 'codebreaker-attachments'
 TESTDATA_BUCKET_NAME = 'codebreaker-testdata'
 SCOREBOARDS_BUCKET_NAME = 'codebreaker-contest-static-scoreboards'
+COMPILER_LAMBDA_NAME = 'codebreaker-compilation'
 
 problems_table = dynamodb.Table('codebreaker-problems')
 submissions_table = dynamodb.Table('codebreaker-submissions')
@@ -1324,6 +1325,13 @@ def getTokens(problemName):
         'secretAccessKey': secretAccessKey,
         'sessionToken': sessionToken
     }
+
+def compileChecker(problemName):
+    lambda_input = {"problemName": problemName, "eventType": "CHECKER"}
+    res = lambda_client.invoke(FunctionName = COMPILER_LAMBDA_NAME, InvocationType='RequestResponse', Payload = json.dumps(lambda_input))
+    output = json.loads(res['Payload'].read().decode("utf-8"))
+    return output
+
 
 if __name__ == '__main__':
     # PLEASE KEEP THIS AT THE BOTTOM
