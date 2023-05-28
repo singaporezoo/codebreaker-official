@@ -10,7 +10,7 @@ def uploadtestdata(problemId):
 		flash('This problem does not exist', 'warning')
 		return redirect('/admin')
 
-	if userInfo == None or userInfo['role'] != 'admin':
+	if userInfo == None or userInfo['role'] not in ['admin', 'superadmin']:
 		flash ('You are not authorised to view this resource!', 'danger')
 		return redirect('/')
 
