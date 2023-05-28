@@ -9,16 +9,18 @@
   <h4> Problem Name: {{probleminfo.problemName}} </h4>
   <input type="file" name="name" multiple="multiple" id="uploadFiles"><br><br>
   <br>
-  <input type="submit" value="Submit" onClick="upload(); return false">
+  <input type="submit" value="Upload" onClick="upload(); return false">
+  <br><br>
+  <h3 id="statusmain"> </h3>
+  <p id="statustext"> </p>
 </div>
 
 <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1292.0.min.js"></script>
-<!-- <script src={{url_for('static',filename='js/upload_testdata.js')}}></script> -->
 
 <script>
   var keys = JSON.parse({{ stsKeys | tojson }});
-  var testdataBucketName = "codebreaker-testdata";
-  var bucketRegion = "ap-southeast-1";
+  var testdataBucketName = keys.bucketName;
+  var bucketRegion = keys.bucketRegion;
   var accessKeyId = keys.accessKeyId;
   var secretAccessKey = keys.secretAccessKey;
   var sessionToken = keys.sessionToken;
@@ -34,24 +36,42 @@
   console.log(secretAccessKey)
   console.log(sessionToken)
 
-  window.onload = () => {
-    $('#myProgress').hide();
-  }
-
   var s3 = new AWS.S3({
     apiVersion: "2006-03-01",
     config: AWS.config
   });
 
+  var pendingFiles = [];
+
+  updateStatus = () => {
+    document.getElementById("statusmain").innerHTML = pendingFiles.length + " files remaining";
+    document.getElementById("statustext").innerHTML = pendingFiles.join(''); 
+  }
+
   upload = () => {
 
     var files = document.getElementById("uploadFiles").files;
+    pendingFiles = [];
+    for (var i = 0; i < files.length; i++){
+      var fileName = files[i].name;
+      if (files[i].size > 128*1024*1024){
+        alert("Error! One of your files is too large!")
+        return {}
+      }
+      var match = fileName.match('[0-9]+[\\.](in|out)');
+      if (match === null){
+        alert("Invalid File Name!");
+        return {}
+      }
+
+      pendingFiles.push(fileName);
+    }
 
     if (!files.length) {
       return alert("Please choose a file to upload first.");
     }
 
-    $('#myProgress').show();
+    updateStatus();
 
     for (var i = 0; i < files.length; i++){
       var file = files[i];
@@ -59,6 +79,7 @@
       var Key =  problemName + "/" + fileName
 
       // Use S3 ManagedUpload class as it supports multipart uploads
+
       var upload = new AWS.S3.ManagedUpload({
         params: {
           Bucket: testdataBucketName,
@@ -69,29 +90,19 @@
 
       var promise = upload.promise();
 
-      promise.then(
-      function(data) {
-        console.log("Uploaded Testcase File!")
-      },
-      function(err) {
-        console.log(err)
-      }
-    );
+      promise.then((data) => {
+        var key = data.key;
+        var filename = key.split('/')[1];
+        var index = pendingFiles.indexOf(filename);
+        if (index > -1){
+          pendingFiles.splice(index,1);
+        }
+        updateStatus();
+      }, (err) => {
+        console.log(err);
+      });
+    }
   }
-}
 </script>
-
-<style> 
-#myProgress {
-  width: 100%;
-  background-color: grey;
-}
-
-#myBar {
-  width: 1%;
-  height: 30px;
-  background-color: green;
-}
-</style>
 
 {% endblock %}
