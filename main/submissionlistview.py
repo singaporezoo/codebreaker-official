@@ -53,10 +53,13 @@ def submissionlist():
 
     maxPage = ceil(maxSub / subPerPage)
     pages = range(max(1, pageNo-1), min(maxPage+1, pageNo+3)) 
-   
+    
+    probleminfo = {}
     if problem != None:
         probleminfo = awstools.getProblemInfo(problem)
-    
+        if probleminfo == None:
+            probleminfo = {}
+   
     if userInfo == None or (userInfo['role'] != 'superadmin' and (problem == None or 'allowAccess' not in probleminfo or userInfo['username'] not in probleminfo['allowAccess'])):
         superhidden = awstools.getSuperhiddenProblems()
         submissionList = [s for s in submissionList if s['problemName'] not in superhidden or s['problemName'] in contestmode.contestproblems()]

@@ -127,4 +127,3 @@ var tour = new Tour({
     document.location.href="/";
   }
 });
-
