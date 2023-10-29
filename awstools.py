@@ -209,8 +209,8 @@ def updateProblemInfo(problemName, info):
     setSuperhidden(problemName, info['superhidden'])
     problems_table.update_item(
         Key = {'problemName' : problemName},
-        UpdateExpression = f'set title=:a, #kys=:b, author=:c, problem_type=:d, timeLimit=:e, memoryLimit=:f, fullFeedback=:g, analysisVisible=:h, customChecker=:i,attachments=:j,contestLink=:k,superhidden=:l,createdTime=:m, editorials=:n, editorialVisible=:o, EE=:p, contestUsers=:q',
-        ExpressionAttributeValues={':a':info['title'], ':b':info['source'], ':c':info['author'], ':d':info['problem_type'], ':e':info['timeLimit'], ':f':info['memoryLimit'], ':g':info['fullFeedback'], ':h':info['analysisVisible'], ':i':info['customChecker'], ':j':info['attachments'], ':k':info['contestLink'], ':l':info['superhidden'], ':m':info['createdTime'], ':n':info['editorials'], ':o':info['editorialVisible'],':p':info['EE'],':q':info['contestUsers']},
+        UpdateExpression = f'set title=:a, #kys=:b, author=:c, problem_type=:d, timeLimit=:e, memoryLimit=:f, fullFeedback=:g, analysisVisible=:h, customChecker=:i,attachments=:j,contestLink=:k,superhidden=:l,createdTime=:m, editorials=:n, editorialVisible=:o, EE=:p, contestUsers=:q, creator=:r',
+        ExpressionAttributeValues={':a':info['title'], ':b':info['source'], ':c':info['author'], ':d':info['problem_type'], ':e':info['timeLimit'], ':f':info['memoryLimit'], ':g':info['fullFeedback'], ':h':info['analysisVisible'], ':i':info['customChecker'], ':j':info['attachments'], ':k':info['contestLink'], ':l':info['superhidden'], ':m':info['createdTime'], ':n':info['editorials'], ':o':info['editorialVisible'],':p':info['EE'],':q':info['contestUsers'], ':r':info['creator']},
         ExpressionAttributeNames={'#kys':'source'}
     )
 
@@ -546,6 +546,8 @@ def createProblemWithId(problem_id):
     info['editorialVisible'] = False
     info['EE'] = False
     info['contestUsers'] = []
+    print("SAMPLE")
+    info['creator'] = getCurrentUserInfo()['username']
     updateProblemInfo(problem_id, info)
     subtasks = {}
     subtasks['subtaskScores'] = []
@@ -1332,6 +1334,30 @@ def compileChecker(problemName):
     output = json.loads(res['Payload'].read().decode("utf-8"))
     return output
 
+def getProblemsToHideSubmissions():
+    response = misc_table.query(
+        KeyConditionExpression = Key('category').eq('problemsToHideSubmissions')
+    )
+    return response['Items'][0]['setOfProblems']
+
+def setProblemToHideSubmissions(problemName, toHideSubmissions):
+    print(problemName, "   ", toHideSubmissions)
+    if toHideSubmissions:
+        misc_table.update_item(
+            Key = {'category': 'problemsToHideSubmissions'},
+            UpdateExpression = f'add setOfProblems :p',
+            ExpressionAttributeValues={':p' : set([problemName])}
+        )
+    else:
+        print(problemName)
+        try:
+            misc_table.update_item(
+                Key = {'category': 'problemsToHideSubmissions'},
+                UpdateExpression = f'delete setOfProblems :p',
+                ExpressionAttributeValues={':p' : set([problemName])}
+            )
+        except e:
+            print(e)
 
 if __name__ == '__main__':
     # PLEASE KEEP THIS AT THE BOTTOM

@@ -132,11 +132,13 @@
 						<div class="card-body shadow-sm">
 							<b> Time Limit: </b> {{probleminfo.timeLimit}} Seconds <br>
 							<b> Memory Limit: </b> {{probleminfo.memoryLimit}}MB <br>
+							<!--
 							{% if not contest or userinfo.role == 'superadmin' or userinfo.username in users %}
 							<b> No. of ACs: </b> {{probleminfo.noACs}} <br>
 							{% else %}
 							<b> No. of ACs: </b> Hidden <br>
 							{% endif %}
+							-->
 							<b> Your best score: </b>
 
 														{% if probleminfo.problemName in userinfo.problemScores %}

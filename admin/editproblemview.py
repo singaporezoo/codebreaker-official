@@ -80,6 +80,13 @@ def editproblem(problemName):
             tagList.append([i,True])
         else:
             tagList.append([i,False])
+    
+    creatorOptions = {'show' : False}
+    if 'creator' in problem_info and problem_info['creator'] == userInfo['username']:
+        creatorOptions['show'] = True    
+        problemsToHideSubmissions = awstools.getProblemsToHideSubmissions()
+
+        creatorOptions['isHideSubmissions'] = (problemName in problemsToHideSubmissions)
 
     if form.is_submitted():
         result = request.form
@@ -432,4 +439,14 @@ def editproblem(problemName):
                 flash('You need admin access to do this', 'warning')
             return redirect(f'/admin/editproblem/{problemName}')
 
-    return render_template('editproblem.html', form=form, info=problem_info, userinfo=userInfo, subsURL=subsURL, socket=contestmode.socket(), tags=tagList)
+        elif result['form_name'] in ['enableHideSubmissions', 'disableHideSubmssions']:
+            if not creatorOptions['show']:
+                flash('idk what you are doing but it shouldnt be allowed', 'danger')
+                return redirect(f'/admin/editproblem/{problemName}')
+            
+            if creatorOptions['isHideSubmissions']:
+                awstools.setProblemToHideSubmissions(problemName, False)
+            else:
+                awstools.setProblemToHideSubmissions(problemName, True)
+
+    return render_template('editproblem.html', form=form, info=problem_info, userinfo=userInfo, subsURL=subsURL, socket=contestmode.socket(), tags=tagList, creatorOptions=creatorOptions)

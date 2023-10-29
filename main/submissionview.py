@@ -113,6 +113,13 @@ def submission(subId):
     if contest and not contestmode.fullfeedback() and userInfo['role'] != 'superadmin' and userInfo['username'] not in contestmode.allowedusers():
         fullFeedback = False
 
+    problemsToHideSubmissions = awstools.getProblemsToHideSubmissions()
+
+    if userInfo == None or userInfo['role'] != 'superadmin':
+        if (userInfo == None or userInfo['username'] != username) and problemName in problemsToHideSubmissions:
+            flash("Sorry, you are not authorized to view this resource!", 'warning')
+            return redirect("/")
+
     toRefresh = False
     subtaskDetails = []
 

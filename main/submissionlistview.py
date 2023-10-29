@@ -44,6 +44,8 @@ def submissionlist():
     submissionList.sort(key = lambda x:x['subId'], reverse=True)
     if username != None or problem != None:
         submissionList = submissionList[(pageNo-1)*subPerPage : min(len(submissionList), pageNo*subPerPage)]
+    
+    problemsToHideSubmissions = awstools.getProblemsToHideSubmissions()
 
     # If submission is compile error, then max time and memory should be N/A 
     for submission in submissionList:
@@ -66,6 +68,9 @@ def submissionlist():
 
     if contest and contestmode.contestId() != 'analysismirror':
         submissionList = [s for s in submissionList if s['problemName'] in contestmode.contestproblems()]
+
+    if (userInfo == None or userInfo['role'] != 'superadmin'):
+         submissionList = [s for s in submissionList if (s['problemName'] not in problemsToHideSubmissions or (userInfo != None and userInfo['username'] == s['username']))]
 
     fullfeedback = True
     if contest:
