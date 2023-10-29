@@ -105,6 +105,13 @@ def editproblem(problemName):
             info['attachments'] = ('attachments' in result)
             info['title'] = result['problem_title']
             info['source'] = result['problem_source']
+
+            if 'creator' not in problem_info:
+                info['creator'] = None
+                print("BRUH")
+            else:
+                info['creator'] = problem_info['creator']
+
             if 'nameA' in result.keys():
                 info['nameA'] = result['nameA']
             if 'nameB' in result.keys():

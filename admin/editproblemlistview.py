@@ -49,7 +49,8 @@ def editproblemlist():
         if not re.match(r'^[\w]*$', result['problem_id']):
             flash ('Invalid problem Id!', 'warning')
             return redirect('/admin/editproblems')
-        awstools.createProblemWithId(result['problem_id'])
+        
+        awstools.createProblemWithId(result['problem_id'], userInfo['username'])
         problem_id = result['problem_id']
         return redirect(f'/admin/editproblem/{problem_id}')
 

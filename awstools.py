@@ -526,7 +526,7 @@ def getNumberOfSubmissions():
     subId = int(item['value'])
     return subId
 
-def createProblemWithId(problem_id):
+def createProblemWithId(problem_id, creator=None):
     info = {}
     info['title'] = problem_id
     info['source'] = 'Unknown Source'
@@ -547,7 +547,7 @@ def createProblemWithId(problem_id):
     info['EE'] = False
     info['contestUsers'] = []
     print("SAMPLE")
-    info['creator'] = getCurrentUserInfo()['username']
+    info['creator'] = creator
     updateProblemInfo(problem_id, info)
     subtasks = {}
     subtasks['subtaskScores'] = []
