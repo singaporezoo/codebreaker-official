@@ -27,8 +27,13 @@ def home():
     for i in range(7,0,-1):
         day = datetime.now() - timedelta(days=i)
         dates.append(day.strftime('%d/%m'))
-    dates2 = statistics['pageviews'].keys()
-    statistics['pageviews'] = [statistics['pageviews'][i] for i in dates2]
+    
+    print(statistics['pageviews'])
+    if statistics['pageviews']  == None:
+        statistics['pageviews'] = []
+    else:
+        dates2 = statistics['pageviews'].keys()
+        statistics['pageviews'] = [statistics['pageviews'][i] for i in dates2]
 
     startTour = False
     tour = request.args.get('tour')

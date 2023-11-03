@@ -37,8 +37,10 @@ def main():
     try:
         zones = cf.zones.get(params=params)
     except CloudFlare.exceptions.CloudFlareAPIError as e:
+        return None
         exit('/zones.get %d %s - api call failed' % (e, e))
     except Exception as e:
+        return None
         exit('/zones - %s - api call failed' % (e))
 
     date_before = now_iso8601_time(0) # now
@@ -60,7 +62,11 @@ def main():
     try:
         r = cf.graphql.post(data={'query':query})
     except CloudFlare.exceptions.CloudFlareAPIError as e:
-        exit('/graphql.post %d %s - api call failed' % (e, e))
+        return None
+        exit('/zones.get %d %s - api call failed' % (e, e))
+    except Exception as e:
+        return None
+        exit('/zones - %s - api call failed' % (e))
 
     ## only one zone, so use zero'th element!
     zone_info = r['data']['viewer']['zones'][0]

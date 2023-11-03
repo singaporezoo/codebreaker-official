@@ -865,6 +865,7 @@ def homepageInfo(recalc = False):
         contests = [i for i in contests if i['public']]
         contests = [i for i in contests if i['endTime'] != "Unlimited"]
         pageviews = cloudflare.main()
+        print("pageviews ", pageviews)
         subsperday = getSubsPerDay()
         parseDate = datetime.now().strftime("%d/%m/%Y")
         json.dump({'date':parseDate,'users':users,'problems':problems,'subs':subs,'nations':nations,'mostsub':mostsub,'mostattempt':mostattempt,'contests':contests,'pageviews':pageviews,'subsperday':subsperday}, open('homepage.json', 'w'))
