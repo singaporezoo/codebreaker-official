@@ -45,12 +45,19 @@ def createRole(problemName):
 			MaxSessionDuration = 3600
 		)
 
+                sleep(5)
+
 		arn = resp['Role']['Arn']
 
 		iam_client.put_role_policy(
 			RoleName=roleName,
 			PolicyName='S3AccessPolicy',
 			PolicyDocument=json.dumps(policyDocument)
+		)
+
+                iam_client.put_role_permissions_boundary(
+			RoleName=roleName,
+			PermissionsBoundary="arn:aws:iam::aws:policy/AmazonS3FullAccess"
 		)
 
 		return arn

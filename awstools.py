@@ -1264,7 +1264,7 @@ def createRole(problemName):
         'Statement': [{ 
             'Sid': 'AllowAllS3ActionsInUserFolder', 
             'Effect': 'Allow', 
-            'Action': ['s3:*'], 
+            'Action': ['s3:PutObject'], 
             'Resource': [f'arn:aws:s3:::{judgeName}-testdata/{problemName}/*'] 
        }] 
     }
@@ -1276,8 +1276,7 @@ def createRole(problemName):
                 "Effect": "Allow",
                 "Principal": {
                     "AWS": [
-                        f"arn:aws:iam::{accountId}:role/ec2main",
-                        f"arn:aws:iam::{accountId}:root"
+                        f"arn:aws:iam::{accountId}:role/ec2main"
                     ] # Allow 
                 },
                 "Action": "sts:AssumeRole",
@@ -1294,7 +1293,7 @@ def createRole(problemName):
             MaxSessionDuration = 3600
         )
 
-        sleep(10)
+        sleep(5)
 
         arn = resp['Role']['Arn']
 
@@ -1303,6 +1302,13 @@ def createRole(problemName):
             PolicyName='S3AccessPolicy',
             PolicyDocument=json.dumps(policyDocument)
         )
+        
+        iam_client.put_role_permissions_boundary(
+	    RoleName=roleName,
+	    PermissionsBoundary="arn:aws:iam::aws:policy/AmazonS3FullAccess"
+	)
+
+        sleep(5)
 
         return arn
 
