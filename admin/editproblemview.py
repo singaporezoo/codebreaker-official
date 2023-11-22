@@ -82,7 +82,7 @@ def editproblem(problemName):
             tagList.append([i,False])
     
     creatorOptions = {'show' : False}
-    if 'creator' in problem_info and problem_info['creator'] == userInfo['username']:
+    if ('creator' in problem_info and problem_info['creator'] == userInfo['username']) or userInfo['role'] == 'superadmin':
         creatorOptions['show'] = True    
         problemsToHideSubmissions = awstools.getProblemsToHideSubmissions()
 

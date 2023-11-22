@@ -180,7 +180,7 @@ if __name__ == '__main__':
         print("DEPLOY MODE")
         if not contestmode.contest():
             print("Deploy without contest mode")
-            serve(app, host='0.0.0.0', port=5000, url_scheme='https', threads = 16)
+            serve(app, host='0.0.0.0', port=5000, url_scheme='https', threads = 100)
         else:
             print("Deploy with contest mode")
             #socketio.run(app, host='0.0.0.0', use_reloader=False)

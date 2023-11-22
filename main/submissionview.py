@@ -116,9 +116,18 @@ def submission(subId):
     problemsToHideSubmissions = awstools.getProblemsToHideSubmissions()
 
     if userInfo == None or userInfo['role'] != 'superadmin':
-        if (userInfo == None or userInfo['username'] != username) and problemName in problemsToHideSubmissions:
-            flash("Sorry, you are not authorized to view this resource!", 'warning')
-            return redirect("/")
+        if problemName in problemsToHideSubmissions:
+            shouldShow = True
+            if userInfo == None:
+                shouldShow = False
+            elif userInfo['username'] == username:
+                shouldShow = True
+            elif 'author' not in problem_info or problem_info['author'] != userInfo['username']:
+                shouldShow = False
+
+            if not shouldShow:
+                flash("Sorry, you are not authorized to view this resource!", 'warning')
+                return redirect("/")
 
     toRefresh = False
     subtaskDetails = []

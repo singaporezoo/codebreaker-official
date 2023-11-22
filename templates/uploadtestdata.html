@@ -59,7 +59,7 @@
         return {}
       }
       var match = fileName.match('[0-9]+[\\.](in|out)');
-      if (match === null){
+      if (match === null || fileName == "0.in" || fileName == "0.out"){
         alert("Invalid File Name!");
         return {}
       }
