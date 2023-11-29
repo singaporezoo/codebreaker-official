@@ -240,6 +240,21 @@
         <input type="submit" value="Freeze User's Score" class="btn btn-secondary">
     </div>
     </form>
+	
+    <br>
+
+    <form action="" method="post" class="form-group">
+    <div class="input-group">
+    <select type="select" name="username" placeholder="User ID" class="form-control mr-1">
+      <option value="ALLUSERS">ALLUSERS</option>
+      {% for user in info['users']  %}
+         <option value={{user}}>{{user}}</option>
+      {% endfor %}
+    </select>
+        <input type="hidden" name="form_name" value="unfreeze_user">
+        <input type="submit" value="Unfreeze User's Score" class="btn btn-secondary">
+    </div>
+    </form>
 
   <br>
 

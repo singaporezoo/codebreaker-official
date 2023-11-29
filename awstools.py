@@ -645,6 +645,15 @@ def endParticipation(contestId, username):
     lambda_input = {"contestId":contestId, "username":username}
     res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:stopcontestwindow', InvocationType='Event', Payload = json.dumps(lambda_input))
 
+def resumeParticipation(contestId, username):
+    try:
+        contests_table.update_item(
+            Key = {'contestId': contestId},
+            UpdateExpression = f'remove scores.{username}'
+        )
+    except Exception as e:
+        print(e)
+
 def validateProblem(problemId):
     lambda_input = {'problemName':problemId}
     res = lambda_client.invoke(FunctionName = 'arn:aws:lambda:ap-southeast-1:354145626860:function:codebreaker-problem-validation', InvocationType='RequestResponse', Payload = json.dumps(lambda_input))

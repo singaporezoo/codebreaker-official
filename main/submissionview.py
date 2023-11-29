@@ -122,7 +122,7 @@ def submission(subId):
                 shouldShow = False
             elif userInfo['username'] == username:
                 shouldShow = True
-            elif 'author' not in problem_info or problem_info['author'] != userInfo['username']:
+            elif 'creator' not in problem_info or problem_info['creator'] != userInfo['username']:
                 shouldShow = False
 
             if not shouldShow:

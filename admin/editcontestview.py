@@ -146,6 +146,15 @@ def editcontest(contestId):
             username = result['username']
             awstools.endParticipation(contestId, username)
             return redirect(f'/admin/editcontest/{contestId}')
+        
+        elif result['form_name'] == 'unfreeze_user':
+            username = result['username']
+            if username == 'ALLUSERS':
+                for user in c_info['scores']:
+                    awstools.resumeParticipation(contestId, user)
+            else:
+                awstools.resumeParticipation(contestId, username)
+            return redirect(f'/admin/editcontest/{contestId}')
 
         elif result['form_name'] == 'add_link':
             for problem in c_info['problems']:
