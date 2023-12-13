@@ -176,7 +176,7 @@ if __name__ == '__main__':
         else:
             scheduler.add_job(id=e['eventId'],func=handleEndParticipation,args=e['eventId'].split(' '),trigger='date',run_date=e['endtime'],timezone=utc)
 
-    if len(sys.argv) <= 1 or sys.argv[1] != "develop":
+    if len(sys.argv) <= 1 or sys.argv[1] == "deploy":
         print("DEPLOY MODE")
         if not contestmode.contest():
             print("Deploy without contest mode")
@@ -186,7 +186,7 @@ if __name__ == '__main__':
             #socketio.run(app, host='0.0.0.0', use_reloader=False)
             serve(app, host='0.0.0.0', port=5000, url_scheme='https', threads = 100)
             socketio.run(app, host='0.0.0.0', port=5000, certfile='../codebreaker_xyz.crt', keyfile='../codebreaker_xyz.key')
-    else:
+    elif sys.argv[1] == "develop":
         print("DEVELOP MODE")
         if not contestmode.contest():
             print("Develop without contest mode")
@@ -194,3 +194,6 @@ if __name__ == '__main__':
         else:
             print("Develop with contest mode")
             socketio.run(app, debug=True, host='0.0.0.0', port=443, certfile='../codebreaker_xyz.crt', keyfile='../codebreaker_xyz.key')
+    else:
+        print("LOCAL TESTING MODE")
+        app.run(debug=True, host='0.0.0.0', port=80)
