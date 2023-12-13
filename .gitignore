@@ -5,7 +5,7 @@
 node_modules/
 password.py
 contestmode.py
-localtesting.py
+localtestingconfig.py
 tmp/submissions/
 __pycache__/
 main/__pycache__/
