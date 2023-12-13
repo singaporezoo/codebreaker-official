@@ -19,6 +19,9 @@ from admin import adminview, editproblemlistview, editusersview, editproblemview
 import awstools #awstools.py contains helper functions for AWS reading and writing to S3 and DB.
 import contestmode
 
+import urllib3
+http = urllib3.PoolManager(num_pools=50)
+
 from datetime import datetime,timedelta
 
 app = Flask(__name__)

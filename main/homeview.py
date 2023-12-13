@@ -28,7 +28,6 @@ def home():
         day = datetime.now() - timedelta(days=i)
         dates.append(day.strftime('%d/%m'))
     
-    print(statistics['pageviews'])
     if statistics['pageviews']  == None:
         statistics['pageviews'] = []
     else:
