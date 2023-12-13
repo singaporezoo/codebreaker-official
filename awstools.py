@@ -14,7 +14,7 @@ from flask import session
 import contestmode
 import os
 import cloudflare
-import localtesting
+import localtestingconfig
 
 judgeName = 'codebreaker'
 s3 = boto3.client('s3','ap-southeast-1')
@@ -409,8 +409,8 @@ def getUserInfoFromUsername(username):
     return None
 
 def getCurrentUserInfo():
-    if localtesting.localTestingUserOverride != None:
-        return getUserInfoFromUsername(localtesting.localTestingUserOverride)
+    if localtestingconfig.localTestingUserOverride != None:
+        return getUserInfoFromUsername(localtestingconfig.localTestingUserOverride)
     try:
         email =  dict(session)['profile']['email']
         user_info =  getUserInfo(email)
