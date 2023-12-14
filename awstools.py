@@ -215,14 +215,6 @@ def updateProblemInfo(problemName, info):
         ExpressionAttributeNames={'#kys':'source'}
     )
 
-def makeAnalysisVisible(problemName):
-    problems_table.update_item(
-        Key = {'problemName' : problemName},
-        UpdateExpression = f'set analysisVisible=:h',
-        ExpressionAttributeValues={':h':1},
-    )
-    setSuperhidden(problemName, False)
-
 def addAllowAccess(problemName):
     problems_table.update_item(
         Key = {'problemName': problemName},
@@ -1027,7 +1019,8 @@ def generateNewScoreboard(contestId):
     return 'Failure'
 
 def isAllowedAccess(problem_info, userInfo):
-    if problem_info['analysisVisible']:
+    hiddenFromAnalysis = getProblemsToHideFromAnalysis()
+    if problem_info['problemName'] not in hiddenFromAnalysis:
         return True
 
     if userInfo == None:
@@ -1360,6 +1353,12 @@ def getProblemsToHideSubmissions():
     )
     return response['Items'][0]['setOfProblems']
 
+def getProblemsToHideFromAnalysis():
+    response = misc_table.query(
+        KeyConditionExpression = Key('category').eq('problemsToHideFromAnalysis')
+    )
+    return response['Items'][0]['setOfProblems']
+
 def setProblemToHideSubmissions(problemName, toHideSubmissions):
     print(problemName, "   ", toHideSubmissions)
     if toHideSubmissions:
@@ -1379,9 +1378,39 @@ def setProblemToHideSubmissions(problemName, toHideSubmissions):
         except e:
             print(e)
 
+def setProblemToHideFromAnalysis(problemName, toHideAnalysis):
+    print(problemName, "   ", toHideAnalysis)
+    if toHideAnalysis:
+        misc_table.update_item(
+            Key = {'category': 'problemsToHideFromAnalysis'},
+            UpdateExpression = f'add setOfProblems :p',
+            ExpressionAttributeValues={':p' : set([problemName])}
+        )
+    else:
+        print(problemName)
+        try:
+            misc_table.update_item(
+                Key = {'category': 'problemsToHideFromAnalysis'},
+                UpdateExpression = f'delete setOfProblems :p',
+                ExpressionAttributeValues={':p' : set([problemName])}
+            )
+        except e:
+            print(e)
+
+def setVisibility(problemName, visibility):
+    if visibility == "private":
+        setProblemToHideSubmissions(problemName, toHideSubmissions=True)
+        setProblemToHideFromAnalysis(problemName, toHideAnalysis=True)
+    elif visibility == "unlisted":
+        setProblemToHideSubmissions(problemName, toHideSubmissions=False)
+        setProblemToHideFromAnalysis(problemName, toHideAnalysis=True)
+    elif visibility == "public":
+        setProblemToHideSubmissions(problemName, toHideSubmissions=False)
+        setProblemToHideFromAnalysis(problemName, toHideAnalysis=False)
+
 if __name__ == '__main__':
     # PLEASE KEEP THIS AT THE BOTTOM
     # THIS IS FOR DEBUGGING AND WILL ONLY BE ACTIVATED IF YOU DIRECTLY RUN THIS FILE
     # IT DOES NOT OUTPUT ANYTHING ONTO TMUX
-    print(getSubsPerDay())
+    print()
     pass

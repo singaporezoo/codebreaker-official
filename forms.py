@@ -43,7 +43,6 @@ class updateProblemForm(FlaskForm):
     memory_limit = IntegerField('memory_limit')
     feedback = BooleanField('feedback')
     editorial_visible = BooleanField('editorial_visible')
-    analysis = BooleanField('analysis')
     checker = BooleanField('checker')
     superhidden = BooleanField('superhidden')
     attachments = BooleanField('attachments')

@@ -106,11 +106,6 @@
 		Full Feedback
 		
 		<br>
-		
-		{{form.analysis(type="checkbox", checked=(info['analysisVisible'] == 1))}}
-		Analysis Mode
-
-		<br>
 
 		{{form.editorial_visible(type="checkbox", checked=(info['editorialVisible'] == 1))}}
 		Visible Editorials
@@ -397,23 +392,25 @@
 		
 		<p> Only you can see these options since you're the creator of this problem </p>
 
-		<h2> Hide Submissions </h2>
+		<h2> Problem Visibility </h2>
 
-		<p> If this is enabled, everyone, including adnims, cannot see other people's submissions, both on the list of submissions and the submission page itself. </p>
-
-		{% if creatorOptions['isHideSubmissions'] %}
-			
-			<form action="" method="post" class="form-group" onSubmit="return confirm('Are you sure you disable hide submissions for this problem?');">
-                		<input type="hidden" name="form_name" value="disableHideSubmssions">
-                		<input type="submit" value="Disable Hide Submissions" class="btn btn-secondary navbar mb-2">
-        		</form>
-
-		{% else %}
-			 <form action="" method="post" class="form-group" onSubmit="return confirm('Are you sure you enable hide submissions for this problem?');">
-                                <input type="hidden" name="form_name" value="enableHideSubmissions">
-                                <input type="submit" value="Enable Hide Submissions" class="btn btn-secondary navbar mb-2">
-                        </form>
-		{% endif %}
+		<p> Change the problem visibility in the dropdown box below. </p>
+		<ul>
+			<li> Private: Submissions to this problem will be hidden from everyone (including admins) and the problem will be hidden from analysis mode.</li>
+			<li> Unlisted: Submissions to this problem will appear on the submissions page, but the problem will be hidden from analysis mode.</li>
+			<li> Public: Submissions to this problem will appear on the submissions page and the problem will be available in analysis mode.</li>
+		</ul>
+	
+		<form action="" method="post" class="form-group">
+				<input type="hidden" name="form_name" value="change_visibility">
+				<select class="form-control" name="problemVisibilitySelect" id="problemVisibilitySelect">
+					<option value="private" {{ "selected" if creatorOptions["visibility"] == "private" }}>Private</option>
+					<option value="unlisted" {{ "selected" if creatorOptions["visibility"] == "unlisted" }}>Unlisted</option>
+					<option value="public" {{ "selected" if creatorOptions["visibility"] == "public" }}>Public</option>
+				</select>
+				<br>
+				<input type="submit" value="Update" class="btn btn-secondary navbar mb-2">
+		</form>
 		<br>
 		<br>
 		<br>

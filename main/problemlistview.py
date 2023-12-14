@@ -30,8 +30,9 @@ def problemlist():
                 if j != i['tags'][-1]:
                     i['tagtext'] += ', '
 
+    hiddenFromAnalysis = awstools.getProblemsToHideFromAnalysis()
     problemInfo = [dict((key,value) for key, value in P.items() if key in ['problemName','analysisVisible','title', 'source', 'author','problem_type','noACs','contestLink', 'createdTime', 'EE', 'tags', 'tagtext']) for P in problems] #impt info goes into the list (key in [list])
-    problemInfo = [problem for problem in problemInfo if problem['analysisVisible']] # Filter out hidden problems
+    problemInfo = [problem for problem in problemInfo if problem['problemName'] not in hiddenFromAnalysis] # Filter out hidden problems
     problemInfo.sort(key = lambda x:-x['noACs'])
 
     if command == 'newest':

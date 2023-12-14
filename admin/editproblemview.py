@@ -85,8 +85,17 @@ def editproblem(problemName):
     if ('creator' in problem_info and problem_info['creator'] == userInfo['username']) or userInfo['role'] == 'superadmin':
         creatorOptions['show'] = True    
         problemsToHideSubmissions = awstools.getProblemsToHideSubmissions()
-
-        creatorOptions['isHideSubmissions'] = (problemName in problemsToHideSubmissions)
+        problemsToHideFromAnalysis = awstools.getProblemsToHideFromAnalysis()
+        subsHidden = (problemName in problemsToHideSubmissions)
+        analysisHidden = (problemName in problemsToHideFromAnalysis)
+        visibility = None
+        if subsHidden and analysisHidden:
+            visibility = "private"
+        elif (not subsHidden) and (not analysisHidden):
+            visibility = "public"
+        elif (not subsHidden) and analysisHidden:
+            visibility = "unlisted"
+        creatorOptions['visibility'] = visibility
 
     if form.is_submitted():
         result = request.form
@@ -446,14 +455,13 @@ def editproblem(problemName):
                 flash('You need admin access to do this', 'warning')
             return redirect(f'/admin/editproblem/{problemName}')
 
-        elif result['form_name'] in ['enableHideSubmissions', 'disableHideSubmssions']:
+        elif result['form_name'] in ['change_visibility']:
             if not creatorOptions['show']:
                 flash('idk what you are doing but it shouldnt be allowed', 'danger')
                 return redirect(f'/admin/editproblem/{problemName}')
             
-            if creatorOptions['isHideSubmissions']:
-                awstools.setProblemToHideSubmissions(problemName, False)
-            else:
-                awstools.setProblemToHideSubmissions(problemName, True)
+            visibility = request.form.get('problemVisibilitySelect')
+            awstools.setVisibility(problemName, visibility)
+            flash(f'Problem visibility changed to {visibility}!', 'success')
 
     return render_template('editproblem.html', form=form, info=problem_info, userinfo=userInfo, subsURL=subsURL, socket=contestmode.socket(), tags=tagList, creatorOptions=creatorOptions)
