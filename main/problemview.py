@@ -68,7 +68,6 @@ def problem(PROBLEM_NAME):
     author = problem_info['author']
     problem_info["author"] = [x.replace(" ", "") for x in author.split(",")]
     title = problem_info['title']
-    analysisVisible = problem_info['analysisVisible']
     problemType = problem_info['problem_type']
     validated = problem_info['validated']
     editorials = [i for i in problem_info['editorials'] if i != ""]

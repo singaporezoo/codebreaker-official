@@ -21,8 +21,10 @@ def editproblemlist():
     problemScores = {}
     if userInfo != None:
         problemScores = userInfo['problemScores']
-    problemInfo = [dict((key,value) for key, value in P.items() if key in ['problemName', 'title', 'source', 'author','problem_type','superhidden','analysisVisible','validated','contestLink','allowAccess']) for P in problems] #impt info goes into the list (key in [list])
-
+    problemInfo = [dict((key,value) for key, value in P.items() if key in ['problemName', 'title', 'source', 'author','problem_type','superhidden','validated','contestLink','allowAccess']) for P in problems] #impt info goes into the list (key in [list])
+    hiddenFromAnalysis = awstools.getProblemsToHideFromAnalysis()
+    for problem in problemInfo:
+        problem['analysisVisible'] = problem['problemName'] not in hiddenFromAnalysis 
     #filtering hidden problems
     if userInfo['role'] == 'admin':
         problemInfo = [p for p in problemInfo if ('superhidden' not in p or p['superhidden'] == False) or ('allowAccess' in p and userInfo['username'] in p['allowAccess'])]
