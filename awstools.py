@@ -559,6 +559,7 @@ def createProblemWithId(problem_id, creator=None):
         UpdateExpression = f'set noACs=:a, testcaseCount=:b',
         ExpressionAttributeValues={':a':extras['noACs'], ':b':extras['testcaseCount']}
     )
+    setVisibility(problem_id, "unlisted")
     validateProblem(problem_id)
 
 def getAllContests():
