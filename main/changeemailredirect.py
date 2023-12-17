@@ -5,12 +5,12 @@ from datetime import datetime, timedelta
 minutesAllowedToReset = 15 #in minutes
 
 def changeemail():
-    userinfo = awstools.getCurrentUserInfo()
     changeEmailKey = request.args.get('key')
-
+    olduser = request.args.get('olduser')
+    userinfo = awstools.getUserInfoFromUsername(olduser)
+    
     if changeEmailKey == None or 'changeEmailKey' not in userinfo:
         return redirect("/editprofile")
-
 
     if userinfo['changeEmailKey'] == changeEmailKey:
         timeOfGeneration = datetime.strptime(userinfo['timeOfGeneration'], "%Y-%m-%d %X")

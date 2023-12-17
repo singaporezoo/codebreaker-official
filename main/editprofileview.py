@@ -36,7 +36,7 @@ def editprofile():
                 'name' : userinfo['fullname'],
                 'username' : userinfo['username'],
                 'oldemail' : userinfo['email'],
-                'link' : f"https://codebreaker.xyz/changeemail?key={changeEmailKey}"
+                'link' : f"https://codebreaker.xyz/changeemail?key={changeEmailKey}&olduser={userinfo['username']}"
             }
 
             sendemail.sendEmail(info, sendemail.CHANGE_EMAIL)
