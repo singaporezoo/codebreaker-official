@@ -40,8 +40,12 @@ def editprofile():
             }
 
             sendemail.sendEmail(info, sendemail.CHANGE_EMAIL)
-
+            
+            #force logout without the logout page
+            for key in list(session.keys()):
+                session.pop(key)
             flash(f"An email has been sent to {new_email}, please check {new_email}'s inbox for the link to change your email.", "success")
+            return redirect("/")
         else:
             result = request.form
             name = result['name']

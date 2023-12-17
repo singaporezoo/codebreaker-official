@@ -19,9 +19,16 @@ def changeemail():
         diffInTime = (now - timeOfGeneration).total_seconds()
         if diffInTime <= minutesAllowedToReset*60:
             awstools.changeEmail(userinfo)
-            flash("Email Changed Successfully!", "success")
-            return redirect("/logout")
+            
+            #force logout without the logout page
+            for key in list(session.keys()):
+                session.pop(key)
+
+            flash("Email Changed Successfully! You may login now", "success")
+            
+            return redirect("/")
         else:
             flash("The change email link has expired!", "warning")
             return redirect("/editprofile")
-    return changeEmailKey
+
+    return redirect("/editprofile")
