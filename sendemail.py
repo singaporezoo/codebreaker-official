@@ -8,6 +8,7 @@ ACCOUNT_CREATED = 0
 ACCOUNT_ENABLED = 1
 ACCOUNT_DISABLED = 2
 ROLE_CHANGED = 3
+CHANGE_EMAIL = 4
 
 ACCOUNT_CREATED_MESSAGE = """
 Dear {name}, 
@@ -71,6 +72,23 @@ Note: this is an auto-generated email.
 
 ROLE_CHANGED_SUBJECT = "Codebreaker Role Changed"
 
+
+CHANGE_EMAIL_MESSSAGE = """
+Dear {name},
+<br><br>
+You have requested an email change for the username {username} from {oldemail} to this email. By clicking on this <a href = {link}>link</a>, you will complete the email change process. 
+<br><br>
+Please note that this link is only valid for 15 minutes.
+<br><br>
+Regards,
+<br>
+codebreaker.xyz
+<br><br>
+Note: this is an auto-generated email.
+"""
+
+CHANGE_EMAIL_SUBJECT = "Codebreaker Email Change Request"
+
 def sendEmail(info, type, changeinfo = None, newrole = None):
 
     msg = MIMEMultipart('alternative')
@@ -103,6 +121,11 @@ def sendEmail(info, type, changeinfo = None, newrole = None):
         msg['Subject'] = ROLE_CHANGED_SUBJECT
         text = ROLE_CHANGED_MESSAGE.format(name = info['fullname'], newrole = newrole,
         link = f'codebreaker.xyz/profile/{changeinfo["username"]}', changedby = changeinfo['username'])
+
+    if type == CHANGE_EMAIL:
+        msg['Subject'] = CHANGE_EMAIL_SUBJECT
+        text = CHANGE_EMAIL_MESSSAGE.format(name = info['name'], username = info['username'], oldemail = info['oldemail'],
+            link = info['link'])
 
     msg.attach(MIMEText(text, 'html'))
 
