@@ -3,6 +3,8 @@ import json
 import subprocess
 import time
 from time import sleep
+import string
+import copy
 import random
 import sendemail
 from pprint import pprint
@@ -371,23 +373,26 @@ def batchGetSubmissionsLimited(start, end):
     )
     return response
 
-def getUserInfo(email):
+def getUserInfo(email, createNewUserIfDoesNotExist = True):
     
     response = users_table.query(
         KeyConditionExpression = Key('email').eq(email)
     )
     user_info = response['Items']
     if len(user_info) == 0:
-        newUserInfo = {
-            'email' : email,
-            'role' : 'disabled',
-            'username' : 'placeholder',
-            'theme' : 'alien',
-            'problemScores' : {},
-            'nation':''
-        }
-        users_table.put_item(Item = newUserInfo)
-        return getUserInfo(email)
+        if createNewUserIfDoesNotExist:
+            newUserInfo = {
+                'email' : email,
+                'role' : 'disabled',
+                'username' : 'placeholder',
+                'theme' : 'alien',
+                'problemScores' : {},
+                'nation':''
+            }
+            users_table.put_item(Item = newUserInfo)
+            return getUserInfo(email)
+        else:
+            return None
 
     return user_info[0]
 
@@ -1408,6 +1413,30 @@ def setVisibility(problemName, visibility):
     elif visibility == "public":
         setProblemToHideSubmissions(problemName, toHideSubmissions=False)
         setProblemToHideFromAnalysis(problemName, toHideAnalysis=False)
+
+def generateChangeEmailKey(userinfo, new_email):
+    changeEmailKey = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase + string.digits) for _ in range(64))
+    users_table.update_item(
+        Key = {'email' : userinfo['email']},
+        UpdateExpression = f'set changeEmailKey = :k, timeOfGeneration = :t, newEmail = :n',
+        ExpressionAttributeValues={':k' : changeEmailKey, ':t' : datetime.now().strftime("%Y-%m-%d %X"), ':n' : new_email}
+    )
+    return changeEmailKey
+
+def changeEmail(userinfo):
+    newUserInfo = copy.deepcopy(userinfo)
+    
+    newUserInfo['email'] =  newUserInfo['newEmail']
+
+    for key in ["changeEmailKey", "timeOfGeneration", "newEmail"]:
+        if key in newUserInfo:
+            del newUserInfo[key]
+
+    users_table.put_item(Item = newUserInfo)
+
+    users_table.delete_item(
+        Key = {'email':userinfo['email']}
+    )
 
 if __name__ == '__main__':
     # PLEASE KEEP THIS AT THE BOTTOM
