@@ -1248,7 +1248,7 @@ def gradeSubmission(problemName,submissionId,username,submissionTime=None,regrad
         "problemType": problemType
     }
 
-    stepFunctionARN = "arn:aws:states:ap-southeast-1:354145626860:stateMachine:codebreaker-grading-v4"
+    stepFunctionARN = "arn:aws:states:ap-southeast-1:354145626860:stateMachine:codebreaker-grader-v4-development"
     res = SFclient.start_execution(stateMachineArn = stepFunctionARN, input = json.dumps(SF_input))
 
 # REGRADE PROBLEM AS INVOKED IN ADMIN PAGE
