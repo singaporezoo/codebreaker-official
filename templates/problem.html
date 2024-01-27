@@ -166,7 +166,7 @@
 								<br>
 								<b>Editorial: </b>
 								{% for i in range(editorials|length) %}
-									<a href = "{{editorials[i]}}">{{i+1}}</a>
+									<a href = "{{editorials[i]}}" target="_blank" rel="noopener noreferrer">{{i+1}}</a>
 								{%endfor%}
 							{%endif%}
 							{% if contest and remsubs != -1%}
