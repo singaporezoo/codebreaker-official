@@ -47,7 +47,7 @@ def submission(subId):
     problemName = subDetails['problemName']
     username = subDetails['username']
     problem_info = awstools.getProblemInfo(problemName)
-    if type(problem_info) == str:
+    if type(problem_info) == str or problem_info == None:
         return "Sorry, this problem doesn't exist"
     totalScore = 0
     verdicts = subDetails['verdicts']
