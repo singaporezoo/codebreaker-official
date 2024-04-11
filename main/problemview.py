@@ -90,13 +90,11 @@ def problem(PROBLEM_NAME):
             canSubmit = False
             flash("Problem has 1 or more issues that require fixing",'danger')
 
-    result = awstools.getProblemStatementHTML(PROBLEM_NAME)
+    statementHTML = awstools.getProblemStatementHTML(PROBLEM_NAME)
+    statementPDFURL = awstools.getProblemStatementPDFURL(PROBLEM_NAME)
 
-    if result['status'] == 200:
-        statementHTML = result['response']
-    else:  # No statement found
+    if statementHTML == None and statementPDFURL == None:
         flash("Statement not found", "warning")
-        statementHTML = ""
     
     delay = 9
     if contestmode.contest():
@@ -283,5 +281,5 @@ def problem(PROBLEM_NAME):
             return redirect("https://raw.githubusercontent.com/ryangohca/photodump-bot/main/fromis_9/217d8818baf448fba55dd65daab05fe0847.png")
         return redirect(f"/submission/{subId}")
 
-    return render_template('problem.html', form=form, probleminfo=problem_info, userinfo = awstools.getCurrentUserInfo(), statementHTML = statementHTML, contest=contestmode.contest(), editorials = editorials, users=contestmode.allowedusers(), remsubs = remsubs, cppref=contestmode.cppref(), socket=contestmode.socket())
+    return render_template('problem.html', form=form, probleminfo=problem_info, userinfo = awstools.getCurrentUserInfo(), statementHTML = statementHTML, statementPDFURL=statementPDFURL, contest=contestmode.contest(), editorials = editorials, users=contestmode.allowedusers(), remsubs = remsubs, cppref=contestmode.cppref(), socket=contestmode.socket())
     

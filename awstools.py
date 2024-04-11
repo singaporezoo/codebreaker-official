@@ -224,24 +224,31 @@ def addAllowAccess(problemName):
         ExpressionAttributeValues={':a':[]},
     )
 
+def getProblemStatementPDFURL(problemName):
+    try: 
+        name = f'{problemName}.pdf'
+        s3.head_object(Bucket=STATEMENTS_BUCKET_NAME, Key=name)
+        url = s3.generate_presigned_url(
+            ClientMethod='get_object',
+            Params={'Bucket': STATEMENTS_BUCKET_NAME, 'Key': name},
+            ExpiresIn=60)
+        return url
+    except ClientError as e:
+        return None
+
 def getProblemStatementHTML(problemName):
     statement = ''
     try:
         htmlfile = s3.get_object(Bucket=STATEMENTS_BUCKET_NAME, Key=f'{problemName}.html') 
         body = htmlfile['Body'].read().decode("utf-8") 
         statement += body
+        return statement
     except s3.exceptions.NoSuchKey as e:
-        pass
+        return None
+    """
     try:
-        name = f'{problemName}.pdf'
-        s3.head_object(Bucket=STATEMENTS_BUCKET_NAME, Key=name)
-        if (len(statement) > 0):
-            statement += '<br>'
-        url = s3.generate_presigned_url(
-            ClientMethod='get_object',
-            Params={'Bucket': STATEMENTS_BUCKET_NAME, 'Key': name},
-            ExpiresIn=60)
-
+        url = getProbelmStatementPDFURL(problemName)
+        statement += "<br>"
         statement += '<iframe src=\"' + url + '\" width=\"100%\" height=\"700px\"></iframe>'
     except ClientError as e:
         pass
@@ -249,6 +256,7 @@ def getProblemStatementHTML(problemName):
         return {'status': 404, 'response':'No statement is currently available'}
     else:
         return {'status': 200, 'response':statement}
+    """
 
 def uploadStatement(statement, s3Name):
     s3.upload_fileobj(statement, STATEMENTS_BUCKET_NAME, s3Name, ExtraArgs={"ContentType":statement.content_type})

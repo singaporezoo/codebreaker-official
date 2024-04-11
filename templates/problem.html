@@ -61,12 +61,20 @@
 						</li>
 						{% endif %}
 
+						{% if statementPDFURL %}
+						<li class="nav-item">
+							<a class="nav-link" href={{statementPDFURL}} target = "_blank">Statement in New Tab</a>
+						</li>
+						{% endif %}
+
 					</ul>
 						<!-- Tab panes -->
 						<div class="tab-content">
 							<div id="statement" class="container tab-pane active "><br>
 								<h3> <b> {{probleminfo.title}} </b> </h3>
-								{{statementHTML | safe}}
+								{% if statementHTML %} {{statementHTML | safe}} {% endif %}
+								<br>
+								{% if statementPDFURL %} <iframe src= {{statementPDFURL}} width=100% height=700px></iframe> {% endif %}
 							</div>
 
 							<div id="submitCode" class="container tab-pane fade"><br>
@@ -86,7 +94,7 @@
 									<p id="submitButtonParagraph">  {{form.submit(class="btn btn-primary", onclick="onSubmit()")}} </p>
 									{% endif %}
 								</form>
-															{% endif %}
+							{% endif %}
 							</div>
 
 							<div id="submitInteractive" class="container tab-pane fade"><br>
@@ -100,7 +108,7 @@
 									<p> {{form.code(class = 'form-control', id = 'editorI', maxLength = '50')}} </p>
 									<p id="submitButtonParagraph">  {{form.submit(class="btn btn-primary", onclick="onSubmit()")}} </p>
 								</form>
-															{% endif %}
+							{% endif %}
 							</div>
 
 							<div id='submitCommunication' class="container tab-pane fade"><br>
