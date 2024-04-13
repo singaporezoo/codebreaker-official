@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %} Credits {% endblock %} <!-- Title goes here -->
+{% block head %} {{ super() }} {% endblock %}
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+{% block content %}
+
+<div class="container">
+	<br>
+	<h1>Useful Resources</h1><br><table class="table table-hover" id="notesTable">
+	
+	<tbody>
+		<tr>
+			<td>
+				<div class = "notesLinkHeader"><a href="https://drive.google.com/drive/folders/1fkglGUXh-wO9m59OZbT3ikD0Nw472-hQ">
+					Dec Course 2021 Elementary Public Drive
+				</a></div>
+				<div>The latest public resource for NUS's Elementary December Course for Competitive Programming. An excellent resource for starting out on your CP journey</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class = "notesLinkHeader"><a href="https://drive.google.com/drive/folders/1UqXmMctOvtZnZ1OHPSBrCEXZB5d-zIe3">
+					Dec Course 2022 Advanced Public Drive
+				</a></div>
+				<div>The latest public resource for NUS's Advanced December Course for Competitive Programming. Useful in improving topical knowledge at the advanced level. (DP speedups, heavy-light-decomposition, etc)</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class = "notesLinkHeader"><a href="https://cses.fi/book/book.pdf">
+					CP handbook by Antti Laaksonen
+				</a></div>
+				<div>A complete book containing most of the content you'll need for the NOI and more! Do note that some topics are explicitly excluded from the NOI and IOI syllabus.</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class = "notesLinkHeader"><a href="https://cp-algorithms.com/">
+					CP Algorithms
+				</a></div>
+				<div>A resource containing the code and theory behind useful algorithms and data structures.</div>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class = "notesLinkHeader"><a href="https://github.com/noisg/sg_noi_archive">
+					NOI github repository
+				</a></div>
+				<div>A collection of NOI's past problems, including preliminary/qualification rounds. Coded solutions and editorials included too. Good to practice with in conjunction with <a href="https://codebreaker.xyz/group/noi">this</a></div>
+			</td>
+		</tr>
+		
+</tbody></table><br>			
+	<br>
+	
+</div>
+
+{% endblock %}
+

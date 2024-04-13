@@ -13,7 +13,7 @@ import json
 from password import FLASK_SECRET_KEY, GOOGLE_CLIENT_SECRET
 from pytz import utc
 
-from main import problemlistview, submissionview, newuserview, profileview, submissionlistview, contestview, contestlistview, scoreboardview, credits, rankingsview, groupview, editprofileview, problemview, announcelistview, announceview, defaultview, clarificationsview, homeview, changeemailredirect
+from main import problemlistview, submissionview, newuserview, profileview, submissionlistview, contestview, contestlistview, scoreboardview, creditsview, resourcesview, rankingsview, groupview, editprofileview, problemview, announcelistview, announceview, defaultview, clarificationsview, homeview, changeemailredirect
 from admin import adminview, editproblemlistview, editusersview, editproblemview, editcontestlistview, editcontestview, editannouncelistview, editannounceview, editcontestgroupview, editclarificationsview, viewsubmissions, uploadtestdataview
 
 import awstools #awstools.py contains helper functions for AWS reading and writing to S3 and DB.
@@ -54,7 +54,8 @@ app.add_url_rule('/admin/editproblems',view_func=editproblemlistview.editproblem
 app.add_url_rule('/admin/editusers',view_func=editusersview.editusers)
 app.add_url_rule('/admin/edituserrole',view_func=editusersview.editUserRole, methods = ['POST'])
 app.add_url_rule('/admin/editproblemtags', view_func = editproblemview.editProblemTags, methods=['POST'])
-app.add_url_rule('/credits',view_func=credits.credits)
+app.add_url_rule('/credits',view_func=creditsview.credits)
+app.add_url_rule('/resources',view_func=resourcesview.resources)
 app.add_url_rule('/admin/editproblem/<problemName>', view_func = editproblemview.editproblem, methods = ['GET', 'POST'])
 app.add_url_rule('/admin/editcontests',view_func=editcontestlistview.editcontestlist, methods=['GET', 'POST'])
 app.add_url_rule('/admin/editcontest/<contestId>', view_func = editcontestview.editcontest, methods = ['GET', 'POST'])
