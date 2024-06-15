@@ -48,6 +48,9 @@ def editproblemlist():
         if result['problem_id'] in problemNames:
             flash('oopsies! problem id already taken :(', 'warning')
             return redirect('/admin/editproblems')
+        if not result['problem_id'].islower():
+            flash('Problem Ids cannot have capital letters!', 'warning')
+            return redirect('/admin/editproblems')
         if not re.match(r'^[\w]*$', result['problem_id']):
             flash ('Invalid problem Id!', 'warning')
             return redirect('/admin/editproblems')
