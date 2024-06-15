@@ -38,7 +38,7 @@ def submission(subId):
     subDetails = awstools.getSubmission(int(subId))
     if subDetails == None:
         return "Sorry, the submission you're looking for doesn't exist. Refresh the page if you just made a submission." 
-
+    
     subtaskScores = [fixFloat(i) for i in subDetails['subtaskScores']]
     scores = [fixFloat(i) for i in subDetails["score"]]
     returnCodes = [fixFloat(i) for i in subDetails["returnCodes"]]
