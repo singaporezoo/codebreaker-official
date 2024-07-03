@@ -3,6 +3,7 @@
 *.swo
 .DS_Store
 node_modules/
+virtualenv/
 password.py
 contestmode.py
 localtestingconfig.py
