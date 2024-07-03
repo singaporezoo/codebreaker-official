@@ -160,7 +160,7 @@ def problem(PROBLEM_NAME):
         language = languages[language]
 
         ''' BLOCK DISABLED OR NON-USERS FROM SUBMITTING '''
-        if userInfo == None or (userInfo['role'] not in ['member','admin','superadmin']):
+        if userInfo == None or (userInfo['role'] in ['disabled', 'locked']):
             flash('You do not have permission to submit!','warning')
             return redirect(f'/problem/{PROBLEM_NAME}')
 

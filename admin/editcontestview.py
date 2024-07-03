@@ -46,8 +46,8 @@ def editcontest(contestId):
     form = updateContestForm()
     userInfo = awstools.getCurrentUserInfo()
 
-    if userInfo == None or (userInfo['role'] != 'admin' and userInfo['role'] != 'superadmin'):
-        flash("Abmenistratior access is required", "warning")
+    if userInfo == None or (userInfo['role'] not in ["superadmin", "admin", "cmanager"]):
+        flash("Administrator access is required", "warning")
         return redirect("/")
 
     if contestmode.contest() and (userInfo['role'] != 'superadmin' and userInfo['username'] not in contestmode.allowedusers()):

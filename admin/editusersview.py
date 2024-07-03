@@ -13,7 +13,7 @@ def editUserRole():
     if userInfo['role'] != 'admin' and userInfo['role'] != 'superadmin':
         return {'status':300,'error':'Access to resource denied'}
 
-    if newrole not in ['locked', 'disabled', 'member', 'admin']:
+    if newrole not in ['locked', 'disabled', 'member', 'cmanager', 'admin']:
         return {'status':301,'error':'Invalid role provided'}
 
     if userInfo['username'] == username:

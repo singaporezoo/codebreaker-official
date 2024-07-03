@@ -68,14 +68,12 @@
 			
 			<!-- Links -->
 			<ul class="nav navbar-nav">
+				{% if userinfo.role in ["superadmin","admin"]%}
 				<li class="nav-item">
 					<a class="nav-link" href="/admin/editannouncements">Announcements</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="/admin/editproblems">Problems</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="/admin/editcontests">Contests</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="/admin/editclarifications">Clarifications
@@ -84,6 +82,10 @@
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="/admin/editusers">Users</a>
+				</li>
+				{%endif%}
+				<li class="nav-item">
+					<a class="nav-link" href="/admin/editcontests">Contests</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="/">Home

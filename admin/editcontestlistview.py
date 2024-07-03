@@ -13,7 +13,7 @@ def editcontestlist():
 
     userInfo = awstools.getCurrentUserInfo()
 
-    if userInfo == None or (userInfo['role'] != 'admin' and userInfo['role'] != 'superadmin'):
+    if userInfo == None or (userInfo['role'] not in ["superadmin", "admin", "cmanager"]):
         flash("Admin access is required", "warning")
         return redirect("/")
 

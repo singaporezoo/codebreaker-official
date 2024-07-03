@@ -44,9 +44,10 @@
 				<td>
 				<select onfocus="this.oldvalue=this.value;"onchange="updateRole(this);this.oldvalue=this.value;">
 					<option value="admin">admin</option>
+					<option value="cmanager">cmanager</option>
+					<option value="member">member</option>
 					<option value="disabled">disabled</option>
 					<option value="locked">locked</option>
-					<option value="member">member</option>
 				</select>
 				</td>
 				{% elif user.role == "admin" or user.role == "superadmin" %}
@@ -56,6 +57,7 @@
 				<select onfocus="this.oldvalue=this.value;"onchange="updateRole(this);this.oldvalue=this.value;">
 					<option value="member">member</option>
 					<option value="admin">admin</option>
+					<option value="cmanager">cmanager</option>
 					<option value="disabled">disabled</option>
 					<option value="locked">locked</option>
 				</select>
@@ -65,8 +67,9 @@
 				<select onfocus="this.oldvalue=this.value;"onchange="updateRole(this);this.oldvalue=this.value;">
 					<option value="disabled">disabled</option>
 					<option value="admin">admin</option>
-					<option value="locked">locked</option>
+					<option value="cmanager">cmanager</option>
 					<option value="member">member</option>
+					<option value="locked">locked</option>
 				</select>
 				</td>
 				{%else%}
@@ -74,8 +77,9 @@
 				<select onfocus="this.oldvalue=this.value;"onchange="updateRole(this);this.oldvalue=this.value;">
 					<option value="locked">locked</option>
 					<option value="admin">admin</option>
-					<option value="disabled">disabled</option>
+					<option value="cmanager">cmanager</option>
 					<option value="member">member</option>
+					<option value="disabled">disabled</option>
 				</select>
 				</td>
 

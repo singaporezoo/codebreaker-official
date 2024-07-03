@@ -118,7 +118,7 @@
 				</li>
 				</div>
 
-				{% if userinfo.role == "admin" or userinfo.role == "superadmin" %}
+				{% if userinfo.role in ["superadmin","admin","cmanager"]%}
 				<li class="nav-item">
 					<a class="nav-link" href="/admin">Admin</a>
 				</li>

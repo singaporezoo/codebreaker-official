@@ -36,7 +36,7 @@ def submission(subId):
         return "Sorry, the submission you're looking for doesn't exist"
 
     subDetails = awstools.getSubmission(int(subId))
-    if subDetails == None:
+    if subDetails == None or 'subtaskScores' not in subDetails.keys():
         return "Sorry, the submission you're looking for doesn't exist. Refresh the page if you just made a submission." 
     
     subtaskScores = [fixFloat(i) for i in subDetails['subtaskScores']]
@@ -228,7 +228,7 @@ def submission(subId):
         
         else:
             ''' RESUBMIT '''
-            if userInfo == None or (userInfo['role'] not in ['member','admin','superadmin']):
+            if userInfo == None or (userInfo['role'] in ['disabled', 'locked']):
                 flash('You do not have permission to submit!','warning')
                 return redirect(f'/problem/{problemName}')
             
