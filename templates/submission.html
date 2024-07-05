@@ -76,7 +76,7 @@
 							<p id="codestorageB" hidden>{{codeB}}</p>
 							<p>{{message}}</p>
 						{% endif %}
-					{% elif userinfo.role == "admin" or userinfo.role == "superadmin" or (userinfo != None and userinfo['problemScores'][probleminfo.problemName] == 100)%}
+					{% elif userinfo.role in ["cmanager", "superadmin", "admin"]  or (userinfo != None and userinfo['problemScores'][probleminfo.problemName] == 100)%}
 						<!-- admin or superadmin or person ac -->
 						{% if code != None %}
 							<textarea id='codebox'>{{code}}</textarea> 
