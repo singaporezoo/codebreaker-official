@@ -1043,7 +1043,7 @@ def isAllowedAccess(problem_info, userInfo):
     if userInfo['role'] == 'superadmin':
         return True
 
-    if userInfo['role'] in ['member', 'admin']:
+    if userInfo['role'] in ['member', 'cmanager', 'admin']:
         if 'contestUsers' in problem_info and userInfo['username'] in problem_info['contestUsers']:
             return True
 
