@@ -62,6 +62,16 @@
 					<option value="locked">locked</option>
 				</select>
 				</td>
+				{% elif user.role=="cmanager"%}
+				<td>
+				<select onfocus="this.oldvalue=this.value;"onchange="updateRole(this);this.oldvalue=this.value;">
+					<option value="cmanager">cmanager</option>
+					<option value="admin">admin</option>
+					<option value="member">member</option>
+					<option value="disabled">disabled</option>
+					<option value="locked">locked</option>
+				</select>
+				</td>
 				{% elif user.role=="disabled"%}
 				<td>
 				<select onfocus="this.oldvalue=this.value;"onchange="updateRole(this);this.oldvalue=this.value;">
