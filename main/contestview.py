@@ -40,7 +40,7 @@ def contest(contestId):
         return redirect("/announcements")
     
     showScoreboard = True
-    if not contestinfo["publicScoreboard"] and (userInfo != None and userInfo['role'] != "admin" and userInfo['role'] != "superadmin"):
+    if not contestinfo["publicScoreboard"] and (userInfo != None and not userInfo['role'] in ["admin", "superadmin", "cmanager"]):
         showScoreboard = False
 
     start = datetime.strptime(contestinfo['startTime'], "%Y-%m-%d %X") 

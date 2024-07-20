@@ -55,7 +55,7 @@
 	<b class="ml-2"> <a href={{contestinfo.editorial}}>Editorial</a></b>
 	{% endif %}
 
-	{% if userinfo.role == 'superadmin' or (not contest and userinfo.role == 'admin') or (contest and userinfo.username in users) %}
+	{% if userinfo.role == 'superadmin' or (not contest and (userinfo.role == 'cmanager' or userinfo.role == 'admin')) or (contest and userinfo.username in users) %}
 	<b class="ml-2"> <a href="/admin/editcontest/{{contestinfo.contestId}}">Edit Contest</a> </b>
 	<br>
 	{% endif %}

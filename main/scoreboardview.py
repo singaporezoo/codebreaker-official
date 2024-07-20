@@ -22,7 +22,7 @@ def scoreboard(contestId):
         flash("Sorry, you've not been invited to this private contest!", "warning")
         return redirect("/contests")
     
-    if not contestinfo["publicScoreboard"] and userinfo['role'] != "admin" and userinfo['role'] != 'superadmin':
+    if not contestinfo["publicScoreboard"] and not userinfo['role'] in ["cmanager", "admin", "superadmin"]:
         flash("Sorry, the scoreboard is not public", "warning")
         return redirect("/contests")
     
