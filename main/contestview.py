@@ -55,7 +55,8 @@ def contest(contestId):
     if past:
         startContest = False
     elif userInfo == None:
-        startContest = False
+        if (now < start): startContest=True
+        else: startContest = False
     elif userInfo['role'] == 'superadmin' and (username not in contestinfo["users"] or contestinfo["users"][username] == "0"):
         startContest = True
     else:
@@ -95,6 +96,7 @@ def contest(contestId):
             return redirect(f"/contest/{contestId}")
 
         login = (username != '')
+        print("begin!")
 
         return render_template("begincontest.html", contest=contestmode.contest(), userinfo=userInfo, contestinfo=contestinfo, form=form, startTime=startTime, users=contestmode.allowedusers(), cppref=contestmode.cppref(), login=login)
 
