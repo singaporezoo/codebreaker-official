@@ -1,0 +1,66 @@
+import awstools
+
+"""
+Change the parameters below
+"""
+
+# Whether in contest mode: True or False
+def contest():
+    return True
+
+# Return the name of the contest being supported
+def contestId():
+    userinfo = awstools.getCurrentUserInfo()
+    if userinfo == None: return 'analysismirror'
+
+    return 'dec2024sel'
+    #return 'analysismirror'
+
+# Whether to show only first WA or all: True or False
+def fullfeedback():
+    return False
+
+# Whether to hide the time and memory: True or False
+def hidetime():
+    return True
+
+# Whether to allow cppref on the site: True or False
+def cppref():
+    return True
+
+# Whether subtask stiching is allowed: True or False
+def stitch():
+    return True
+
+# people who can see subs (contest admins)
+def allowedusers():
+    return ['bribritt', 'Xiaoyang', 'zyq69', 'ryangohca', 'TheRaptor', 'siewjh', 'hmm', 'shoryu386', 'beepbeepsheep', 'zaneyu', 'blackscreen1', 'Tyx2019', 'LCJLY', 'Kiameimon', 'JustKitkat', 'Shadow1', 'Reverberate']
+
+"""
+WARNING DON'T TOUCH ANYTHING BELOW
+---------------------------------------------------------------------------------------
+"""
+
+#idk what this does
+def contestIds():
+    return ['test']
+
+#Don't touch this
+def contestproblems():
+    problems = []
+    for i in [contestId()]:
+        problems += awstools.getContestInfo(i)['problems']
+    return problems
+
+def socket():
+    return False
+    if not contest():
+        return False
+    userinfo = awstools.getCurrentUserInfo()
+    if userinfo == None:
+        return False
+    username = userinfo['username']
+    role = userinfo['role']
+    if username in allowedusers() or role == 'superadmin':
+        return True
+    return contestId() != 'analysismirror'

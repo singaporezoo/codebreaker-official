@@ -32,6 +32,10 @@ def newuser():
         if nation.title() not in countries:
             flash("Invalid Country", "warning")
             return redirect('/newuser')
+        
+        if len(username) > 25:
+            flash("Keep your username under 25 characters :<", "warning")
+            return redirect('/newuser')
 
         #check if username exists
         checkUser = awstools.getUserInfoFromUsername(username)
