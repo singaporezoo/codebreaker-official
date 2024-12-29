@@ -37,6 +37,8 @@ def newuser():
             flash("Keep your username under 25 characters :<", "warning")
             return redirect('/newuser')
 
+
+
         #check if username exists
         checkUser = awstools.getUserInfoFromUsername(username)
         if checkUser != None:
