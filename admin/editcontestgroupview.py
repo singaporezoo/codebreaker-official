@@ -43,7 +43,7 @@ def editcontestgroup(groupId):
     form = updateContestGroupForm()
 
     userInfo = awstools.getCurrentUserInfo()
-    if userInfo == None or (userInfo['role'] != 'admin' and userInfo['role'] != 'superadmin'):
+    if userInfo == None or (not userInfo['role'] in ['cmanager', 'admin', 'superadmin']):
         flash("Abmenistratior access is required", "warning")
         return redirect("/")
 
