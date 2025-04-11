@@ -171,9 +171,9 @@ def problem(PROBLEM_NAME):
         
         ''' CHECKING FOR SUBMISSIONS TOO CLOSE TO EACH OTHER ''' 
         now = time.time() 
-        if "testCookie" not in request.cookies:
-            flash("Please turn on cookies to submit", "danger")
-            return redirect(f"/problem/{PROBLEM_NAME}")
+        # if "testCookie" not in request.cookies:
+        #    flash("Please turn on cookies to submit", "danger")
+        #    return redirect(f"/problem/{PROBLEM_NAME}")
         times = []
         for i in range(outlets):
             lastSub = request.cookies.get(f'lastSub{i}')

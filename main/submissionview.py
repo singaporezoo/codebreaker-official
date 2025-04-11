@@ -247,9 +247,9 @@ def submission(subId):
                 return redirect(f"/submission/{subId}")
 
 
-            if "testCookie" not in request.cookies:
-                flash("Please turn on cookies to submit", "danger")
-                return redirect(f"/submission/{subId}")
+            # if "testCookie" not in request.cookies:
+            #    flash("Please turn on cookies to submit", "danger")
+            #     return redirect(f"/submission/{subId}")
             times = []
             for i in range(outlets):
                 lastSub = request.cookies.get(f'lastSub{i}')
