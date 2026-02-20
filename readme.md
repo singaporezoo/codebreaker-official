@@ -2,20 +2,20 @@
 
 ## Introduction
 
-Codebreaker is the official platform for Singapore Informatics Olympiad training and contests. It is home to 1,400 problems and over 3,000 users, and has performed **national team selection** for the International Olympiad of Informatics teams in Singapore and Indonesia.
+Codebreaker is the official platform for Singapore Informatics Olympiad training and contests. It is home to 2,000 problems and over 8,000 users, and has performed **national team selection** for the International Olympiad of Informatics teams in Singapore and Indonesia.
 
-The primary motivation for Singapore’s migration to Codebreaker is **lowering operating costs**. Despite having run for over 4 years and having graded hundreds of thousands of submissions, the total operational cost of Codebreaker is under $2000.
+The primary motivation for Singapore’s migration to Codebreaker is **lowering operating costs**. Despite having run for over 6 years and having graded hundreds of thousands of submissions, the total operational cost of Codebreaker is under $3000.
 
 Codebreaker Contest System is a fork of the Codebreaker architecture that serves to allow for **easy and independent** usage of Codebreaker to run contests. In that way, Codebreaker Contest serves to be a more **cost-efficient** and more user-friendly version of the gold standard of contest organization and management, CMS. It is available at this link: [https://github.com/dvdg6566/codebreaker-contest-manager/](https://github.com/dvdg6566/codebreaker-contest-manager/).
 
 ## Codebreker Statistics
 
-As of time of writing (June 2024), here are the statistics for [Codebreaker](https://codebreaker.xyz) (main site).
+As of time of writing (Feb 2026), here are the statistics for [Codebreaker](https://codebreaker.xyz) (main site).
 
-- Average traffic (Page requests) on CloudFlare per month is between 1,200,000 to 1,500,000
-- Codebreaker has graded a total of 510,000 submissions.
-- Codebreaker has 4,650 registerd users, coming from a 71 different countries
-- Codebreaker has a total of 1,600 different problems, coming from a mixture of public sources and the Singapore training system.
+- Codebreaker receives an average of 400,000 to 500,000 monthly page requests (Excluding AI crawlers). 
+- Codebreaker has graded a total of 800,000 submissions.
+- Codebreaker has 8,000+ registerd users, coming from a 100+ different countries
+- Codebreaker has a total of 2,000+ different problems, coming from a mixture of public sources and the Singapore training system.
 
 ## Codebreaker Infrastructure Overview
 
